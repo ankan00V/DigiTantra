@@ -10,26 +10,33 @@ import type { Message } from '@/lib/types';
 import { aiChatbotAssistance } from '@/ai/flows/ai-chatbot-assistance';
 import { cn } from '@/lib/utils';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Icosahedron } from '@react-three/drei';
+import { Box, Sphere } from '@react-three/drei';
 
 const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
-    const meshRef = useRef<THREE.Mesh>(null!);
+    const groupRef = useRef<THREE.Group>(null!);
     useFrame((state, delta) => {
-        if (meshRef.current) {
-            meshRef.current.rotation.y += delta * (isLoading ? 1.5 : 0.2);
-            meshRef.current.rotation.x += delta * (isLoading ? 1.5 : 0.2);
+        if (groupRef.current) {
+            groupRef.current.rotation.y += delta * (isLoading ? 0.5 : 0.1);
         }
     });
 
+    const headMaterial = <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={isLoading ? 1.0 : 0.4} />
+    const eyeMaterial = <meshStandardMaterial color="hsl(var(--foreground))" emissive="hsl(var(--foreground))" emissiveIntensity={isLoading ? 1.5 : 0.5} />
+
     return (
-        <Icosahedron ref={meshRef} args={[1, 0]}>
-            <meshStandardMaterial 
-                color="hsl(var(--primary))" 
-                wireframe 
-                emissive="hsl(var(--primary))" 
-                emissiveIntensity={isLoading ? 1.5 : 0.5} 
-            />
-        </Icosahedron>
+        <group ref={groupRef} scale={0.7} position={[0, -0.2, 0]}>
+            {/* Head */}
+            <Box args={[1.5, 1.5, 1.5]}>
+                {headMaterial}
+            </Box>
+            {/* Eyes */}
+            <Sphere args={[0.2, 16, 16]} position={[-0.4, 0.2, 0.75]}>
+                {eyeMaterial}
+            </Sphere>
+            <Sphere args={[0.2, 16, 16]} position={[0.4, 0.2, 0.75]}>
+                {eyeMaterial}
+            </Sphere>
+        </group>
     )
 };
 
@@ -83,9 +90,9 @@ export function Chatbot() {
             <Sparkles className="h-6 w-6 text-primary" />
             <h3 className="font-headline text-xl">AI Assistant</h3>
         </div>
-        <div className='w-16 h-10'>
+        <div className='w-20 h-14'>
             <Suspense fallback={<Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}>
-                <Canvas camera={{ position: [0, 0, 2.5], fov: 50 }}>
+                <Canvas camera={{ position: [0, 0, 3], fov: 50 }}>
                     <ambientLight intensity={0.5} />
                     <pointLight position={[5,5,5]} intensity={1} color="hsl(var(--primary))" />
                     <Chatbot3DElement isLoading={isLoading} />
