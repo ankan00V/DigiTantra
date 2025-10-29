@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "social-1",
+      "description": "Abstract network graphic",
+      "imageUrl": "https://images.unsplash.com/photo-1738082956220-a1f20a8632ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhYnN0cmFjdCUyMG5ldHdvcmt8ZW58MHx8fHwxNzYxNjYxMzA5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract network"
+    },
+    {
+      "id": "social-2",
+      "description": "Data visualization chart",
+      "imageUrl": "https://images.unsplash.com/photo-1745847768367-893e989d3a98?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZGF0YSUyMGNoYXJ0fGVufDB8fHx8MTc2MTYxODUxNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "data chart"
+    },
+    {
+      "id": "social-3",
+      "description": "Person working on a laptop",
+      "imageUrl": "https://images.unsplash.com/photo-1541560052-5e137f229371?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxsYXB0b3AlMjB3b3JrfGVufDB8fHx8MTc2MTY2MjgwM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "laptop work"
+    },
+    {
+      "id": "blog-hero",
+      "description": "Futuristic digital landscape",
+      "imageUrl": "https://images.unsplash.com/photo-1616191637151-2eb45284f27b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkaWdpdGFsJTIwbGFuZHNjYXBlfGVufDB8fHx8MTc2MTYyMjY3NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "digital landscape"
+    }
+  ]
 }
