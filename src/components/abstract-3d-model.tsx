@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Icosahedron, Torus, Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
@@ -60,7 +60,6 @@ function Stars(props: any) {
   const ref = useRef<any>()
   const [sphere] = useState(() => {
     // Generate random points in a sphere
-    const_ts-ignore
     const positions = new Float32Array(5000 * 3);
     for (let i = 0; i < 5000; i++) {
       const r = 4 + Math.random() * 4;
