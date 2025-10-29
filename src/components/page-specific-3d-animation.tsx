@@ -95,7 +95,7 @@ const AcademicFallingObjects = () => {
                 <FallingObject key={i} position={data.position}>
                     {data.type === 'word' && (
                         <Text
-                            fontSize={2 + Math.random()}
+                            fontSize={1 + Math.random()}
                             color="hsl(var(--primary))"
                             anchorX="center"
                             anchorY="middle"
@@ -166,8 +166,8 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'home':
         return (
             <group ref={groupRef}>
-                <Plane ref={meshRef} args={[4, 4, 32, 32]} material={homeMaterial} rotation-x={-Math.PI * 0.2} position={[0, -1, 0]}/>
-                 <TorusKnot args={[1, 0.1, 200, 22]} position={[0,0.5,0]}>
+                <Plane ref={meshRef} args={[8, 8, 64, 64]} material={homeMaterial} rotation-x={-Math.PI * 0.2} position={[0, -1, 0]}/>
+                 <TorusKnot args={[2, 0.2, 400, 44]} position={[0,0.5,0]}>
                     <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.7} />
                 </TorusKnot>
             </group>
