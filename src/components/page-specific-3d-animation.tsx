@@ -2,7 +2,7 @@
 
 import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Icosahedron, Sphere, Torus, TorusKnot, Box, Dodecahedron, Octahedron, Plane } from '@react-three/drei';
+import { Icosahedron, Sphere, Torus, TorusKnot, Box, Dodecahedron, Octahedron, Plane, Text } from '@react-three/drei';
 import * as THREE from 'three';
 
 type AnimationType = 'home' | 'about' | 'features' | 'analytics' | 'contact' | 'social' | 'blog';
@@ -48,6 +48,60 @@ const Starfield = () => {
                 opacity={0.8}
              />
         </points>
+    );
+};
+
+const FallingWord = ({ word, position }: { word: string; position: [number, number, number] }) => {
+    const ref = useRef<any>(null!);
+    const [x, y, z] = position;
+
+    useFrame((state, delta) => {
+        if (ref.current) {
+            ref.current.position.y -= delta * 2;
+            if (ref.current.position.y < -15) {
+                ref.current.position.y = 15;
+            }
+        }
+    });
+
+    return (
+        <Text
+            ref={ref}
+            position={[x, y, z]}
+            fontSize={1 + Math.random()}
+            color="hsl(var(--primary))"
+            anchorX="center"
+            anchorY="middle"
+            font="/fonts/SpaceGrotesk-Bold.ttf"
+        >
+            {word}
+        </Text>
+    );
+};
+
+const FallingWords = () => {
+    const words = useMemo(() => {
+        const motivationalWords = ['Learn', 'Grow', 'Imagine', 'Create', 'Innovate', 'Succeed', 'Inspire', 'Dream'];
+        const wordData = [];
+        for (let i = 0; i < 50; i++) {
+            wordData.push({
+                word: motivationalWords[Math.floor(Math.random() * motivationalWords.length)],
+                position: [
+                    (Math.random() - 0.5) * 30,
+                    (Math.random() - 0.5) * 30,
+                    (Math.random() - 0.5) * 10 - 5,
+                ] as [number, number, number],
+            });
+        }
+        return wordData;
+    }, []);
+
+    return (
+        <group>
+            {words.map((data, i) => (
+                <FallingWord key={i} word={data.word} position={data.position} />
+            ))}
+        </group>
     );
 };
 
@@ -113,7 +167,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
             </group>
         )
     case 'about':
-        return <Starfield />;
+        return <FallingWords />;
     case 'features':
        return (
         <Dodecahedron ref={meshRef} args={[1.5, 0]}>
