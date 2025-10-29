@@ -1,14 +1,38 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Bot, Loader2, Send, User } from 'lucide-react';
+import { Bot, Loader2, Send, User, Sparkles } from 'lucide-react';
 import type { Message } from '@/lib/types';
 import { aiChatbotAssistance } from '@/ai/flows/ai-chatbot-assistance';
 import { cn } from '@/lib/utils';
+import { Canvas } from '@react-three/fiber';
+import { Icosahedron } from '@react-three/drei';
+
+const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
+    const meshRef = useRef<THREE.Mesh>(null!);
+    useRef((state: any, delta: number) => {
+        if (meshRef.current) {
+            meshRef.current.rotation.y += delta * (isLoading ? 1.5 : 0.2);
+            meshRef.current.rotation.x += delta * (isLoading ? 1.5 : 0.2);
+        }
+    });
+
+    return (
+        <Icosahedron ref={meshRef} args={[1, 0]}>
+            <meshStandardMaterial 
+                color="hsl(var(--primary))" 
+                wireframe 
+                emissive="hsl(var(--primary))" 
+                emissiveIntensity={isLoading ? 1.5 : 0.5} 
+            />
+        </Icosahedron>
+    )
+};
+
 
 export function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
@@ -53,10 +77,21 @@ export function Chatbot() {
   };
 
   return (
-    <div className="glassmorphic rounded-lg flex flex-col h-[500px] w-full max-w-md mx-auto">
-      <div className="p-4 border-b flex items-center gap-3">
-        <Bot className="h-6 w-6 text-primary" />
-        <h3 className="font-headline text-xl">AI Assistant</h3>
+    <div className="glassmorphic rounded-lg flex flex-col h-[600px] w-full max-w-2xl mx-auto shadow-2xl shadow-primary/10 border-primary/20">
+      <div className="p-4 border-b flex items-center justify-between">
+        <div className='flex items-center gap-3'>
+            <Sparkles className="h-6 w-6 text-primary" />
+            <h3 className="font-headline text-xl">AI Assistant</h3>
+        </div>
+        <div className='w-16 h-10'>
+            <Suspense fallback={<Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}>
+                <Canvas camera={{ position: [0, 0, 2.5], fov: 50 }}>
+                    <ambientLight intensity={0.5} />
+                    <pointLight position={[5,5,5]} intensity={1} color="hsl(var(--primary))" />
+                    <Chatbot3DElement isLoading={isLoading} />
+                </Canvas>
+            </Suspense>
+        </div>
       </div>
       <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="space-y-4">
@@ -93,7 +128,7 @@ export function Chatbot() {
           {isLoading && (
             <div className="flex items-start gap-3 justify-start">
                <Avatar className="h-8 w-8 bg-primary/20 text-primary">
-                  <AvatarFallback><Bot size={20} /></AvatarFallback>
+                  <AvatarFallback><Bot size={20} /></Avatar-Fallback>
                 </Avatar>
                 <div className="p-3 rounded-lg bg-accent flex items-center">
                     <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
@@ -103,16 +138,17 @@ export function Chatbot() {
         </div>
       </ScrollArea>
       <form onSubmit={handleSubmit} className="p-4 border-t">
-        <div className="flex items-center gap-2">
+        <div className="relative">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about digital marketing..."
             disabled={isLoading}
             autoComplete='off'
+            className="pr-12 h-12 text-base"
           />
-          <Button type="submit" size="icon" disabled={isLoading}>
-            <Send className="h-4 w-4" />
+          <Button type="submit" size="icon" disabled={isLoading} className="absolute right-2.5 top-1/2 -translate-y-1/2">
+            <Send className="h-5 w-5" />
           </Button>
         </div>
       </form>

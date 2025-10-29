@@ -5,6 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Chatbot } from "@/components/chatbot";
 import type { Metadata } from 'next';
 import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Mail } from "lucide-react";
 
 export const metadata: Metadata = {
   title: 'Contact | DigMkt',
@@ -13,41 +15,48 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="relative overflow-hidden">
-        <PageSpecific3DAnimation type="contact" />
-      <div className="main-container relative z-10">
+    <div className="relative overflow-hidden min-h-screen">
+      <PageSpecific3DAnimation type="contact" />
+      <div className="main-container relative z-10 flex flex-col items-center">
         <div className="text-center">
           <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tighter">
-            Get In <span className="text-glow-primary text-primary">Touch</span>
+            Chat with our <span className="text-glow-primary text-primary">AI Assistant</span>
           </h1>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
-            Have a question or a project in mind? Reach out to us or talk to our AI assistant for immediate help.
+            Get instant answers to your digital marketing questions, or fill out the form below for general inquiries.
           </p>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          <div className="space-y-6">
-             <h2 className="font-headline text-3xl text-secondary">Contact Form</h2>
-             <form className="space-y-4">
-               <div className="space-y-2">
-                 <Label htmlFor="name">Name</Label>
-                 <Input id="name" placeholder="Your Name" />
-               </div>
-               <div className="space-y-2">
-                 <Label htmlFor="email">Email</Label>
-                 <Input id="email" type="email" placeholder="your@email.com" />
-               </div>
-               <div className="space-y-2">
-                 <Label htmlFor="message">Message</Label>
-                 <Textarea id="message" placeholder="How can we help you?" rows={5} />
-               </div>
-               <Button type="submit" className="font-semibold w-full" size="lg">Send Message</Button>
-             </form>
-          </div>
-          <div className="space-y-6">
-             <h2 className="font-headline text-3xl text-primary text-center lg:text-left">Chat With Us</h2>
-             <Chatbot />
-          </div>
+        <div className="mt-12 w-full flex justify-center">
+          <Chatbot />
+        </div>
+
+        <div className="mt-24 w-full max-w-2xl">
+           <Card className="glassmorphic">
+            <CardHeader>
+                <CardTitle className="font-headline text-3xl flex items-center gap-3">
+                    <Mail className="h-6 w-6 text-secondary"/>
+                    General Inquiries
+                </CardTitle>
+            </CardHeader>
+             <CardContent>
+                 <form className="space-y-4">
+                   <div className="space-y-2">
+                     <Label htmlFor="name">Name</Label>
+                     <Input id="name" placeholder="Your Name" />
+                   </div>
+                   <div className="space-y-2">
+                     <Label htmlFor="email">Email</Label>
+                     <Input id="email" type="email" placeholder="your@email.com" />
+                   </div>
+                   <div className="space-y-2">
+                     <Label htmlFor="message">Message</Label>
+                     <Textarea id="message" placeholder="How can we help you?" rows={5} />
+                   </div>
+                   <Button type="submit" className="font-semibold w-full" size="lg">Send Message</Button>
+                 </form>
+             </CardContent>
+           </Card>
         </div>
       </div>
     </div>
