@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Clock, TrendingDown } from "lucide-react";
 import type { Metadata } from 'next';
 import { AnalyticsDashboard } from "@/components/analytics-dashboard";
+import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
 
 export const metadata: Metadata = {
   title: 'Analytics | DigMkt',
@@ -31,8 +32,9 @@ const stats = [
 
 export default function AnalyticsPage() {
   return (
-    <div className="animated-gradient-bg">
-        <div className="main-container">
+    <div className="relative overflow-hidden">
+        <PageSpecific3DAnimation type="analytics" />
+        <div className="main-container relative z-10">
             <div className="text-center">
                 <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tighter">
                     Website <span className="text-glow-primary text-primary">Analytics</span>

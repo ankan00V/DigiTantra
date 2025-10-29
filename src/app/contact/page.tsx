@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Chatbot } from "@/components/chatbot";
 import type { Metadata } from 'next';
+import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
 
 export const metadata: Metadata = {
   title: 'Contact | DigMkt',
@@ -12,8 +13,9 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="animated-gradient-bg">
-      <div className="main-container">
+    <div className="relative overflow-hidden">
+        <PageSpecific3DAnimation type="contact" />
+      <div className="main-container relative z-10">
         <div className="text-center">
           <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tighter">
             Get In <span className="text-glow-primary text-primary">Touch</span>

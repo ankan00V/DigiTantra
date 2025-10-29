@@ -2,12 +2,13 @@ import Link from 'next/link';
 import { ArrowRight, Bot, BarChart, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PageSpecific3DAnimation } from '@/components/page-specific-3d-animation';
 
 export default function Home() {
   return (
     <div className="relative overflow-hidden">
-      <div className="animated-gradient-bg">
-        <div className="main-container text-center min-h-screen flex flex-col justify-center items-center pt-20 lg:pt-0">
+      <PageSpecific3DAnimation type="home" />
+      <div className="main-container text-center min-h-screen flex flex-col justify-center items-center pt-20 lg:pt-0">
           <div className="relative z-10">
             <h1 className="font-headline text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
               <span className="block text-primary text-glow-primary animate-glow">DigMkt</span>
@@ -28,9 +29,8 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
 
-      <section className="py-20">
+      <section className="py-20 relative z-10 bg-background">
         <div className="container mx-auto px-4">
            <div className="text-center mb-16">
              <h2 className="font-headline text-3xl md:text-4xl font-bold tracking-tight">Core Pillars</h2>

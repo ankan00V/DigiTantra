@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { SocialPostCard } from '@/components/social-post-card';
+import { PageSpecific3DAnimation } from '@/components/page-specific-3d-animation';
 
 export const metadata: Metadata = {
   title: 'Social Media | DigMkt',
@@ -27,8 +28,9 @@ const posts = [
 
 export default function SocialPage() {
   return (
-    <div className="animated-gradient-bg">
-      <div className="main-container">
+    <div className="relative overflow-hidden">
+        <PageSpecific3DAnimation type="social" />
+      <div className="main-container relative z-10">
         <div className="text-center">
           <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tighter">
             Our <span className="text-glow-primary text-primary">Social</span> Presence
