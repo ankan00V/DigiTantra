@@ -2,7 +2,7 @@
 
 import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Icosahedron, Sphere, Torus, TorusKnot, Box, Dodecahedron, Octahedron, Plane, Text } from '@react-three/drei';
+import { Icosahedron, Sphere, Torus, TorusKnot, Box, Dodecahedron, Octahedron, Plane, Text, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
 
 type AnimationType = 'home' | 'about' | 'features' | 'analytics' | 'contact' | 'social' | 'blog';
@@ -51,55 +51,100 @@ const Starfield = () => {
     );
 };
 
-const FallingWord = ({ word, position }: { word: string; position: [number, number, number] }) => {
+const FallingObject = ({ children, position }: { children: React.ReactNode; position: [number, number, number] }) => {
     const ref = useRef<any>(null!);
-    const [x, y, z] = position;
 
     useFrame((state, delta) => {
         if (ref.current) {
-            ref.current.position.y -= delta * 2;
-            if (ref.current.position.y < -15) {
-                ref.current.position.y = 15;
+            ref.current.position.y -= delta * (1.5 + Math.random());
+            ref.current.rotation.x += delta * 0.2;
+            ref.current.rotation.y += delta * 0.1;
+            if (ref.current.position.y < -20) {
+                ref.current.position.y = 20;
             }
         }
     });
 
-    return (
-        <Text
-            ref={ref}
-            position={[x, y, z]}
-            fontSize={1 + Math.random()}
-            color="hsl(var(--primary))"
-            anchorX="center"
-            anchorY="middle"
-            font="/fonts/SpaceGrotesk-Bold.ttf"
-        >
-            {word}
-        </Text>
-    );
+    return <group ref={ref} position={position}>{children}</group>
 };
 
-const FallingWords = () => {
-    const words = useMemo(() => {
+const AcademicFallingObjects = () => {
+    const objects = useMemo(() => {
+        const items = [];
         const motivationalWords = ['Learn', 'Grow', 'Imagine', 'Create', 'Innovate', 'Succeed', 'Inspire', 'Dream'];
-        const wordData = [];
-        for (let i = 0; i < 50; i++) {
-            wordData.push({
-                word: motivationalWords[Math.floor(Math.random() * motivationalWords.length)],
+        
+        // Words
+        for (let i = 0; i < 25; i++) {
+            items.push({
+                type: 'word',
+                content: motivationalWords[Math.floor(Math.random() * motivationalWords.length)],
                 position: [
-                    (Math.random() - 0.5) * 30,
-                    (Math.random() - 0.5) * 30,
-                    (Math.random() - 0.5) * 10 - 5,
+                    (Math.random() - 0.5) * 40,
+                    (Math.random() - 0.5) * 40,
+                    (Math.random() - 0.5) * 15 - 5,
                 ] as [number, number, number],
             });
         }
-        return wordData;
+
+        // Books
+        for (let i = 0; i < 15; i++) {
+            items.push({
+                type: 'book',
+                position: [
+                    (Math.random() - 0.5) * 40,
+                    (Math.random() - 0.5) * 40,
+                    (Math.random() - 0.5) * 15 - 5,
+                ] as [number, number, number],
+            });
+        }
+
+        // Pens
+        for (let i = 0; i < 15; i++) {
+            items.push({
+                type: 'pen',
+                position: [
+                    (Math.random() - 0.5) * 40,
+                    (Math.random() - 0.5) * 40,
+                    (Math.random() - 0.5) * 15 - 5,
+                ] as [number, number, number],
+            });
+        }
+
+        return items;
     }, []);
 
     return (
         <group>
-            {words.map((data, i) => (
-                <FallingWord key={i} word={data.word} position={data.position} />
+            {objects.map((data, i) => (
+                <FallingObject key={i} position={data.position}>
+                    {data.type === 'word' && (
+                        <Text
+                            fontSize={1 + Math.random()}
+                            color="hsl(var(--primary))"
+                            anchorX="center"
+                            anchorY="middle"
+                            font="/fonts/SpaceGrotesk-Bold.ttf"
+                            material-toneMapped={false}
+                        >
+                            {data.content}
+                        </Text>
+                    )}
+                    {data.type === 'book' && (
+                         <Box args={[1.2, 1.6, 0.2]}>
+                            <meshStandardMaterial color="hsl(var(--secondary))" roughness={0.5} metalness={0.2} />
+                         </Box>
+                    )}
+                    {data.type === 'pen' && (
+                        <group rotation={[0,0, Math.PI / 4]}>
+                            <Cylinder args={[0.08, 0.08, 1.5, 8]}>
+                                <meshStandardMaterial color="hsl(var(--foreground))" roughness={0.3} metalness={0.7}/>
+                            </Cylinder>
+                             <Cylinder args={[0.08, 0, 0.2, 8]} position={[0, 0.85, 0]}>
+                                <meshStandardMaterial color="hsl(var(--primary))" roughness={0.3} metalness={0.7}/>
+                            </Cylinder>
+                        </group>
+                    )}
+                </FallingObject>
             ))}
         </group>
     );
@@ -167,7 +212,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
             </group>
         )
     case 'about':
-        return <FallingWords />;
+        return <AcademicFallingObjects />;
     case 'features':
        return (
         <Dodecahedron ref={meshRef} args={[1.5, 0]}>
@@ -244,8 +289,8 @@ const Particles = () => {
 export function PageSpecific3DAnimation({ type }: { type: AnimationType }) {
   return (
     <div className="absolute top-0 left-0 w-full h-full z-0 opacity-20">
-      <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
-        <ambientLight intensity={0.2} />
+      <Canvas camera={{ position: [0, 0, 15], fov: 75 }}>
+        <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
         <AnimatedShape type={type} />
