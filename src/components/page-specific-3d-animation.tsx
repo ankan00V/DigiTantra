@@ -7,6 +7,51 @@ import * as THREE from 'three';
 
 type AnimationType = 'home' | 'about' | 'features' | 'analytics' | 'contact' | 'social' | 'blog';
 
+const Starfield = () => {
+    const starsRef = useRef<THREE.Points>(null!);
+
+    const starGeo = useMemo(() => {
+        const geo = new THREE.BufferGeometry();
+        const vertices = [];
+        for (let i = 0; i < 6000; i++) {
+            vertices.push(
+                Math.random() * 600 - 300,
+                Math.random() * 600 - 300,
+                Math.random() * 600 - 300
+            );
+        }
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        return geo;
+    }, []);
+
+    useFrame((state, delta) => {
+        if (starsRef.current) {
+            const positions = starsRef.current.geometry.attributes.position.array as number[];
+            for (let i = 0; i < positions.length; i += 3) {
+                positions[i + 1] -= delta * 20; 
+                if (positions[i + 1] < -200) {
+                    positions[i + 1] = 200; 
+                }
+            }
+            starsRef.current.geometry.attributes.position.needsUpdate = true;
+            starsRef.current.rotation.y += delta * 0.02;
+        }
+    });
+
+    return (
+        <points ref={starsRef} geometry={starGeo}>
+             <pointsMaterial
+                color="hsl(var(--primary))"
+                size={0.7}
+                sizeAttenuation
+                transparent
+                opacity={0.8}
+             />
+        </points>
+    );
+};
+
+
 const AnimatedShape = ({ type }: { type: AnimationType }) => {
   const meshRef = useRef<THREE.Mesh>(null!);
   const groupRef = useRef<THREE.Group>(null!);
@@ -80,11 +125,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
         </Dodecahedron>
        )
     case 'analytics':
-        return (
-            <group ref={groupRef}>
-                <Octahedron ref={meshRef} args={[1.2, 0]}>{sharedMaterial}</Octahedron>
-            </group>
-        )
+        return <Starfield />;
     case 'social':
         return (
             <TorusKnot ref={meshRef} args={[1.2, 0.2, 128, 16]}>
@@ -158,7 +199,7 @@ export function PageSpecific3DAnimation({ type }: { type: AnimationType }) {
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
         <AnimatedShape type={type} />
-        <Particles />
+        {type !== 'analytics' && <Particles />}
       </Canvas>
     </div>
   );
