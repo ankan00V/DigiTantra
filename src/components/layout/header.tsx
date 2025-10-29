@@ -11,11 +11,9 @@ import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '/', label: 'Home' },
+  { href: '/features', label: 'Courses' },
+  { href: '/analytics', label: 'Dashboard' },
   { href: '/about', label: 'About' },
-  { href: '/features', label: 'Features' },
-  { href: '/analytics', label: 'Analytics' },
-  { href: '/social', label: 'Social' },
-  { href: '/blog', label: 'Blog' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -52,14 +50,18 @@ export function Header() {
               variant="ghost"
               asChild
               className={cn(
-                'text-muted-foreground hover:text-primary',
-                pathname === link.href && 'text-primary font-semibold'
+                'text-muted-foreground font-semibold hover:text-primary',
+                pathname === link.href && 'text-primary'
               )}
             >
               <Link href={link.href}>{link.label}</Link>
             </Button>
           ))}
         </nav>
+        <div className="hidden md:flex items-center gap-2">
+            <Button variant="ghost">Log in</Button>
+            <Button>Sign Up</Button>
+        </div>
         <div className="md:hidden">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -90,6 +92,10 @@ export function Header() {
                     </Button>
                   ))}
                 </nav>
+                 <div className="mt-auto p-4 border-t space-y-2">
+                    <Button variant="ghost" className="w-full justify-center text-lg">Log in</Button>
+                    <Button className="w-full justify-center text-lg">Sign Up</Button>
+                </div>
               </div>
             </SheetContent>
           </Sheet>

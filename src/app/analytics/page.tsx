@@ -1,32 +1,32 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Clock, TrendingDown } from "lucide-react";
+import { Eye, Clock, TrendingUp, TrendingDown, Users, CheckCircle } from "lucide-react";
 import type { Metadata } from 'next';
 import { AnalyticsDashboard } from "@/components/analytics-dashboard";
 import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
 
 export const metadata: Metadata = {
-  title: 'Analytics | DigMkt',
-  description: 'View key metrics and data visualizations for the DigMkt website.',
+  title: 'Dashboard | DigMkt',
+  description: 'View key metrics and data visualizations for course performance.',
 };
 
 const stats = [
     {
-        icon: <Eye className="h-8 w-8 text-primary" />,
-        label: "Total Page Views",
-        value: "1,424",
-        change: "+12.5%"
+        icon: <Users className="h-8 w-8 text-primary" />,
+        label: "Total Students",
+        value: "12,424",
+        change: "+15.2% this month"
     },
     {
-        icon: <TrendingDown className="h-8 w-8 text-secondary" />,
-        label: "Bounce Rate",
-        value: "42.3%",
-        change: "-5.2%"
+        icon: <CheckCircle className="h-8 w-8 text-green-400" />,
+        label: "Completion Rate",
+        value: "82.3%",
+        change: "+3.1% this month"
     },
     {
         icon: <Clock className="h-8 w-8 text-primary" />,
-        label: "Avg. Session Duration",
-        value: "2m 45s",
-        change: "+8.9%"
+        label: "Avg. Learning Time",
+        value: "28h 45m",
+        change: "+5.9% this month"
     },
 ]
 
@@ -37,10 +37,10 @@ export default function AnalyticsPage() {
         <div className="main-container relative z-10">
             <div className="text-center">
                 <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tighter">
-                    Website <span className="text-glow-primary text-primary">Analytics</span>
+                    Platform <span className="text-glow-primary text-primary">Dashboard</span>
                 </h1>
                 <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
-                    Tracking key performance indicators to measure success and inform strategy. All data shown is for demonstration purposes.
+                    Tracking key performance indicators for our courses and students. All data shown is for demonstration.
                 </p>
             </div>
 
@@ -53,7 +53,7 @@ export default function AnalyticsPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-4xl font-bold">{stat.value}</div>
-                            <p className="text-xs text-muted-foreground mt-1">{stat.change} from last month</p>
+                            <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
                         </CardContent>
                     </Card>
                 ))}
