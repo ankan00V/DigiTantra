@@ -68,36 +68,52 @@ const FallingObject = ({ children, position }: { children: React.ReactNode; posi
     return <group ref={ref} position={position}>{children}</group>
 };
 
-const HandshakeAnimation = () => {
-  const groupRef = useRef<THREE.Group>(null!);
-  const hand1Ref = useRef<THREE.Mesh>(null!);
-  const hand2Ref = useRef<THREE.Mesh>(null!);
+const BookAnimation = () => {
+    const groupRef = useRef<THREE.Group>(null!);
+    const leftCoverRef = useRef<THREE.Mesh>(null!);
+    const rightCoverRef = useRef<THREE.Mesh>(null!);
 
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-    if (groupRef.current) {
-      groupRef.current.rotation.y += 0.005;
-      groupRef.current.rotation.x = Math.sin(time * 0.2) * 0.2;
-    }
-    if(hand1Ref.current && hand2Ref.current) {
-        const shake = Math.sin(time * 8) * 0.05;
-        hand1Ref.current.position.x = -0.5 + shake;
-        hand2Ref.current.position.x = 0.5 - shake;
-    }
-  });
+    useFrame((state) => {
+        const time = state.clock.getElapsedTime();
+        if (groupRef.current) {
+            groupRef.current.rotation.y += 0.005;
+        }
+        if (leftCoverRef.current && rightCoverRef.current) {
+            const angle = (Math.PI / 8) * (1 + Math.sin(time * 0.8));
+            leftCoverRef.current.rotation.y = angle;
+            rightCoverRef.current.rotation.y = -angle;
+        }
+    });
 
-  return (
-    <group ref={groupRef}>
-      <mesh ref={hand1Ref} position={[-0.5, 0, 0]} rotation={[0, 0, 0.3]}>
-        <boxGeometry args={[1, 1.5, 0.4]} />
-        <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.6} />
-      </mesh>
-      <mesh ref={hand2Ref} position={[0.5, 0, 0]} rotation={[0, 0, -0.3]}>
-        <boxGeometry args={[1, 1.5, 0.4]} />
-        <meshStandardMaterial color="hsl(var(--secondary))" wireframe emissive="hsl(var(--secondary))" emissiveIntensity={0.6} />
-      </mesh>
-    </group>
-  );
+    const coverMaterial = <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.6} />;
+    const pagesMaterial = <meshStandardMaterial color="hsl(var(--foreground))" wireframe emissive="hsl(var(--foreground))" emissiveIntensity={0.4} />;
+
+    return (
+        <group ref={groupRef} scale={1.2}>
+            {/* Binding */}
+            <Box args={[0.2, 2.2, 1.6]} position={[0, 0, 0]}>
+                <meshStandardMaterial color="hsl(var(--secondary))" wireframe />
+            </Box>
+            {/* Left Cover */}
+            <group position={[-0.1, 0, 0]}>
+                <mesh ref={leftCoverRef} position={[0.6, 0, 0]}>
+                    <boxGeometry args={[1.2, 2.2, 0.1]} />
+                    {coverMaterial}
+                </mesh>
+            </group>
+            {/* Right Cover */}
+            <group position={[0.1, 0, 0]}>
+                <mesh ref={rightCoverRef} position={[-0.6, 0, 0]}>
+                    <boxGeometry args={[1.2, 2.2, 0.1]} />
+                    {coverMaterial}
+                </mesh>
+            </group>
+             {/* Pages */}
+            <Box args={[1.1, 2.0, 1.4]} position={[0, 0, 0]}>
+                {pagesMaterial}
+            </Box>
+        </group>
+    );
 };
 
 
@@ -230,7 +246,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'analytics':
         return <Starfield />;
     case 'contact':
-        return <HandshakeAnimation />;
+        return <BookAnimation />;
     case 'social':
         return (
             <TorusKnot ref={meshRef} args={[1.2, 0.2, 128, 16]}>
