@@ -68,6 +68,38 @@ const FallingObject = ({ children, position }: { children: React.ReactNode; posi
     return <group ref={ref} position={position}>{children}</group>
 };
 
+const HandshakeAnimation = () => {
+  const groupRef = useRef<THREE.Group>(null!);
+  const hand1Ref = useRef<THREE.Mesh>(null!);
+  const hand2Ref = useRef<THREE.Mesh>(null!);
+
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime();
+    if (groupRef.current) {
+      groupRef.current.rotation.y += 0.005;
+      groupRef.current.rotation.x = Math.sin(time * 0.2) * 0.2;
+    }
+    if(hand1Ref.current && hand2Ref.current) {
+        const shake = Math.sin(time * 8) * 0.05;
+        hand1Ref.current.position.x = -0.5 + shake;
+        hand2Ref.current.position.x = 0.5 - shake;
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      <mesh ref={hand1Ref} position={[-0.5, 0, 0]} rotation={[0, 0, 0.3]}>
+        <boxGeometry args={[1, 1.5, 0.4]} />
+        <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.6} />
+      </mesh>
+      <mesh ref={hand2Ref} position={[0.5, 0, 0]} rotation={[0, 0, -0.3]}>
+        <boxGeometry args={[1, 1.5, 0.4]} />
+        <meshStandardMaterial color="hsl(var(--secondary))" wireframe emissive="hsl(var(--secondary))" emissiveIntensity={0.6} />
+      </mesh>
+    </group>
+  );
+};
+
 
 const AcademicFallingObjects = () => {
     const objects = useMemo(() => {
@@ -197,6 +229,8 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
        )
     case 'analytics':
         return <Starfield />;
+    case 'contact':
+        return <HandshakeAnimation />;
     case 'social':
         return (
             <TorusKnot ref={meshRef} args={[1.2, 0.2, 128, 16]}>
@@ -265,7 +299,7 @@ const Particles = () => {
 export function PageSpecific3DAnimation({ type }: { type: AnimationType }) {
   return (
     <div className="absolute top-0 left-0 w-full h-full z-0 opacity-20">
-      <Canvas camera={{ position: [0, 0, 25], fov: 75 }}>
+      <Canvas camera={{ position: [0, 0, 8], fov: 75 }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
