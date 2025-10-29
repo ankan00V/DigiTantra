@@ -56,7 +56,7 @@ const FallingObject = ({ children, position }: { children: React.ReactNode; posi
 
     useFrame((state, delta) => {
         if (ref.current) {
-            ref.current.position.y -= delta * (1.5 + Math.random());
+            ref.current.position.y -= delta * (0.5 + Math.random());
             ref.current.rotation.x += delta * 0.2;
             ref.current.rotation.y += delta * 0.1;
             if (ref.current.position.y < -20) {
@@ -68,40 +68,16 @@ const FallingObject = ({ children, position }: { children: React.ReactNode; posi
     return <group ref={ref} position={position}>{children}</group>
 };
 
+
 const AcademicFallingObjects = () => {
     const objects = useMemo(() => {
         const items = [];
         const motivationalWords = ['Learn', 'Grow', 'Imagine', 'Create', 'Innovate', 'Succeed', 'Inspire', 'Dream'];
         
-        // Words
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 50; i++) {
             items.push({
                 type: 'word',
                 content: motivationalWords[Math.floor(Math.random() * motivationalWords.length)],
-                position: [
-                    (Math.random() - 0.5) * 40,
-                    (Math.random() - 0.5) * 40,
-                    (Math.random() - 0.5) * 15 - 5,
-                ] as [number, number, number],
-            });
-        }
-
-        // Books
-        for (let i = 0; i < 15; i++) {
-            items.push({
-                type: 'book',
-                position: [
-                    (Math.random() - 0.5) * 40,
-                    (Math.random() - 0.5) * 40,
-                    (Math.random() - 0.5) * 15 - 5,
-                ] as [number, number, number],
-            });
-        }
-
-        // Pens
-        for (let i = 0; i < 15; i++) {
-            items.push({
-                type: 'pen',
                 position: [
                     (Math.random() - 0.5) * 40,
                     (Math.random() - 0.5) * 40,
@@ -119,7 +95,7 @@ const AcademicFallingObjects = () => {
                 <FallingObject key={i} position={data.position}>
                     {data.type === 'word' && (
                         <Text
-                            fontSize={1 + Math.random()}
+                            fontSize={2 + Math.random()}
                             color="hsl(var(--primary))"
                             anchorX="center"
                             anchorY="middle"
@@ -128,21 +104,6 @@ const AcademicFallingObjects = () => {
                         >
                             {data.content}
                         </Text>
-                    )}
-                    {data.type === 'book' && (
-                         <Box args={[1.2, 1.6, 0.2]}>
-                            <meshStandardMaterial color="hsl(var(--secondary))" roughness={0.5} metalness={0.2} />
-                         </Box>
-                    )}
-                    {data.type === 'pen' && (
-                        <group rotation={[0,0, Math.PI / 4]}>
-                            <Cylinder args={[0.08, 0.08, 1.5, 8]}>
-                                <meshStandardMaterial color="hsl(var(--foreground))" roughness={0.3} metalness={0.7}/>
-                            </Cylinder>
-                             <Cylinder args={[0.08, 0, 0.2, 8]} position={[0, 0.85, 0]}>
-                                <meshStandardMaterial color="hsl(var(--primary))" roughness={0.3} metalness={0.7}/>
-                            </Cylinder>
-                        </group>
                     )}
                 </FallingObject>
             ))}
