@@ -38,7 +38,7 @@ export function Header() {
     <header
       className={cn(
         'fixed top-0 left-0 right-0 z-40 transition-all duration-300 ease-in-out',
-        scrolled ? 'py-2 border-b border-white/10 bg-background/80 backdrop-blur-lg' : 'py-4'
+        scrolled ? 'py-2 border-b border-border/50 bg-background/80 backdrop-blur-lg' : 'py-4'
       )}
     >
       <div className="container mx-auto flex items-center justify-between">
@@ -52,7 +52,7 @@ export function Header() {
               variant="ghost"
               asChild
               className={cn(
-                'text-foreground/80 hover:text-primary',
+                'text-muted-foreground hover:text-primary',
                 pathname === link.href && 'text-primary font-semibold'
               )}
             >

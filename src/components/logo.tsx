@@ -10,19 +10,13 @@ export function Logo(props: SVGProps<SVGSVGElement>) {
       aria-label="DigMkt Logo"
       {...props}
     >
-      <defs>
-        <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" style={{ stopColor: 'hsl(var(--primary))' }} />
-          <stop offset="100%" style={{ stopColor: 'hsl(var(--secondary))' }} />
-        </linearGradient>
-      </defs>
       <text
         className="font-headline"
         x="0"
         y="40"
         fontSize="40"
         fontWeight="bold"
-        fill="url(#logo-gradient)"
+        fill="hsl(var(--primary))"
       >
         DigMkt
       </text>
