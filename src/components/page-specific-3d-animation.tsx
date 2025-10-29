@@ -56,11 +56,11 @@ const FallingObject = ({ children, position }: { children: React.ReactNode; posi
 
     useFrame((state, delta) => {
         if (ref.current) {
-            ref.current.position.y -= delta * (0.5 + Math.random());
+            ref.current.position.y -= delta * (0.5 + Math.random() * 0.5);
             ref.current.rotation.x += delta * 0.2;
             ref.current.rotation.y += delta * 0.1;
-            if (ref.current.position.y < -20) {
-                ref.current.position.y = 20;
+            if (ref.current.position.y < -25) {
+                ref.current.position.y = 25;
             }
         }
     });
@@ -73,15 +73,17 @@ const AcademicFallingObjects = () => {
     const objects = useMemo(() => {
         const items = [];
         const motivationalWords = ['Learn', 'Grow', 'Imagine', 'Create', 'Innovate', 'Succeed', 'Inspire', 'Dream'];
+        const objectTypes = ['word', 'book', 'pen'];
         
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 70; i++) { // Increased object count for variety
+            const type = objectTypes[Math.floor(Math.random() * objectTypes.length)];
             items.push({
-                type: 'word',
-                content: motivationalWords[Math.floor(Math.random() * motivationalWords.length)],
+                type: type,
+                content: type === 'word' ? motivationalWords[Math.floor(Math.random() * motivationalWords.length)] : '',
                 position: [
-                    (Math.random() - 0.5) * 40,
-                    (Math.random() - 0.5) * 40,
-                    (Math.random() - 0.5) * 15 - 5,
+                    (Math.random() - 0.5) * 50,
+                    (Math.random() - 0.5) * 50,
+                    (Math.random() - 0.5) * 20 - 5,
                 ] as [number, number, number],
             });
         }
@@ -89,13 +91,16 @@ const AcademicFallingObjects = () => {
         return items;
     }, []);
 
+    const bookMaterial = <meshStandardMaterial color="hsl(var(--primary))" roughness={0.6} />;
+    const penMaterial = <meshStandardMaterial color="hsl(var(--secondary))" metalness={0.5} roughness={0.4} />;
+
     return (
         <group>
             {objects.map((data, i) => (
                 <FallingObject key={i} position={data.position}>
                     {data.type === 'word' && (
                         <Text
-                            fontSize={1 + Math.random()}
+                            fontSize={0.8 + Math.random() * 0.5} // Made words smaller
                             color="hsl(var(--primary))"
                             anchorX="center"
                             anchorY="middle"
@@ -104,6 +109,16 @@ const AcademicFallingObjects = () => {
                         >
                             {data.content}
                         </Text>
+                    )}
+                    {data.type === 'book' && (
+                        <Box args={[1.2, 1.6, 0.2]}>
+                           {bookMaterial}
+                        </Box>
+                    )}
+                    {data.type === 'pen' && (
+                        <Cylinder args={[0.05, 0.05, 1.5, 8]}>
+                           {penMaterial}
+                        </Cylinder>
                     )}
                 </FallingObject>
             ))}
@@ -166,8 +181,8 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'home':
         return (
             <group ref={groupRef}>
-                <Plane ref={meshRef} args={[8, 8, 64, 64]} material={homeMaterial} rotation-x={-Math.PI * 0.2} position={[0, -1, 0]}/>
-                 <TorusKnot args={[2, 0.2, 400, 44]} position={[0,0.5,0]}>
+                <Plane ref={meshRef} args={[12, 12, 128, 128]} material={homeMaterial} rotation-x={-Math.PI * 0.2} position={[0, -1, 0]}/>
+                 <TorusKnot args={[3, 0.3, 400, 44]} position={[0,0.5,0]}>
                     <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.7} />
                 </TorusKnot>
             </group>
@@ -250,7 +265,7 @@ const Particles = () => {
 export function PageSpecific3DAnimation({ type }: { type: AnimationType }) {
   return (
     <div className="absolute top-0 left-0 w-full h-full z-0 opacity-20">
-      <Canvas camera={{ position: [0, 0, 15], fov: 75 }}>
+      <Canvas camera={{ position: [0, 0, 25], fov: 75 }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
