@@ -9,12 +9,12 @@ import { Bot, Loader2, Send, User, Sparkles } from 'lucide-react';
 import type { Message } from '@/lib/types';
 import { aiChatbotAssistance } from '@/ai/flows/ai-chatbot-assistance';
 import { cn } from '@/lib/utils';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Icosahedron } from '@react-three/drei';
 
 const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
     const meshRef = useRef<THREE.Mesh>(null!);
-    useRef((state: any, delta: number) => {
+    useFrame((state, delta) => {
         if (meshRef.current) {
             meshRef.current.rotation.y += delta * (isLoading ? 1.5 : 0.2);
             meshRef.current.rotation.x += delta * (isLoading ? 1.5 : 0.2);
@@ -128,7 +128,7 @@ export function Chatbot() {
           {isLoading && (
             <div className="flex items-start gap-3 justify-start">
                <Avatar className="h-8 w-8 bg-primary/20 text-primary">
-                  <AvatarFallback><Bot size={20} /></Avatar-Fallback>
+                  <AvatarFallback><Bot size={20} /></AvatarFallback>
                 </Avatar>
                 <div className="p-3 rounded-lg bg-accent flex items-center">
                     <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
