@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { ScrollProgress } from '@/components/layout/scroll-progress';
+import { PageTransitionWrapper } from '@/components/layout/page-transition-wrapper';
 
 const fontBody = Inter({ 
   subsets: ['latin'],
@@ -38,12 +39,14 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased', fontBody.variable, fontHeadline.variable)}>
-        <ScrollProgress />
-        <Header />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <Footer />
+        <PageTransitionWrapper>
+          <ScrollProgress />
+          <Header />
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <Footer />
+        </PageTransitionWrapper>
         <Toaster />
       </body>
     </html>
