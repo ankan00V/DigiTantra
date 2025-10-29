@@ -113,11 +113,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
             </group>
         )
     case 'about':
-      return (
-        <Box ref={meshRef} args={[1.8, 1.8, 1.8]}>
-          {sharedMaterial}
-        </Box>
-      );
+        return <Starfield />;
     case 'features':
        return (
         <Dodecahedron ref={meshRef} args={[1.5, 0]}>
@@ -199,7 +195,7 @@ export function PageSpecific3DAnimation({ type }: { type: AnimationType }) {
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
         <AnimatedShape type={type} />
-        {type !== 'analytics' && <Particles />}
+        {type !== 'analytics' && type !== 'about' && <Particles />}
       </Canvas>
     </div>
   );
