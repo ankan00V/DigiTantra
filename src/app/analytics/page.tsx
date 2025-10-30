@@ -5,7 +5,7 @@ import { AnalyticsDashboard } from "@/components/analytics-dashboard";
 import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
 
 export const metadata: Metadata = {
-  title: 'Dashboard | DigMkt',
+  title: 'Dashboard | DigiTantra',
   description: 'View key metrics and data visualizations for course performance.',
 };
 

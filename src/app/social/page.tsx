@@ -4,24 +4,24 @@ import { SocialPostCard } from '@/components/social-post-card';
 import { PageSpecific3DAnimation } from '@/components/page-specific-3d-animation';
 
 export const metadata: Metadata = {
-  title: 'Social Media | DigMkt',
-  description: 'Follow DigMkt on social media and view our latest posts and updates.',
+  title: 'Social Media | DigiTantra',
+  description: 'Follow DigiTantra on social media and view our latest posts and updates.',
 };
 
 const posts = [
     {
         platform: "Instagram",
-        content: "Data meets design. ✨ We're DigMkt, a new concept in digital marketing strategy. #DigitalMarketing #AI #SEO #Innovation",
+        content: "Data meets design. ✨ We're DigiTantra, a new concept in tech education. #DigitalMarketing #AI #SEO #Innovation",
         image: PlaceHolderImages.find(img => img.id === 'social-1')!
     },
     {
         platform: "Twitter/X",
-        content: "Just launched! DigMkt is a project exploring the future of digital marketing. Check out our AI-powered features and data-driven insights. Link in bio!",
+        content: "Just launched! DigiTantra is a project exploring the future of tech education. Check out our AI-powered features and project-based learning. Link in bio!",
         image: PlaceHolderImages.find(img => img.id === 'social-2')!
     },
     {
         platform: "Facebook",
-        content: "Welcome to DigMkt! Our mission is to demonstrate a complete digital marketing ecosystem, merging branding, analytics, SEO, and AI. This academic project showcases the power of a cohesive online strategy. Follow us for insights and updates!",
+        content: "Welcome to DigiTantra! Our mission is to build a complete digital ecosystem for tech education, merging great curriculum, AI, and project-based learning. Follow us for insights and updates!",
         image: PlaceHolderImages.find(img => img.id === 'social-3')!
     }
 ]

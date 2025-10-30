@@ -34,7 +34,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-white/5 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} DigMkt. All Rights Reserved.</p>
+          <p>&copy; {new Date().getFullYear()} DigiTantra. All Rights Reserved.</p>
         </div>
       </div>
     </footer>

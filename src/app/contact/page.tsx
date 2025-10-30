@@ -9,8 +9,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Mail } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: 'Contact | DigMkt',
-  description: 'Get in touch with DigMkt or chat with our AI assistant for quick answers.',
+  title: 'Contact | DigiTantra',
+  description: 'Get in touch with DigiTantra or chat with our AI assistant for quick answers.',
 };
 
 export default function ContactPage() {

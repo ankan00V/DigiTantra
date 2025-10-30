@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview Provides an AI chatbot assistance flow for DigMkt website visitors.
+ * @fileOverview Provides an AI chatbot assistance flow for DigiTantra website visitors.
  *
  * - aiChatbotAssistance - A function that handles the chatbot assistance process.
  * - AiChatbotAssistanceInput - The input type for the aiChatbotAssistance function.
@@ -35,11 +35,11 @@ const prompt = ai.definePrompt({
   name: 'aiChatbotAssistancePrompt',
   input: {schema: AiChatbotAssistanceInputSchema},
   output: {schema: AiChatbotAssistanceOutputSchema},
-  prompt: `You are a helpful AI chatbot assisting visitors on the DigMkt website.
+  prompt: `You are a helpful AI chatbot assisting visitors on the DigiTantra website.
 
-  DigMkt is a digital marketing agency that helps businesses grow their online presence.
+  DigiTantra is an online learning platform that helps people learn tech skills.
 
-  Answer the following user query based on the information about DigMkt:
+  Answer the following user query based on the information about DigiTantra:
 
   Query: {{{query}}}
   `,

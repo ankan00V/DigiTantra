@@ -21,8 +21,8 @@ const fontHeadline = Space_Grotesk({
 
 
 export const metadata: Metadata = {
-  title: 'DigMkt — Where Data Meets Design',
-  description: 'A modern, data-driven, and visually stunning website for the MKT311 Digital Marketing academic project.',
+  title: 'DigiTantra — The Future of Tech Education',
+  description: 'A modern, data-driven, and visually stunning website for learning tech skills.',
   keywords: ['digital marketing', 'SEO', 'analytics', 'AI tools', 'modern marketing'],
 };
 

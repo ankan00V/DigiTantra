@@ -4,30 +4,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
 
 export const metadata: Metadata = {
-  title: 'About | DigMkt',
-  description: 'Learn about the DigMkt project, its academic context, and the inspiration behind its design.',
+  title: 'About | DigiTantra',
+  description: 'Learn about the DigiTantra project, its academic context, and the inspiration behind its design.',
 };
 
 const aboutSections = [
     {
         icon: <BookOpen className="h-8 w-8 text-primary" />,
-        title: "Academic Context",
-        description: "This website is an individual assignment for MKT311 – Digital Marketing under Dr. Ashok Malhi. It aims to demonstrate a comprehensive understanding of building a digital marketing ecosystem.",
+        title: "Our Mission",
+        description: "This website is a showcase project to demonstrate a comprehensive understanding of building a modern digital ecosystem for tech education.",
     },
     {
         icon: <Rocket className="h-8 w-8 text-secondary" />,
         title: "CRED-Inspired Design",
-        description: "The UI/UX is heavily inspired by CRED, emphasizing a premium, minimalist, and interactive design philosophy. The name 'DigMkt' symbolizes clarity, innovation, and intelligent online strategy.",
+        description: "The UI/UX is heavily inspired by CRED, emphasizing a premium, minimalist, and interactive design philosophy. The name 'DigiTantra' symbolizes digital expertise and strategy.",
     },
     {
         icon: <BrainCircuit className="h-8 w-8 text-primary" />,
         title: "Learning Goals",
-        description: "The project integrates core digital marketing pillars: branding, web development, SEO, AI-driven strategy, social media marketing, and data analytics through Google Analytics.",
+        description: "The project integrates core pillars of modern tech: branding, web development, AI-driven strategy, and hands-on project-based learning.",
     },
     {
         icon: <Award className="h-8 w-8 text-secondary" />,
         title: "Project Objective",
-        description: "To build a complete digital marketing ecosystem, showcasing the ability to merge technology and marketing strategy into a cohesive and visually stunning online presence.",
+        description: "To build a complete digital learning ecosystem, showcasing the ability to merge technology and educational strategy into a cohesive and visually stunning online presence.",
     }
 ]
 
@@ -38,7 +38,7 @@ export default function AboutPage() {
         <div className="main-container relative z-10">
             <div className="text-center">
                 <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tighter">
-                    The Story of <span className="text-glow-primary text-primary">DigMkt</span>
+                    The Story of <span className="text-glow-primary text-primary">DigiTantra</span>
                 </h1>
                 <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
                     An exploration of digital marketing excellence, combining academic theory with cutting-edge web technology and design.

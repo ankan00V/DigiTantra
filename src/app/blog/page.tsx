@@ -3,7 +3,7 @@ import { BlogGenerator } from '@/components/blog-generator';
 import { PageSpecific3DAnimation } from '@/components/page-specific-3d-animation';
 
 export const metadata: Metadata = {
-  title: 'Blog | DigMkt',
+  title: 'Blog | DigiTantra',
   description: 'Read insights on digital marketing or generate your own AI-powered blog post.',
 };
 

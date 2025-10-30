@@ -23,12 +23,12 @@ export function SocialPostCard({ platform, image, content }: SocialPostCardProps
       <CardHeader className={`p-4 bg-gradient-to-r ${platformColors[platform]}`}>
         <div className="flex items-center space-x-3">
           <Avatar>
-            <AvatarImage src="https://picsum.photos/seed/user/40/40" alt="DigMkt Avatar" />
-            <AvatarFallback>DM</AvatarFallback>
+            <AvatarImage src="https://picsum.photos/seed/user/40/40" alt="DigiTantra Avatar" />
+            <AvatarFallback>DT</AvatarFallback>
           </Avatar>
           <div>
-            <p className="font-bold text-white">DigMkt Official</p>
-            <p className="text-xs text-white/80">@{platform.toLowerCase().replace('/', '')}_digmkt</p>
+            <p className="font-bold text-white">DigiTantra Official</p>
+            <p className="text-xs text-white/80">@{platform.toLowerCase().replace('/', '')}_digitantra</p>
           </div>
         </div>
       </CardHeader>

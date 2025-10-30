@@ -7,7 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: 'Courses & Pricing | DigMkt',
+  title: 'Courses & Pricing | DigiTantra',
   description: 'Explore our comprehensive curriculum of tech courses and their pricing.',
 };
 

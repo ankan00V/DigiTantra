@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, Suspense } from 'react';
+import { useState, useRef, useEffect, Suspense, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -43,24 +43,24 @@ const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
 
 export function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
-    { id: '1', role: 'assistant', content: "Hello! I'm the DigMkt AI assistant. How can I help you with your digital marketing questions?" }
+    { id: '1', role: 'assistant', content: "Hello! I'm the DigiTantra AI assistant. How can I help you with your tech questions?" }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (scrollAreaRef.current) {
         const viewport = scrollAreaRef.current.querySelector('div');
         if (viewport) {
              viewport.scrollTop = viewport.scrollHeight;
         }
     }
-  };
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, scrollToBottom]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,7 +149,7 @@ export function Chatbot() {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about digital marketing..."
+            placeholder="Ask about our tech courses..."
             disabled={isLoading}
             autoComplete='off'
             className="pr-12 h-12 text-base"
