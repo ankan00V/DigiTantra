@@ -37,7 +37,7 @@ export default function Home() {
           <div className="mt-8 flex justify-center gap-4">
             <Button asChild size="lg" className="font-semibold text-lg">
               <Link href="/features">
-                Explore Courses <ArrowRight className="ml-2 h-5 w-5" />
+                Explore Courses & Pricing <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="font-semibold text-lg">
