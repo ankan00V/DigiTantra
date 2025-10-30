@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Menu, X, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
+import { useUser, useAuth } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { Avatar, AvatarFallback } from '../ui/avatar';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -21,6 +24,9 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +37,17 @@ export function Header() {
   }, []);
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  const handleLogout = async () => {
+    closeMobileMenu();
+    await signOut(auth);
+    router.push('/');
+  };
+  
+  const getInitials = (email: string | null | undefined) => {
+    if (!email) return '..';
+    return email.substring(0, 2).toUpperCase();
+  };
 
   return (
     <header
@@ -59,8 +76,24 @@ export function Header() {
           ))}
         </nav>
         <div className="hidden md:flex items-center gap-2">
-            <Button variant="ghost">Log in</Button>
-            <Button>Sign Up</Button>
+          {isUserLoading ? (
+            <div className="h-10 w-24 bg-muted/50 animate-pulse rounded-md" />
+          ) : user ? (
+            <>
+              <Avatar>
+                <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
+              </Avatar>
+              <span className='text-sm font-semibold px-2'>{user.email}</span>
+              <Button variant="ghost" size="icon" onClick={handleLogout} aria-label="Log out">
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" asChild><Link href="/login">Log in</Link></Button>
+              <Button asChild><Link href="/signup">Sign Up</Link></Button>
+            </>
+          )}
         </div>
         <div className="md:hidden">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -93,8 +126,16 @@ export function Header() {
                   ))}
                 </nav>
                  <div className="mt-auto p-4 border-t space-y-2">
-                    <Button variant="ghost" className="w-full justify-center text-lg">Log in</Button>
-                    <Button className="w-full justify-center text-lg">Sign Up</Button>
+                    {isUserLoading ? (
+                      <div className="h-10 w-full bg-muted/50 animate-pulse rounded-md" />
+                    ) : user ? (
+                       <Button variant="ghost" className="w-full justify-center text-lg" onClick={handleLogout}>Log out</Button>
+                    ) : (
+                      <>
+                        <Button variant="ghost" className="w-full justify-center text-lg" asChild onClick={closeMobileMenu}><Link href="/login">Log in</Link></Button>
+                        <Button className="w-full justify-center text-lg" asChild onClick={closeMobileMenu}><Link href="/signup">Sign Up</Link></Button>
+                      </>
+                    )}
                 </div>
               </div>
             </SheetContent>

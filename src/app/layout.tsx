@@ -8,6 +8,7 @@ import { Footer } from '@/components/layout/footer';
 import { ScrollProgress } from '@/components/layout/scroll-progress';
 import { PageTransitionWrapper } from '@/components/layout/page-transition-wrapper';
 import { GoogleAnalytics } from '@/components/google-analytics';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 const fontBody = Inter({ 
   subsets: ['latin'],
@@ -41,15 +42,17 @@ export default function RootLayout({
         <GoogleAnalytics ga_id={process.env.NEXT_PUBLIC_GA_ID ?? ""} />
       </head>
       <body className={cn('font-body antialiased', fontBody.variable, fontHeadline.variable)}>
-        <PageTransitionWrapper>
-          <ScrollProgress />
-          <Header />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <Footer />
-        </PageTransitionWrapper>
-        <Toaster />
+        <FirebaseClientProvider>
+          <PageTransitionWrapper>
+            <ScrollProgress />
+            <Header />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <Footer />
+          </PageTransitionWrapper>
+          <Toaster />
+        </FirebaseClientProvider>
       </body>
     </html>
   );
