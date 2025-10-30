@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUpRight, BarChart, Bot, Code, Cpu, Database, Feather, Lock, Rocket, Server, Gem, CheckCircle, Clock, Users } from "lucide-react";
+import { ArrowUpRight, BarChart, Bot, Code, Cpu, Database, Feather, Lock, Rocket, Server, Gem, CheckCircle, Clock, Users, ChevronDown } from "lucide-react";
 import type { Metadata } from 'next';
 import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -39,7 +39,7 @@ export default function FeaturesPage() {
         <Accordion type="single" collapsible className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
           {courses.map((course, index) => (
              <AccordionItem value={`item-${index}`} key={index} className="border-none">
-                <Card className="glassmorphic group relative flex flex-col overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 h-full">
+                <Card className="glassmorphic group relative flex flex-col overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 h-full">
                     <AccordionTrigger className="hover:no-underline p-0 flex-grow">
                         <div className="p-6 text-left w-full flex-grow flex flex-col">
                             <CardHeader className="p-0 flex-grow">
