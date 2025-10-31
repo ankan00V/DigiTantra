@@ -213,7 +213,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
   switch (type) {
     case 'home':
         return (
-            <group ref={groupRef} scale={1.5}>
+            <group ref={groupRef} scale={1.8}>
                 <Plane ref={meshRef} args={[15, 15, 128, 128]} material={homeMaterial} rotation-x={-Math.PI * 0.2} position={[0, -1, 0]}/>
                  <TorusKnot args={[4, 0.4, 400, 44]} position={[0,0.5,0]}>
                     <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.7} />
@@ -229,7 +229,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
         </Dodecahedron>
        )
     case 'analytics':
-        return <DataFallingObjects />;
+        return <Starfield />;
     case 'contact':
         return (
             <Octahedron ref={meshRef} args={[1.5, 0]}>
