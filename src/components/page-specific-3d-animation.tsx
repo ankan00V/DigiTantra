@@ -180,8 +180,8 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'home':
         return (
             <group ref={groupRef}>
-                <Plane ref={meshRef} args={[12, 12, 128, 128]} material={homeMaterial} rotation-x={-Math.PI * 0.2} position={[0, -1, 0]}/>
-                 <TorusKnot args={[3, 0.3, 400, 44]} position={[0,0.5,0]}>
+                <Plane ref={meshRef} args={[15, 15, 128, 128]} material={homeMaterial} rotation-x={-Math.PI * 0.2} position={[0, -1, 0]}/>
+                 <TorusKnot args={[4, 0.4, 400, 44]} position={[0,0.5,0]}>
                     <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.7} />
                 </TorusKnot>
             </group>
@@ -198,9 +198,9 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
         return <Starfield />;
     case 'contact':
         return (
-            <TorusKnot ref={meshRef} args={[1.2, 0.2, 128, 16]}>
+            <Octahedron ref={meshRef} args={[1.5, 0]}>
                 {sharedMaterial}
-            </TorusKnot>
+            </Octahedron>
         )
     case 'social':
         return (
