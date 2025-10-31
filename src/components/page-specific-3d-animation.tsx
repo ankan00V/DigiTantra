@@ -30,7 +30,9 @@ const Starfield = () => {
             for (let i = 0; i < positions.length; i += 3) {
                 positions[i + 1] -= delta * 20; 
                 if (positions[i + 1] < -200) {
-                    positions[i + 1] = 200; 
+                    positions[i + 1] = 200;
+                    // Randomize x position on reset to avoid patterns
+                    positions[i] = Math.random() * 600 - 300;
                 }
             }
             starsRef.current.geometry.attributes.position.needsUpdate = true;
@@ -232,10 +234,10 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
         return <Starfield />;
     case 'contact':
         return (
-            <Octahedron ref={meshRef} args={[1.5, 0]}>
-                {sharedMaterial}
-            </Octahedron>
-        )
+            <Icosahedron ref={meshRef} args={[1.5, 0]}>
+              {sharedMaterial}
+            </Icosahedron>
+        );
     case 'social':
         return (
             <TorusKnot ref={meshRef} args={[1.2, 0.2, 128, 16]}>
