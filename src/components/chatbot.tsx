@@ -51,7 +51,7 @@ export function Chatbot() {
 
   const scrollToBottom = useCallback(() => {
     if (scrollAreaRef.current) {
-        const viewport = scrollAreaRef.current.querySelector('div');
+        const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
         if (viewport) {
              viewport.scrollTop = viewport.scrollHeight;
         }
