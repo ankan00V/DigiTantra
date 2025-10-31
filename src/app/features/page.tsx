@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: 'Courses & Pricing | DigiTantra',
@@ -12,14 +13,14 @@ export const metadata: Metadata = {
 };
 
 const courses = [
-  { name: 'Gen AI', icon: <Feather />, description: 'Master generative AI and build next-gen applications.', price: '₹49,999', timeline: '12 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Portfolio Projects'] },
-  { name: 'AI/ML', icon: <Cpu />, description: 'Dive deep into machine learning models and algorithms.', price: '₹44,999', timeline: '16 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Capstone Project'] },
-  { name: 'Data Science', icon: <Database />, description: 'Learn to extract insights from data with Python and SQL.', price: '₹39,999', timeline: '14 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Real-world Datasets'] },
-  { name: 'Full Stack Development', icon: <Code />, description: 'Become a complete web developer from frontend to backend.', price: '₹59,999', timeline: '24 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Live Project Building'] },
-  { name: 'Cloud Computing', icon: <Server />, description: 'Understand cloud infrastructure with AWS, Azure, and GCP.', price: '₹34,999', timeline: '10 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Cloud Sandboxes'] },
-  { name: 'Cyber Security', icon: <Lock />, description: 'Protect systems and networks from digital attacks.', price: '₹42,999', timeline: '18 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Ethical Hacking Labs'] },
-  { name: 'Web 3.0 & Blockchain', icon: <Gem />, description: 'Explore the future of the decentralized internet.', price: '₹54,999', timeline: '20 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'dApp Development'] },
-  { name: 'DevOps Engineering', icon: <Rocket />, description: 'Automate and streamline your development pipelines.', price: '₹47,999', timeline: '15 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'CI/CD Pipelines'] },
+  { name: 'Gen AI', icon: <Feather />, description: 'Master generative AI and build next-gen applications.', price: '₹49,999', timeline: '12 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Portfolio Projects'], url: 'https://www.lpu.in/programmes/engineering/b-tech-cse-genrative-artificial-intelligence' },
+  { name: 'AI/ML', icon: <Cpu />, description: 'Dive deep into machine learning models and algorithms.', price: '₹44,999', timeline: '16 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Capstone Project'], url: 'https://www.lpu.in/programmes/engineering/b-tech-cse-artificial-intelligence-and-machine-learning' },
+  { name: 'Data Science', icon: <Database />, description: 'Learn to extract insights from data with Python and SQL.', price: '₹39,999', timeline: '14 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Real-world Datasets'], url: 'https://www.lpu.in/programmes/engineering/b-tech-cse-specialization-in-data-science-ml-and-ai' },
+  { name: 'Full Stack Development', icon: <Code />, description: 'Become a complete web developer from frontend to backend.', price: '₹59,999', timeline: '24 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Live Project Building'], url: 'https://www.lpu.in/b-tech-cse-specialization-in-full-stack-development/' },
+  { name: 'Cloud Computing', icon: <Server />, description: 'Understand cloud infrastructure with AWS, Azure, and GCP.', price: '₹34,999', timeline: '10 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Cloud Sandboxes'], url: 'https://www.lpu.in/b-tech-cse-cloud-computing-with-google-cloud-platform/' },
+  { name: 'Cyber Security', icon: <Lock />, description: 'Protect systems and networks from digital attacks.', price: '₹42,999', timeline: '18 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'Ethical Hacking Labs'], url: 'https://www.lpu.in/programmes/bsc-computer-science-cyber-security' },
+  { name: 'Web 3.0 & Blockchain', icon: <Gem />, description: 'Explore the future of the decentralized internet.', price: '₹54,999', timeline: '20 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'dApp Development'], url: 'https://www.coursera.org/learn/web3-blockchain-fundamentals' },
+  { name: 'DevOps Engineering', icon: <Rocket />, description: 'Automate and streamline your development pipelines.', price: '₹47,999', timeline: '15 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'CI/CD Pipelines'], url: 'https://www.lpu.in/b-tech-cse-cloud-computing-and-devOps-automation/' },
 ];
 
 export default function FeaturesPage() {
@@ -76,7 +77,11 @@ export default function FeaturesPage() {
                                     </li>
                                 ))}
                             </ul>
-                            <Button className="w-full font-semibold">Enroll Now</Button>
+                            <Button className="w-full font-semibold" asChild>
+                              <Link href={course.url} target="_blank" rel="noopener noreferrer">
+                                Enroll Now
+                              </Link>
+                            </Button>
                         </div>
                     </AccordionContent>
                 </Card>
