@@ -68,6 +68,40 @@ const FallingObject = ({ children, position }: { children: React.ReactNode; posi
     return <group ref={ref} position={position}>{children}</group>
 };
 
+const DataFallingObjects = () => {
+    const objects = useMemo(() => {
+        const items = [];
+        const objectTypes = [Icosahedron, Sphere, Box, Octahedron, TorusKnot];
+        for (let i = 0; i < 70; i++) {
+            items.push({
+                type: objectTypes[Math.floor(Math.random() * objectTypes.length)],
+                position: [
+                    (Math.random() - 0.5) * 50,
+                    (Math.random() - 0.5) * 50,
+                    (Math.random() - 0.5) * 20 - 5,
+                ] as [number, number, number],
+                scale: Math.random() * 0.2 + 0.1,
+            });
+        }
+        return items;
+    }, []);
+
+    const material = <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.4} />;
+
+    return (
+        <group>
+            {objects.map((data, i) => (
+                <FallingObject key={i} position={data.position}>
+                    <data.type args={[data.scale * 4]}>
+                       {material}
+                    </data.type>
+                </FallingObject>
+            ))}
+        </group>
+    );
+};
+
+
 const AcademicFallingObjects = () => {
     const objects = useMemo(() => {
         const items = [];
@@ -179,7 +213,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
   switch (type) {
     case 'home':
         return (
-            <group ref={groupRef}>
+            <group ref={groupRef} scale={1.5}>
                 <Plane ref={meshRef} args={[15, 15, 128, 128]} material={homeMaterial} rotation-x={-Math.PI * 0.2} position={[0, -1, 0]}/>
                  <TorusKnot args={[4, 0.4, 400, 44]} position={[0,0.5,0]}>
                     <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.7} />
@@ -195,7 +229,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
         </Dodecahedron>
        )
     case 'analytics':
-        return <Starfield />;
+        return <DataFallingObjects />;
     case 'contact':
         return (
             <Octahedron ref={meshRef} args={[1.5, 0]}>
@@ -275,7 +309,7 @@ export function PageSpecific3DAnimation({ type }: { type: AnimationType }) {
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
         <AnimatedShape type={type} />
-        {type !== 'analytics' && type !== 'about' && <Particles />}
+        {type !== 'about' && type !== 'analytics' && <Particles />}
       </Canvas>
     </div>
   );
