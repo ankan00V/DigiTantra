@@ -68,72 +68,6 @@ const FallingObject = ({ children, position }: { children: React.ReactNode; posi
     return <group ref={ref} position={position}>{children}</group>
 };
 
-const RobotHead = ({ position }: { position: [number, number, number] }) => {
-    const groupRef = useRef<THREE.Group>(null!);
-    useFrame((state, delta) => {
-        if (groupRef.current) {
-            groupRef.current.rotation.x += delta * 0.5;
-            groupRef.current.rotation.y += delta * 0.5;
-        }
-    });
-
-    const headMaterial = <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.6} />
-
-    return (
-        <group ref={groupRef} position={position}>
-            <Box args={[1, 1, 1]}>
-                {headMaterial}
-            </Box>
-        </group>
-    );
-};
-
-const ContactAnimation = () => {
-    const groupRef = useRef<THREE.Group>(null!);
-    const numRobots = 40;
-    const radius = 6;
-
-    const robots = useMemo(() => {
-        const temp = [];
-        for (let i = 0; i < numRobots; i++) {
-            const angle = (i / numRobots) * Math.PI * 2;
-            const y = (Math.random() - 0.5) * 8;
-            const x = Math.cos(angle) * (radius + (Math.random() - 0.5) * 2);
-            const z = Math.sin(angle) * (radius + (Math.random() - 0.5) * 2);
-            temp.push({ id: i, position: [x, y, z] as [number, number, number] });
-        }
-        return temp;
-    }, []);
-
-    useFrame((state, delta) => {
-        if (groupRef.current) {
-            groupRef.current.rotation.y += delta * 0.05;
-        }
-    });
-
-    return (
-        <group ref={groupRef}>
-            <Text
-                fontSize={1.5}
-                color="hsl(var(--primary))"
-                anchorX="center"
-                anchorY="middle"
-                font="/fonts/SpaceGrotesk-Bold.ttf"
-                material-toneMapped={false}
-                rotation-x={-0.1}
-            >
-                DIGITANTRA
-            </Text>
-            <group>
-                {robots.map(robot => (
-                    <RobotHead key={robot.id} position={robot.position} />
-                ))}
-            </group>
-        </group>
-    );
-};
-
-
 const AcademicFallingObjects = () => {
     const objects = useMemo(() => {
         const items = [];
@@ -263,7 +197,11 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'analytics':
         return <Starfield />;
     case 'contact':
-        return <ContactAnimation />;
+        return (
+            <TorusKnot ref={meshRef} args={[1.2, 0.2, 128, 16]}>
+                {sharedMaterial}
+            </TorusKnot>
+        )
     case 'social':
         return (
             <TorusKnot ref={meshRef} args={[1.2, 0.2, 128, 16]}>
@@ -337,7 +275,7 @@ export function PageSpecific3DAnimation({ type }: { type: AnimationType }) {
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
         <AnimatedShape type={type} />
-        {type !== 'analytics' && type !== 'about' && type !== 'contact' && <Particles />}
+        {type !== 'analytics' && type !== 'about' && <Particles />}
       </Canvas>
     </div>
   );
