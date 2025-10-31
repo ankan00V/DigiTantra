@@ -48,7 +48,7 @@ export default function AnalyticsPage() {
             </div>
 
             <div className="mt-16">
-                <Card className="glassmorphic">
+                <Card className="glassmorphic transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/50">
                     <CardContent className="p-8 flex flex-col md:flex-row items-center gap-8">
                         <Avatar className="h-24 w-24 border-4 border-primary">
                             <AvatarImage src="https://media.licdn.com/dms/image/v2/D5603AQEgsBwL21VRlw/profile-displayphoto-scale_400_400/B56ZgJOw0_HYAk-/0/1752501523203?e=1763596800&v=beta&t=36YCkE6cGe8xJBSWfu2FqAl8YCEEa8SLx555O3r0_N8" alt="Ankan Ghosh" />
