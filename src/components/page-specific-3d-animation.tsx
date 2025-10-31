@@ -68,50 +68,67 @@ const FallingObject = ({ children, position }: { children: React.ReactNode; posi
     return <group ref={ref} position={position}>{children}</group>
 };
 
-const BookAnimation = () => {
+const RobotHead = ({ position }: { position: [number, number, number] }) => {
     const groupRef = useRef<THREE.Group>(null!);
-    const leftCoverRef = useRef<THREE.Mesh>(null!);
-    const rightCoverRef = useRef<THREE.Mesh>(null!);
-
-    useFrame((state) => {
-        const time = state.clock.getElapsedTime();
+    useFrame((state, delta) => {
         if (groupRef.current) {
-            groupRef.current.rotation.y += 0.005;
-        }
-        if (leftCoverRef.current && rightCoverRef.current) {
-            const angle = (Math.PI / 8) * (1 + Math.sin(time * 0.8));
-            leftCoverRef.current.rotation.y = angle;
-            rightCoverRef.current.rotation.y = -angle;
+            groupRef.current.rotation.x += delta * 0.5;
+            groupRef.current.rotation.y += delta * 0.5;
         }
     });
 
-    const coverMaterial = <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.6} />;
-    const pagesMaterial = <meshStandardMaterial color="hsl(var(--foreground))" wireframe emissive="hsl(var(--foreground))" emissiveIntensity={0.4} />;
+    const headMaterial = <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.6} />
 
     return (
-        <group ref={groupRef} scale={1.2}>
-            {/* Binding */}
-            <Box args={[0.2, 2.2, 1.6]} position={[0, 0, 0]}>
-                <meshStandardMaterial color="hsl(var(--secondary))" wireframe />
+        <group ref={groupRef} position={position}>
+            <Box args={[1, 1, 1]}>
+                {headMaterial}
             </Box>
-            {/* Left Cover */}
-            <group position={[-0.1, 0, 0]}>
-                <mesh ref={leftCoverRef} position={[0.6, 0, 0]}>
-                    <boxGeometry args={[1.2, 2.2, 0.1]} />
-                    {coverMaterial}
-                </mesh>
+        </group>
+    );
+};
+
+const ContactAnimation = () => {
+    const groupRef = useRef<THREE.Group>(null!);
+    const numRobots = 40;
+    const radius = 6;
+
+    const robots = useMemo(() => {
+        const temp = [];
+        for (let i = 0; i < numRobots; i++) {
+            const angle = (i / numRobots) * Math.PI * 2;
+            const y = (Math.random() - 0.5) * 8;
+            const x = Math.cos(angle) * (radius + (Math.random() - 0.5) * 2);
+            const z = Math.sin(angle) * (radius + (Math.random() - 0.5) * 2);
+            temp.push({ id: i, position: [x, y, z] as [number, number, number] });
+        }
+        return temp;
+    }, []);
+
+    useFrame((state, delta) => {
+        if (groupRef.current) {
+            groupRef.current.rotation.y += delta * 0.05;
+        }
+    });
+
+    return (
+        <group ref={groupRef}>
+            <Text
+                fontSize={1.5}
+                color="hsl(var(--primary))"
+                anchorX="center"
+                anchorY="middle"
+                font="/fonts/SpaceGrotesk-Bold.ttf"
+                material-toneMapped={false}
+                rotation-x={-0.1}
+            >
+                DIGITANTRA
+            </Text>
+            <group>
+                {robots.map(robot => (
+                    <RobotHead key={robot.id} position={robot.position} />
+                ))}
             </group>
-            {/* Right Cover */}
-            <group position={[0.1, 0, 0]}>
-                <mesh ref={rightCoverRef} position={[-0.6, 0, 0]}>
-                    <boxGeometry args={[1.2, 2.2, 0.1]} />
-                    {coverMaterial}
-                </mesh>
-            </group>
-             {/* Pages */}
-            <Box args={[1.1, 2.0, 1.4]} position={[0, 0, 0]}>
-                {pagesMaterial}
-            </Box>
         </group>
     );
 };
@@ -246,7 +263,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'analytics':
         return <Starfield />;
     case 'contact':
-        return <BookAnimation />;
+        return <ContactAnimation />;
     case 'social':
         return (
             <TorusKnot ref={meshRef} args={[1.2, 0.2, 128, 16]}>
@@ -315,12 +332,12 @@ const Particles = () => {
 export function PageSpecific3DAnimation({ type }: { type: AnimationType }) {
   return (
     <div className="absolute top-0 left-0 w-full h-full z-0 opacity-20">
-      <Canvas camera={{ position: [0, 0, 8], fov: 75 }}>
+      <Canvas camera={{ position: [0, 0, 15], fov: 75 }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
         <AnimatedShape type={type} />
-        {type !== 'analytics' && type !== 'about' && <Particles />}
+        {type !== 'analytics' && type !== 'about' && type !== 'contact' && <Particles />}
       </Canvas>
     </div>
   );
