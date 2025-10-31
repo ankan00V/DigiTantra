@@ -1,8 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Clock, TrendingUp, TrendingDown, Users, CheckCircle } from "lucide-react";
+import { Users, CheckCircle, Clock, Linkedin } from "lucide-react";
 import type { Metadata } from 'next';
 import { AnalyticsDashboard } from "@/components/analytics-dashboard";
 import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: 'Dashboard | DigiTantra',
@@ -42,6 +45,29 @@ export default function AnalyticsPage() {
                 <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
                     Tracking key performance indicators for our courses and students. All data shown is for demonstration.
                 </p>
+            </div>
+
+            <div className="mt-16">
+                <Card className="glassmorphic">
+                    <CardContent className="p-8 flex flex-col md:flex-row items-center gap-8">
+                        <Avatar className="h-24 w-24 border-4 border-primary">
+                            <AvatarImage src="https://media.licdn.com/dms/image/D5603AQF4GZ-IuG9U_w/profile-displayphoto-shrink_400_400/0/1718873096055?e=1727308800&v=beta&t=kF5RqlLtfYJ-YvP53tHsohA1e_wY_iJgYh-w_A1t3yY" alt="Ankan Ghosh" />
+                            <AvatarFallback>AG</AvatarFallback>
+                        </Avatar>
+                        <div className="text-center md:text-left">
+                            <h3 className="font-headline text-3xl text-primary">Connect with the Founder</h3>
+                            <p className="text-muted-foreground mt-2 max-w-lg">
+                                Have questions or ideas? Connect with Ankan Ghosh, the creator of DigiTantra. Let's innovate the future of tech education together.
+                            </p>
+                        </div>
+                        <Button asChild size="lg" className="font-semibold ml-auto flex-shrink-0">
+                            <Link href="https://www.linkedin.com/in/ghoshankan/" target="_blank" rel="noopener noreferrer">
+                                <Linkedin className="mr-2 h-5 w-5" />
+                                Connect on LinkedIn
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">

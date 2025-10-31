@@ -89,29 +89,6 @@ export default function FeaturesPage() {
             </AccordionItem>
           ))}
         </Accordion>
-
-        <div className="mt-24">
-            <Card className="glassmorphic">
-                <CardContent className="p-8 flex flex-col md:flex-row items-center gap-8">
-                    <Avatar className="h-24 w-24 border-4 border-primary">
-                        <AvatarImage src="https://media.licdn.com/dms/image/D5603AQF4GZ-IuG9U_w/profile-displayphoto-shrink_400_400/0/1718873096055?e=1727308800&v=beta&t=kF5RqlLtfYJ-YvP53tHsohA1e_wY_iJgYh-w_A1t3yY" alt="Ankan Ghosh" />
-                        <AvatarFallback>AG</AvatarFallback>
-                    </Avatar>
-                    <div className="text-center md:text-left">
-                        <h3 className="font-headline text-3xl text-primary">Connect with the Founder</h3>
-                        <p className="text-muted-foreground mt-2 max-w-lg">
-                            Have questions or ideas? Connect with Ankan Ghosh, the creator of DigiTantra. Let's innovate the future of tech education together.
-                        </p>
-                    </div>
-                    <Button asChild size="lg" className="font-semibold ml-auto flex-shrink-0">
-                        <Link href="https://www.linkedin.com/in/ghoshankan/" target="_blank" rel="noopener noreferrer">
-                            <Linkedin className="mr-2 h-5 w-5" />
-                            Connect on LinkedIn
-                        </Link>
-                    </Button>
-                </CardContent>
-            </Card>
-        </div>
       </div>
     </div>
   );
