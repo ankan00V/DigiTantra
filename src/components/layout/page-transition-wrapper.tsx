@@ -1,35 +1,34 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, startTransition } from 'react';
 import { usePathname } from 'next/navigation';
 import { PageLoader } from '@/components/page-loader';
 
 function PageTransitionInner({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [isNavigating, setIsNavigating] = useState(false);
+    const [previousPath, setPreviousPath] = useState(pathname);
 
     useEffect(() => {
-        // When the path changes, we are navigating.
-        // We can use a short timeout to avoid flashing the loader on very fast navigations.
-        const timer = setTimeout(() => setIsNavigating(true), 100); 
+        if (pathname !== previousPath) {
+            // Start navigation, show loader
+            startTransition(() => {
+                setIsNavigating(true);
+            });
 
-        return () => clearTimeout(timer);
-    }, [pathname]);
+            // When navigation is complete, the new children will render.
+            // We then update the previous path and hide the loader.
+            const handleNavigationEnd = () => {
+                setPreviousPath(pathname);
+                setIsNavigating(false);
+            };
 
-    useEffect(() => {
-        // When the component re-renders for the new page, we can hide the loader.
-        // A timeout ensures the new content has had a chance to start rendering.
-        const timer = setTimeout(() => setIsNavigating(false), 200); // Adjust delay if needed
+            // Give the new page content time to render before hiding loader
+            const timer = setTimeout(handleNavigationEnd, 300); // Adjust delay if needed
 
-        return () => clearTimeout(timer);
-    }, [pathname]);
-
-
-    // This effect handles the case where the new page is loaded.
-    useEffect(() => {
-        setIsNavigating(false);
-    }, [children]);
-
+            return () => clearTimeout(timer);
+        }
+    }, [pathname, previousPath]);
 
     return (
         <>
