@@ -17,11 +17,11 @@ const chartData = [
 const chartConfig = {
   pageViews: {
     label: "Page Views",
-    color: "hsl(var(--primary))",
+    color: "hsl(var(--chart-1))",
   },
   sessionDuration: {
     label: "Session Duration (s)",
-    color: "hsl(var(--secondary))",
+    color: "hsl(var(--chart-2))",
   }
 } satisfies ChartConfig;
 
@@ -40,7 +40,7 @@ export function AnalyticsDashboard() {
                         <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                         <YAxis tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                         <ChartTooltip content={<ChartTooltipContent />} />
-                        <Line type="monotone" dataKey="pageViews" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ fill: 'hsl(var(--primary))', r: 4 }} />
+                        <Line type="monotone" dataKey="pageViews" stroke="var(--color-pageViews)" strokeWidth={2} dot={{ fill: 'var(--color-pageViews)', r: 4 }} />
                     </LineChart>
                 </ChartContainer>
             </CardContent>
@@ -57,7 +57,7 @@ export function AnalyticsDashboard() {
                         <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                         <YAxis tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                         <ChartTooltip content={<ChartTooltipContent />} />
-                        <Bar dataKey="sessionDuration" fill="hsl(var(--secondary))" radius={4} />
+                        <Bar dataKey="sessionDuration" fill="var(--color-sessionDuration)" radius={4} />
                     </BarChart>
                 </ChartContainer>
             </CardContent>
