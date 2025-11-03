@@ -22,12 +22,14 @@ const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
     });
 
     return (
-        <Icosahedron ref={meshRef} args={[1, 0]} scale={0.8}>
+        <Icosahedron ref={meshRef} args={[1, 0]} scale={isLoading ? 1.4 : 1.2}>
              <meshStandardMaterial 
                 color="hsl(var(--primary))" 
                 wireframe 
                 emissive="hsl(var(--primary))" 
-                emissiveIntensity={isLoading ? 1.2 : 0.4} 
+                emissiveIntensity={isLoading ? 1.5 : 0.5} 
+                transparent
+                opacity={0.8}
             />
         </Icosahedron>
     )
@@ -41,6 +43,20 @@ export function Chatbot() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    if (containerRef.current) {
+      const { top } = containerRef.current.getBoundingClientRect();
+      const speed = -0.1;
+      containerRef.current.style.transform = `translateY(${top * speed}px)`;
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const scrollToBottom = useCallback(() => {
     if (scrollAreaRef.current) {
@@ -77,7 +93,7 @@ export function Chatbot() {
   };
 
   return (
-    <div className="glassmorphic rounded-lg flex flex-col h-[600px] w-full max-w-2xl mx-auto shadow-2xl shadow-primary/20 border-primary/20 transition-all duration-500 transform-gpu" style={{ perspective: '1000px', transform: 'rotateY(-5deg) rotateX(5deg)' }}>
+    <div ref={containerRef} className="glassmorphic rounded-lg flex flex-col h-[600px] w-full max-w-2xl mx-auto shadow-2xl shadow-primary/20 border-primary/20 transition-all duration-300 transform-gpu" style={{ perspective: '1000px' }}>
       <div className="p-4 border-b flex items-center justify-between">
         <div className='flex items-center gap-3'>
             <Sparkles className="h-6 w-6 text-primary" />
@@ -85,7 +101,7 @@ export function Chatbot() {
         </div>
         <div className='w-20 h-14'>
             <Suspense fallback={<Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}>
-                <Canvas camera={{ position: [0, 0, 3], fov: 50 }}>
+                <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
                     <ambientLight intensity={0.5} />
                     <pointLight position={[5,5,5]} intensity={1} color="hsl(var(--primary))" />
                     <Chatbot3DElement isLoading={isLoading} />
