@@ -34,9 +34,9 @@ const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
     return (
         <Sphere ref={meshRef} args={[1, 32, 32]}>
              <meshStandardMaterial 
-                color="hsl(var(--primary))" 
+                color="purple" 
                 wireframe 
-                emissive="hsl(var(--primary))" 
+                emissive="purple" 
                 emissiveIntensity={0.5}
                 transparent
                 opacity={0.8}
