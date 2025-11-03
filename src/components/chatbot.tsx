@@ -10,38 +10,54 @@ import type { Message } from '@/lib/types';
 import { aiChatbotAssistance } from '@/ai/flows/ai-chatbot-assistance';
 import { cn } from '@/lib/utils';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Sphere } from '@react-three/drei';
+import { Icosahedron, TorusKnot } from '@react-three/drei';
 import * as THREE from 'three';
 
 const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
-    const meshRef = useRef<THREE.Mesh>(null!);
+    const groupRef = useRef<THREE.Group>(null!);
+    const icosahedronRef = useRef<THREE.Mesh>(null!);
+    const torusKnotRef = useRef<THREE.Mesh>(null!);
     
     useFrame((state, delta) => {
-        if (meshRef.current) {
+        if (groupRef.current) {
             const time = state.clock.getElapsedTime();
-            meshRef.current.rotation.y += delta * 0.2;
+            groupRef.current.rotation.y += delta * 0.1;
             
-            // Pulse effect
-            const scale = 1.2 + Math.sin(time * 2) * 0.1;
-            meshRef.current.scale.set(scale, scale, scale);
+            if (icosahedronRef.current) {
+                icosahedronRef.current.rotation.x += delta * 0.2;
+                icosahedronRef.current.rotation.z += delta * 0.2;
+                 if (icosahedronRef.current.material instanceof THREE.MeshStandardMaterial) {
+                    const targetIntensity = isLoading ? 1.5 + Math.sin(time * 5) * 0.5 : 0.6;
+                    icosahedronRef.current.material.emissiveIntensity = THREE.MathUtils.lerp(icosahedronRef.current.material.emissiveIntensity, targetIntensity, 0.1);
+                 }
+            }
 
-            if (meshRef.current.material instanceof THREE.MeshStandardMaterial) {
-                 meshRef.current.material.emissiveIntensity = isLoading ? 1.5 + Math.sin(time * 5) * 0.5 : 0.5;
+            if (torusKnotRef.current) {
+                torusKnotRef.current.rotation.y += delta * 0.5;
             }
         }
     });
 
     return (
-        <Sphere ref={meshRef} args={[1, 32, 32]}>
-             <meshStandardMaterial 
-                color="purple" 
-                wireframe 
-                emissive="purple" 
-                emissiveIntensity={0.5}
-                transparent
-                opacity={0.8}
-            />
-        </Sphere>
+        <group ref={groupRef}>
+             <Icosahedron ref={icosahedronRef} args={[0.8, 1]}>
+                <meshStandardMaterial 
+                    color="purple" 
+                    wireframe 
+                    emissive="purple" 
+                    emissiveIntensity={0.6}
+                    transparent
+                    opacity={0.8}
+                />
+            </Icosahedron>
+            <TorusKnot ref={torusKnotRef} args={[1.2, 0.02, 1000, 16]}>
+                 <meshStandardMaterial 
+                    color="hsl(var(--primary))"
+                    emissive="hsl(var(--primary))"
+                    emissiveIntensity={0.2}
+                 />
+            </TorusKnot>
+        </group>
     )
 };
 
@@ -59,7 +75,7 @@ export function Chatbot() {
     if (containerRef.current) {
       const { top } = containerRef.current.getBoundingClientRect();
       const speed = -0.1;
-      containerRef.current.style.transform = `translateY(${top * speed}px)`;
+      containerRef.current.style.transform = `translateY(${top * speed}px) rotateX(-10deg) scale(1.05)`;
     }
   };
 
@@ -103,7 +119,7 @@ export function Chatbot() {
   };
 
   return (
-    <div ref={containerRef} className="glassmorphic rounded-lg flex flex-col h-[600px] w-full max-w-2xl mx-auto shadow-2xl shadow-primary/20 border-primary/20 transition-all duration-300 transform-gpu" style={{ perspective: '1000px' }}>
+    <div ref={containerRef} className="glassmorphic rounded-lg flex flex-col h-[600px] w-full max-w-2xl mx-auto shadow-2xl shadow-primary/20 border-primary/20 transition-all duration-300 transform-gpu" style={{ perspective: '1000px', transform: 'rotateX(-10deg) scale(1.05)' }}>
       <div className="p-4 border-b flex items-center justify-between">
         <div className='flex items-center gap-3'>
             <Sparkles className="h-6 w-6 text-primary" />
