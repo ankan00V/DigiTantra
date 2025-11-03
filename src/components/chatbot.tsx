@@ -10,28 +10,38 @@ import type { Message } from '@/lib/types';
 import { aiChatbotAssistance } from '@/ai/flows/ai-chatbot-assistance';
 import { cn } from '@/lib/utils';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Icosahedron } from '@react-three/drei';
+import { Sphere } from '@react-three/drei';
+import * as THREE from 'three';
 
 const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
     const meshRef = useRef<THREE.Mesh>(null!);
+    
     useFrame((state, delta) => {
         if (meshRef.current) {
-            meshRef.current.rotation.y += delta * (isLoading ? 0.8 : 0.2);
-            meshRef.current.rotation.x += delta * 0.1;
+            const time = state.clock.getElapsedTime();
+            meshRef.current.rotation.y += delta * 0.2;
+            
+            // Pulse effect
+            const scale = 1.2 + Math.sin(time * 2) * 0.1;
+            meshRef.current.scale.set(scale, scale, scale);
+
+            if (meshRef.current.material instanceof THREE.MeshStandardMaterial) {
+                 meshRef.current.material.emissiveIntensity = isLoading ? 1.5 + Math.sin(time * 5) * 0.5 : 0.5;
+            }
         }
     });
 
     return (
-        <Icosahedron ref={meshRef} args={[1, 0]} scale={isLoading ? 1.4 : 1.2}>
+        <Sphere ref={meshRef} args={[1, 32, 32]}>
              <meshStandardMaterial 
                 color="hsl(var(--primary))" 
                 wireframe 
                 emissive="hsl(var(--primary))" 
-                emissiveIntensity={isLoading ? 1.5 : 0.5} 
+                emissiveIntensity={0.5}
                 transparent
                 opacity={0.8}
             />
-        </Icosahedron>
+        </Sphere>
     )
 };
 
