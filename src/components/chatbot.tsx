@@ -10,7 +10,7 @@ import type { Message } from '@/lib/types';
 import { aiChatbotAssistance } from '@/ai/flows/ai-chatbot-assistance';
 import { cn } from '@/lib/utils';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { TorusKnot } from '@react-three/drei';
+import { Icosahedron } from '@react-three/drei';
 
 const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
     const meshRef = useRef<THREE.Mesh>(null!);
@@ -22,14 +22,14 @@ const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
     });
 
     return (
-        <TorusKnot ref={meshRef} args={[0.8, 0.2, 128, 16]} scale={0.6}>
-            <meshStandardMaterial 
+        <Icosahedron ref={meshRef} args={[1, 0]} scale={0.8}>
+             <meshStandardMaterial 
                 color="hsl(var(--primary))" 
                 wireframe 
                 emissive="hsl(var(--primary))" 
                 emissiveIntensity={isLoading ? 1.2 : 0.4} 
             />
-        </TorusKnot>
+        </Icosahedron>
     )
 };
 
