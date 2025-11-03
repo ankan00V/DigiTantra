@@ -30,9 +30,8 @@ const Starfield = () => {
             for (let i = 0; i < positions.length; i += 3) {
                 positions[i + 1] -= delta * 20; 
                 if (positions[i + 1] < -200) {
-                    positions[i + 1] = 200;
-                    // Randomize x position on reset to avoid patterns
-                    positions[i] = Math.random() * 600 - 300;
+                    positions[i] = Math.random() * 600 - 300; // Randomize X position
+                    positions[i + 1] = 200; // Reset Y position to the top
                 }
             }
             starsRef.current.geometry.attributes.position.needsUpdate = true;
@@ -231,12 +230,44 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
         </Dodecahedron>
        )
     case 'analytics':
-        return <Starfield />;
+        return <DataFallingObjects />;
     case 'contact':
+      const contactGroupRef = useRef<THREE.Group>(null!);
+      const contactIcosahedronRef = useRef<THREE.Mesh>(null!);
+      const contactTorusKnotRef = useRef<THREE.Mesh>(null!);
+
+      useFrame((state, delta) => {
+        if (contactGroupRef.current) {
+          contactGroupRef.current.rotation.y += delta * 0.1;
+        }
+        if (contactIcosahedronRef.current) {
+          contactIcosahedronRef.current.rotation.x += delta * 0.2;
+          contactIcosahedronRef.current.rotation.z += delta * 0.2;
+        }
+        if (contactTorusKnotRef.current) {
+          contactTorusKnotRef.current.rotation.y += delta * 0.5;
+        }
+      });
         return (
-            <Icosahedron ref={meshRef} args={[1.5, 0]}>
-              {sharedMaterial}
-            </Icosahedron>
+            <group ref={contactGroupRef} scale={2.5}>
+              <Icosahedron ref={contactIcosahedronRef} args={[0.8, 1]}>
+                  <meshStandardMaterial
+                      color="purple"
+                      wireframe
+                      emissive="purple"
+                      emissiveIntensity={0.6}
+                      transparent
+                      opacity={0.8}
+                  />
+              </Icosahedron>
+              <TorusKnot ref={contactTorusKnotRef} args={[1.2, 0.02, 1000, 16]}>
+                  <meshStandardMaterial
+                      color="hsl(var(--primary))"
+                      emissive="hsl(var(--primary))"
+                      emissiveIntensity={0.2}
+                  />
+              </TorusKnot>
+            </group>
         );
     case 'social':
         return (
