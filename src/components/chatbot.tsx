@@ -10,33 +10,26 @@ import type { Message } from '@/lib/types';
 import { aiChatbotAssistance } from '@/ai/flows/ai-chatbot-assistance';
 import { cn } from '@/lib/utils';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Box, Sphere } from '@react-three/drei';
+import { TorusKnot } from '@react-three/drei';
 
 const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
-    const groupRef = useRef<THREE.Group>(null!);
+    const meshRef = useRef<THREE.Mesh>(null!);
     useFrame((state, delta) => {
-        if (groupRef.current) {
-            groupRef.current.rotation.y += delta * (isLoading ? 0.5 : 0.1);
+        if (meshRef.current) {
+            meshRef.current.rotation.y += delta * (isLoading ? 0.8 : 0.2);
+            meshRef.current.rotation.x += delta * 0.1;
         }
     });
 
-    const headMaterial = <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={isLoading ? 1.0 : 0.4} />
-    const eyeMaterial = <meshStandardMaterial color="hsl(var(--foreground))" emissive="hsl(var(--foreground))" emissiveIntensity={isLoading ? 1.5 : 0.5} />
-
     return (
-        <group ref={groupRef} scale={0.7} position={[0, -0.2, 0]}>
-            {/* Head */}
-            <Box args={[1.5, 1.5, 1.5]}>
-                {headMaterial}
-            </Box>
-            {/* Eyes */}
-            <Sphere args={[0.2, 16, 16]} position={[-0.4, 0.2, 0.75]}>
-                {eyeMaterial}
-            </Sphere>
-            <Sphere args={[0.2, 16, 16]} position={[0.4, 0.2, 0.75]}>
-                {eyeMaterial}
-            </Sphere>
-        </group>
+        <TorusKnot ref={meshRef} args={[0.8, 0.2, 128, 16]} scale={0.6}>
+            <meshStandardMaterial 
+                color="hsl(var(--primary))" 
+                wireframe 
+                emissive="hsl(var(--primary))" 
+                emissiveIntensity={isLoading ? 1.2 : 0.4} 
+            />
+        </TorusKnot>
     )
 };
 
