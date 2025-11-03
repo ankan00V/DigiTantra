@@ -7,11 +7,11 @@ import type { ChartConfig } from '@/components/ui/chart';
 
 const chartData = [
   { month: "January", pageViews: 186, sessionDuration: 120 },
-  { month: "February", pageViews: 305, sessionDuration: 180 },
-  { month: "March", pageViews: 237, sessionDuration: 150 },
-  { month: "April", pageViews: 273, sessionDuration: 210 },
-  { month: "May", pageViews: 209, sessionDuration: 190 },
-  { month: "June", pageViews: 214, sessionDuration: 220 },
+  { month: "February", pageViews: 195, sessionDuration: 180 },
+  { month: "March", pageViews: 210, sessionDuration: 150 },
+  { month: "April", pageViews: 225, sessionDuration: 210 },
+  { month: "May", pageViews: 245, sessionDuration: 190 },
+  { month: "June", pageViews: 270, sessionDuration: 220 },
 ];
 
 const chartConfig = {
