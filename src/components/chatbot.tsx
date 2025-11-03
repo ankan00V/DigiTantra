@@ -84,7 +84,7 @@ export function Chatbot() {
   };
 
   return (
-    <div className="glassmorphic rounded-lg flex flex-col h-[600px] w-full max-w-2xl mx-auto shadow-2xl shadow-primary/10 border-primary/20">
+    <div className="glassmorphic rounded-lg flex flex-col h-[600px] w-full max-w-2xl mx-auto shadow-2xl shadow-primary/20 border-primary/20 transition-all duration-500 transform-gpu" style={{ perspective: '1000px', transform: 'rotateY(-5deg) rotateX(5deg)' }}>
       <div className="p-4 border-b flex items-center justify-between">
         <div className='flex items-center gap-3'>
             <Sparkles className="h-6 w-6 text-primary" />
