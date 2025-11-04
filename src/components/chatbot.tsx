@@ -69,20 +69,6 @@ export function Chatbot() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleScroll = () => {
-    if (containerRef.current) {
-      const { top } = containerRef.current.getBoundingClientRect();
-      const speed = -0.1;
-      containerRef.current.style.transform = `translateY(${top * speed}px) rotateX(-10deg) scale(1.05)`;
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const scrollToBottom = useCallback(() => {
     if (scrollAreaRef.current) {
@@ -119,7 +105,7 @@ export function Chatbot() {
   };
 
   return (
-    <div ref={containerRef} className="glassmorphic rounded-lg flex flex-col h-[600px] w-full max-w-2xl mx-auto shadow-2xl shadow-primary/20 border-primary/20 transition-all duration-300 transform-gpu" style={{ perspective: '1000px', transform: 'rotateX(-10deg) scale(1.05)' }}>
+    <div className="glassmorphic rounded-lg flex flex-col h-[600px] w-full max-w-2xl mx-auto shadow-2xl shadow-primary/20 border-primary/20 transition-all duration-300 transform-gpu border-primary/50 animate-pulse hover:animate-none shadow-[0_0_15px_hsl(var(--primary))]">
       <div className="p-4 border-b flex items-center justify-between">
         <div className='flex items-center gap-3'>
             <Sparkles className="h-6 w-6 text-primary" />
