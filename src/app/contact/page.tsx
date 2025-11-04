@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="relative overflow-hidden min-h-screen">
-      <div className="main-container relative z-10 flex flex-col items-center justify-center min-h-[80vh]">
-        <div className="text-center">
+      <div className="main-container flex flex-col items-center justify-center min-h-[80vh]">
+        <div className="text-center relative z-10">
           <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tighter">
             Chat with our <span className="text-glow-primary text-primary">AI Assistant</span>
           </h1>
@@ -19,7 +19,7 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="mt-12 w-full flex justify-center">
+        <div className="mt-12 w-full flex justify-center relative z-10">
           <Chatbot />
         </div>
       </div>

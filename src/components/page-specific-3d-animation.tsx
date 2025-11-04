@@ -295,28 +295,43 @@ const animationMap: Record<string, AnimationType> = {
     '/about': 'about',
     '/features': 'features',
     '/analytics': 'analytics',
-    '/contact': 'contact',
     '/social': 'social',
     '/blog': 'blog',
 };
 
+const pageSpecificAnimations: Record<string, AnimationType> = {
+    '/contact': 'contact',
+}
+
 export function PageSpecific3DAnimation() {
   const pathname = usePathname();
   const animationType = animationMap[pathname];
+  const fullPageAnimationType = pageSpecificAnimations[pathname];
 
-  if (!animationType) {
-    return null;
-  }
-
-  return (
-    <div className="fixed top-0 left-0 w-full h-full z-0 opacity-20 pointer-events-none">
-      <Canvas camera={{ position: [0, 0, 15], fov: 75 }}>
+  const renderCanvas = (type: AnimationType) => (
+     <Canvas camera={{ position: [0, 0, 15], fov: 75 }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
-        <AnimatedShape type={animationType} />
-        {animationType !== 'about' && animationType !== 'analytics' && animationType !== 'contact' && <Particles />}
+        <AnimatedShape type={type} />
+        {type !== 'about' && type !== 'analytics' && type !== 'contact' && <Particles />}
       </Canvas>
-    </div>
+  )
+
+  return (
+    <>
+      {/* Full page background animation for specific routes */}
+      {fullPageAnimationType && (
+         <div className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none opacity-20">
+           {renderCanvas(fullPageAnimationType)}
+        </div>
+      )}
+      {/* Contained animation for other pages */}
+      {animationType && (
+        <div className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none opacity-20">
+          {renderCanvas(animationType)}
+        </div>
+      )}
+    </>
   );
 }

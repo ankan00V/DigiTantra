@@ -48,7 +48,7 @@ export default function RootLayout({
             <PageSpecific3DAnimation />
             <ScrollProgress />
             <Header />
-            <main className="min-h-screen">
+            <main className="min-h-screen relative z-10">
               {children}
             </main>
             <Footer />
