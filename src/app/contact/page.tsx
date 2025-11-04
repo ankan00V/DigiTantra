@@ -15,7 +15,7 @@ export default function ContactPage() {
             Chat with <span className="text-glow-primary text-primary">DigiSaarthi</span>
           </h1>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
-            Get instant answers to your questions. Our AI is here to help you navigate the world of digital marketing.
+            Get instant answers to your questions. Our AI is here to help you navigate the world of endless learning
           </p>
         </div>
 
