@@ -6,61 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Icosahedron, Sphere, Torus, TorusKnot, Box, Dodecahedron, Octahedron, Plane, Text, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
 
-type AnimationType = 'home' | 'about' | 'features' | 'analytics' | 'contact' | 'social' | 'blog';
-
-const Starfield = () => {
-    const starsRef = useRef<THREE.Points>(null!);
-
-    const starGeo = useMemo(() => {
-        const geo = new THREE.BufferGeometry();
-        const vertices = [];
-        for (let i = 0; i < 6000; i++) {
-            vertices.push(
-                Math.random() * 600 - 300,
-                Math.random() * 600 - 300,
-                Math.random() * 600 - 300
-            );
-        }
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        return geo;
-    }, []);
-
-    useFrame((state, delta) => {
-        if (starsRef.current) {
-            starsRef.current.rotation.y += delta * 0.02;
-            starsRef.current.rotation.x += delta * 0.01;
-        }
-    });
-
-    return (
-        <points ref={starsRef} geometry={starGeo}>
-             <pointsMaterial
-                color="hsl(var(--primary))"
-                size={0.7}
-                sizeAttenuation
-                transparent
-                opacity={0.8}
-             />
-        </points>
-    );
-};
-
-const FallingObject = ({ children, position }: { children: React.ReactNode; position: [number, number, number] }) => {
-    const ref = useRef<any>(null!);
-
-    useFrame((state, delta) => {
-        if (ref.current) {
-            ref.current.position.y -= delta * (0.5 + Math.random() * 0.5);
-            ref.current.rotation.x += delta * 0.2;
-            ref.current.rotation.y += delta * 0.1;
-            if (ref.current.position.y < -25) {
-                ref.current.position.y = 25;
-            }
-        }
-    });
-
-    return <group ref={ref} position={position}>{children}</group>
-};
+type AnimationType = 'home' | 'about' | 'features' | 'analytics' | 'contact' | 'social' | 'blog' | 'auth';
 
 const FallingStars = () => {
     const objects = useMemo(() => {
@@ -93,6 +39,22 @@ const FallingStars = () => {
     );
 };
 
+const FallingObject = ({ children, position }: { children: React.ReactNode; position: [number, number, number] }) => {
+    const ref = useRef<any>(null!);
+
+    useFrame((state, delta) => {
+        if (ref.current) {
+            ref.current.position.y -= delta * (0.5 + Math.random() * 0.5);
+            ref.current.rotation.x += delta * 0.2;
+            ref.current.rotation.y += delta * 0.1;
+            if (ref.current.position.y < -25) {
+                ref.current.position.y = 25;
+            }
+        }
+    });
+
+    return <group ref={ref} position={position}>{children}</group>
+};
 
 const DataFallingObjects = () => {
     const objects = useMemo(() => {
@@ -269,6 +231,12 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
                 {sharedMaterial}
             </Sphere>
         )
+    case 'auth':
+        return (
+            <Octahedron ref={meshRef} args={[1.5, 0]}>
+                {sharedMaterial}
+            </Octahedron>
+        )
     default:
       return (
         <Icosahedron ref={meshRef} args={[1.5, 0]}>
@@ -329,6 +297,8 @@ const animationMap: Record<string, AnimationType> = {
     '/analytics': 'analytics',
     '/social': 'social',
     '/blog': 'blog',
+    '/signup': 'auth',
+    '/login': 'auth',
 };
 
 const pageSpecificAnimations: Record<string, AnimationType> = {
