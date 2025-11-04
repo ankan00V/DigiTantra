@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
@@ -9,7 +10,7 @@ import { ScrollProgress } from '@/components/layout/scroll-progress';
 import { PageTransitionWrapper } from '@/components/layout/page-transition-wrapper';
 import { GoogleAnalytics } from '@/components/google-analytics';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
-import { PageSpecific3DAnimation } from '@/components/page-specific-3d-animation';
+import { LayoutContent } from '@/components/layout/layout-content';
 
 const fontBody = Inter({ 
   subsets: ['latin'],
@@ -44,18 +45,11 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased', fontBody.variable, fontHeadline.variable)}>
         <FirebaseClientProvider>
-          <PageTransitionWrapper>
-            <PageSpecific3DAnimation />
-            <ScrollProgress />
-            <Header />
-            <main className="min-h-screen relative z-10">
-              {children}
-            </main>
-            <Footer />
-          </PageTransitionWrapper>
-          <Toaster />
+          <LayoutContent>{children}</LayoutContent>
         </FirebaseClientProvider>
       </body>
     </html>
   );
 }
+
+    

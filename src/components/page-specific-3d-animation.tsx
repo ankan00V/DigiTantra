@@ -62,6 +62,38 @@ const FallingObject = ({ children, position }: { children: React.ReactNode; posi
     return <group ref={ref} position={position}>{children}</group>
 };
 
+const FallingStars = () => {
+    const objects = useMemo(() => {
+        const items = [];
+        for (let i = 0; i < 100; i++) {
+            items.push({
+                position: [
+                    (Math.random() - 0.5) * 50,
+                    (Math.random() - 0.5) * 50,
+                    (Math.random() - 0.5) * 20 - 5,
+                ] as [number, number, number],
+                scale: Math.random() * 0.15 + 0.05,
+            });
+        }
+        return items;
+    }, []);
+
+    const material = <meshStandardMaterial color="hsl(var(--primary))" emissive="hsl(var(--primary))" emissiveIntensity={0.8} roughness={0.2} />;
+
+    return (
+        <group>
+            {objects.map((data, i) => (
+                <FallingObject key={i} position={data.position}>
+                    <Sphere args={[data.scale]}>
+                       {material}
+                    </Sphere>
+                </FallingObject>
+            ))}
+        </group>
+    );
+};
+
+
 const DataFallingObjects = () => {
     const objects = useMemo(() => {
         const items = [];
@@ -224,7 +256,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'analytics':
         return <DataFallingObjects />;
     case 'contact':
-        return <Starfield />;
+        return <FallingStars />;
     case 'social':
         return (
             <TorusKnot ref={meshRef} args={[1.2, 0.2, 128, 16]}>
@@ -303,35 +335,34 @@ const pageSpecificAnimations: Record<string, AnimationType> = {
     '/contact': 'contact',
 }
 
-export function PageSpecific3DAnimation() {
+export function PageSpecific3DAnimation({ type: propType }: { type?: AnimationType }) {
   const pathname = usePathname();
-  const animationType = animationMap[pathname];
-  const fullPageAnimationType = pageSpecificAnimations[pathname];
+  // Allow prop to override pathname-based logic
+  const type = propType || animationMap[pathname] || pageSpecificAnimations[pathname];
 
-  const renderCanvas = (type: AnimationType) => (
+  const renderCanvas = (animationType: AnimationType) => (
      <Canvas camera={{ position: [0, 0, 15], fov: 75 }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
-        <AnimatedShape type={type} />
-        {type !== 'about' && type !== 'analytics' && type !== 'contact' && <Particles />}
+        <AnimatedShape type={animationType} />
+        {animationType !== 'about' && animationType !== 'analytics' && animationType !== 'contact' && <Particles />}
       </Canvas>
   )
 
+  const isPageSpecific = !!pageSpecificAnimations[pathname] || propType === 'contact';
+  
+  const animationClass = isPageSpecific
+    ? "fixed top-0 left-0 w-full h-full z-0 pointer-events-none"
+    : "fixed top-0 left-0 w-full h-full z-0 pointer-events-none opacity-20";
+
+  if (!type) {
+    return null;
+  }
+
   return (
-    <>
-      {/* Full page background animation for specific routes */}
-      {fullPageAnimationType && (
-         <div className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none opacity-20">
-           {renderCanvas(fullPageAnimationType)}
-        </div>
-      )}
-      {/* Contained animation for other pages */}
-      {animationType && (
-        <div className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none opacity-20">
-          {renderCanvas(animationType)}
-        </div>
-      )}
-    </>
+    <div className={animationClass}>
+      {renderCanvas(type)}
+    </div>
   );
 }
