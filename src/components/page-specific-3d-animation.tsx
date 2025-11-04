@@ -26,16 +26,8 @@ const Starfield = () => {
 
     useFrame((state, delta) => {
         if (starsRef.current) {
-            const positions = starsRef.current.geometry.attributes.position.array as number[];
-            for (let i = 0; i < positions.length; i += 3) {
-                positions[i + 1] -= delta * 20; 
-                if (positions[i + 1] < -200) {
-                    positions[i] = Math.random() * 600 - 300; // Randomize X position
-                    positions[i + 1] = 200; // Reset Y position to the top
-                }
-            }
-            starsRef.current.geometry.attributes.position.needsUpdate = true;
             starsRef.current.rotation.y += delta * 0.02;
+            starsRef.current.rotation.x += delta * 0.01;
         }
     });
 
@@ -160,53 +152,6 @@ const AcademicFallingObjects = () => {
     );
 };
 
-const Meteor = () => {
-  const ref = useRef<THREE.Mesh>(null!);
-  const [position, velocity, size] = useMemo(() => {
-    const x = (Math.random() - 0.5) * 30;
-    const y = 20 + Math.random() * 10;
-    const z = (Math.random() - 0.5) * 10 - 5;
-    const velX = (Math.random() - 0.5) * 4;
-    const velY = -15 - Math.random() * 10;
-    return [new THREE.Vector3(x, y, z), new THREE.Vector3(velX, velY, 0), Math.random() * 0.05 + 0.02];
-  }, []);
-
-  useFrame((state, delta) => {
-    if (ref.current) {
-      ref.current.position.add(velocity.clone().multiplyScalar(delta));
-      if (ref.current.position.y < -20) {
-        ref.current.position.set(
-          (Math.random() - 0.5) * 30,
-          20 + Math.random() * 10,
-          (Math.random() - 0.5) * 10 - 5
-        );
-      }
-    }
-  });
-
-  return (
-    <Sphere ref={ref} args={[size, 16, 16]} position={position}>
-      <meshStandardMaterial
-        color="hsl(var(--primary))"
-        emissive="hsl(var(--primary))"
-        emissiveIntensity={3}
-        toneMapped={false}
-      />
-    </Sphere>
-  );
-};
-
-const MeteorShower = ({ count = 30 }: { count?: number }) => {
-  return (
-    <group>
-      {Array.from({ length: count }).map((_, i) => (
-        <Meteor key={i} />
-      ))}
-    </group>
-  );
-};
-
-
 const AnimatedShape = ({ type }: { type: AnimationType }) => {
   const meshRef = useRef<THREE.Mesh>(null!);
   const groupRef = useRef<THREE.Group>(null!);
@@ -278,7 +223,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'analytics':
         return <DataFallingObjects />;
     case 'contact':
-        return <MeteorShower />;
+        return <Starfield />;
     case 'social':
         return (
             <TorusKnot ref={meshRef} args={[1.2, 0.2, 128, 16]}>
@@ -352,10 +297,8 @@ export function PageSpecific3DAnimation({ type }: { type: AnimationType }) {
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
         <AnimatedShape type={type} />
-        {type !== 'about' && type !== 'analytics' && <Particles />}
+        {type !== 'about' && type !== 'analytics' && type !== 'contact' && <Particles />}
       </Canvas>
     </div>
   );
 }
-
-    
