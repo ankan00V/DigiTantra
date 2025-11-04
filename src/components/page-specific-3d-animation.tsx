@@ -2,6 +2,7 @@
 
 import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
+import { usePathname } from 'next/navigation';
 import { Icosahedron, Sphere, Torus, TorusKnot, Box, Dodecahedron, Octahedron, Plane, Text, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -289,15 +290,32 @@ const Particles = () => {
     );
 }
 
-export function PageSpecific3DAnimation({ type }: { type: AnimationType }) {
+const animationMap: Record<string, AnimationType> = {
+    '/': 'home',
+    '/about': 'about',
+    '/features': 'features',
+    '/analytics': 'analytics',
+    '/contact': 'contact',
+    '/social': 'social',
+    '/blog': 'blog',
+};
+
+export function PageSpecific3DAnimation() {
+  const pathname = usePathname();
+  const animationType = animationMap[pathname];
+
+  if (!animationType) {
+    return null;
+  }
+
   return (
-    <div className="absolute top-0 left-0 w-full h-full z-0 opacity-20">
+    <div className="fixed top-0 left-0 w-full h-full z-0 opacity-20 pointer-events-none">
       <Canvas camera={{ position: [0, 0, 15], fov: 75 }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
-        <AnimatedShape type={type} />
-        {type !== 'about' && type !== 'analytics' && type !== 'contact' && <Particles />}
+        <AnimatedShape type={animationType} />
+        {animationType !== 'about' && animationType !== 'analytics' && animationType !== 'contact' && <Particles />}
       </Canvas>
     </div>
   );

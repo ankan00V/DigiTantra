@@ -9,6 +9,7 @@ import { ScrollProgress } from '@/components/layout/scroll-progress';
 import { PageTransitionWrapper } from '@/components/layout/page-transition-wrapper';
 import { GoogleAnalytics } from '@/components/google-analytics';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { PageSpecific3DAnimation } from '@/components/page-specific-3d-animation';
 
 const fontBody = Inter({ 
   subsets: ['latin'],
@@ -44,6 +45,7 @@ export default function RootLayout({
       <body className={cn('font-body antialiased', fontBody.variable, fontHeadline.variable)}>
         <FirebaseClientProvider>
           <PageTransitionWrapper>
+            <PageSpecific3DAnimation />
             <ScrollProgress />
             <Header />
             <main className="min-h-screen">
