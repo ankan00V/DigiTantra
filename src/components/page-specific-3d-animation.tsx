@@ -267,7 +267,11 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'about':
         return <AcademicFallingObjects />;
     case 'features':
-       return <FloatingText />;
+        return (
+            <Dodecahedron ref={meshRef} args={[1.5, 0]}>
+                {sharedMaterial}
+            </Dodecahedron>
+        )
     case 'analytics':
         return <DataFallingObjects />;
     case 'contact':
@@ -369,7 +373,7 @@ export function PageSpecific3DAnimation({ type: propType }: { type?: AnimationTy
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
         <AnimatedShape type={animationType} />
-        {animationType !== 'about' && animationType !== 'analytics' && animationType !== 'contact' && animationType !== 'features' && <Particles />}
+        {animationType !== 'about' && animationType !== 'analytics' && animationType !== 'contact' && <Particles />}
       </Canvas>
   )
 
