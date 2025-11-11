@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { ArrowUpRight, BarChart, Bot, Code, Cpu, Database, Feather, Lock, Rocket, Server, Gem, CheckCircle, Clock, Users, ChevronDown, Linkedin, Star, Quote } from "lucide-react";
 import type { Metadata } from 'next';
 import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
