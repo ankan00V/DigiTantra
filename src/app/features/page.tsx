@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { ArrowUpRight, BarChart, Bot, Code, Cpu, Database, Feather, Lock, Rocket, Server, Gem, CheckCircle, Clock, Users, ChevronDown, Linkedin, Star, Quote } from "lucide-react";
@@ -32,7 +33,7 @@ const testimonials = [
     company: "Google",
     role: "AI Engineer",
     package: "28 LPA",
-    avatar: "https://picsum.photos/seed/priya/100/100",
+    avatar: "https://media.istockphoto.com/id/1587604256/photo/portrait-lawyer-and-black-woman-with-tablet-smile-and-happy-in-office-workplace-african.jpg?s=612x612&w=0&k=20&c=n9yulMNKdIYIQC-Qns8agFj6GBDbiKyPRruaUTh4MKs=",
   },
   {
     name: "Rohan Verma",
@@ -40,7 +41,7 @@ const testimonials = [
     company: "Microsoft",
     role: "Software Engineer",
     package: "25 LPA",
-    avatar: "https://picsum.photos/seed/rohan/100/100",
+    avatar: "https://static.vecteezy.com/system/resources/thumbnails/033/129/417/small/a-business-man-stands-against-white-background-with-his-arms-crossed-ai-generative-photo.jpg",
   },
   {
     name: "Aisha Khan",
@@ -48,7 +49,7 @@ const testimonials = [
     company: "Amazon",
     role: "Data Scientist",
     package: "22 LPA",
-    avatar: "https://picsum.photos/seed/aisha/100/100",
+    avatar: "https://img.freepik.com/free-photo/medium-shot-woman-posing-indoors_23-2149915935.jpg?semt=ais_hybrid&w=740&q=80",
   },
   {
     name: "Vikram Singh",
@@ -56,7 +57,7 @@ const testimonials = [
     company: "Cisco",
     role: "Security Analyst",
     package: "18 LPA",
-    avatar: "https://picsum.photos/seed/vikram/100/100",
+    avatar: "https://www.shutterstock.com/image-photo/serious-young-ambitious-indian-businessman-260nw-2598795817.jpg",
   },
    {
     name: "Sneha Reddy",
@@ -64,7 +65,7 @@ const testimonials = [
     company: "Meta",
     role: "Machine Learning Engineer",
     package: "26 LPA",
-    avatar: "https://picsum.photos/seed/sneha/100/100",
+    avatar: "https://img.freepik.com/free-photo/confident-cheerful-young-businesswoman_1262-20881.jpg?semt=ais_hybrid&w=740&q=80",
   },
   {
     name: "Arjun Mehta",
@@ -72,7 +73,7 @@ const testimonials = [
     company: "McKinsey",
     role: "Tech Consultant",
     package: "27 LPA",
-    avatar: "https://picsum.photos/seed/arjun/100/100",
+    avatar: "https://static.vecteezy.com/system/resources/thumbnails/029/330/406/small/ai-generative-happy-business-man-in-a-suit-white-transparent-background-free-photo.jpg",
   },
   {
     name: "Naina Gupta",
@@ -80,7 +81,7 @@ const testimonials = [
     company: "Accenture",
     role: "DevOps Engineer",
     package: "19 LPA",
-    avatar: "https://picsum.photos/seed/naina/100/100",
+    avatar: "https://img.freepik.com/free-photo/brunette-business-woman-with-wavy-long-hair-blue-eyes-stands-holding-notebook-hands_197531-343.jpg?semt=ais_hybrid&w=740&q=80",
   },
   {
     name: "Karan Johar",
@@ -88,7 +89,7 @@ const testimonials = [
     company: "Netflix",
     role: "Blockchain Developer",
     package: "24 LPA",
-    avatar: "https://picsum.photos/seed/karan/100/100",
+    avatar: "https://static.vecteezy.com/system/resources/thumbnails/034/585/817/small/ai-generative-happy-business-man-in-a-suit-white-background-free-photo.jpg",
   },
   {
     name: "Anjali Rao",
@@ -96,7 +97,7 @@ const testimonials = [
     company: "TCS",
     role: "System Engineer",
     package: "16 LPA",
-    avatar: "https://picsum.photos/seed/anjali/100/100",
+    avatar: "https://static.vecteezy.com/system/resources/thumbnails/038/962/461/small/ai-generated-caucasian-successful-confident-young-businesswoman-ceo-boss-bank-employee-worker-manager-with-arms-crossed-in-formal-wear-isolated-in-white-background-photo.jpg",
   },
   {
     name: "Rajesh Kumar",
@@ -104,7 +105,7 @@ const testimonials = [
     company: "Google",
     role: "Data Analyst",
     package: "21 LPA",
-    avatar: "https://picsum.photos/seed/rajesh/100/100",
+    avatar: "https://thumbs.dreamstime.com/b/young-happy-gentleman-portrait-smiling-elegant-man-isolated-white-background-40627782.jpg",
   },
   {
     name: "Sunita Williams",
@@ -112,7 +113,7 @@ const testimonials = [
     company: "Amazon",
     role: "Cloud Architect",
     package: "23 LPA",
-    avatar: "https://picsum.photos/seed/sunita/100/100",
+    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBwgu1A5zgPSvfE83nurkuzNEoXs9DMNr8Ww&s",
   },
   {
     name: "Amitabh Singh",
@@ -120,7 +121,7 @@ const testimonials = [
     company: "Meta",
     role: "Research Scientist",
     package: "27.5 LPA",
-    avatar: "https://picsum.photos/seed/amitabh/100/100",
+    avatar: "https://thumbs.dreamstime.com/b/portrait-male-african-american-professional-possibly-business-executive-corporate-ceo-finance-attorney-lawyer-sales-stylish-155546880.jpg",
   },
   {
     name: "Deepika Patel",
@@ -128,7 +129,7 @@ const testimonials = [
     company: "Microsoft",
     role: "SDE-1",
     package: "24.5 LPA",
-    avatar: "https://picsum.photos/seed/deepika/100/100",
+    avatar: "https://cdn.myportfolio.com/34b839f6562dc845f8265e2435b68d97/93650d9a-6c6b-4851-a0fb-8710b068b769_rw_600.jpg?h=e557d75cc2421438b921845048e9e58c",
   },
   {
     name: "Ranveer Chopra",
@@ -136,7 +137,7 @@ const testimonials = [
     company: "Accenture",
     role: "Security Consultant",
     package: "20 LPA",
-    avatar: "https://picsum.photos/seed/ranveer/100/100",
+    avatar: "https://images.stockcake.com/public/1/b/2/1b233006-c7d5-4955-8499-b591153b7fd7_large/confident-business-professional-stockcake.jpg",
   },
   {
     name: "Katrina Menon",
@@ -144,7 +145,7 @@ const testimonials = [
     company: "Google",
     role: "Prompt Engineer",
     package: "26.5 LPA",
-    avatar: "https://picsum.photos/seed/katrina/100/100",
+    avatar: "https://img.freepik.com/free-photo/portrait-smiling-successful-businesswoman-looking-into-camera-sitting-restaurant-business-lady-with-stylish-hairstyle-wears-elegant-suit-business-meeting-attractive-appearance_8353-12611.jpg?semt=ais_hybrid&w=740&q=80",
   },
   {
     name: "Salman Biswas",
@@ -152,7 +153,7 @@ const testimonials = [
     company: "TCS",
     role: "Data Scientist",
     package: "17 LPA",
-    avatar: "https://picsum.photos/seed/salman/100/100",
+    avatar: "https://i.pinimg.com/736x/c7/68/ba/c768baca8eb33036c331ba4730643258.jpg",
   },
 ];
 
