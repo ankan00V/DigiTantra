@@ -74,6 +74,86 @@ const testimonials = [
     package: "27 LPA",
     avatar: "https://picsum.photos/seed/arjun/100/100",
   },
+  {
+    name: "Naina Gupta",
+    quote: "The DevOps course was fantastic. I learned so much about CI/CD pipelines and automation, which helped me get a great job at Accenture.",
+    company: "Accenture",
+    role: "DevOps Engineer",
+    package: "19 LPA",
+    avatar: "https://picsum.photos/seed/naina/100/100",
+  },
+  {
+    name: "Karan Johar",
+    quote: "I took the Web 3.0 & Blockchain course and it opened up a new world for me. Now I am working at Netflix on their emerging tech team.",
+    company: "Netflix",
+    role: "Blockchain Developer",
+    package: "24 LPA",
+    avatar: "https://picsum.photos/seed/karan/100/100",
+  },
+  {
+    name: "Anjali Rao",
+    quote: "The Full Stack Development course is worth every penny. I got placed at TCS with a great package and a promotion in the first year!",
+    company: "TCS",
+    role: "System Engineer",
+    package: "16 LPA",
+    avatar: "https://picsum.photos/seed/anjali/100/100",
+  },
+  {
+    name: "Rajesh Kumar",
+    quote: "From zero to hero in Data Science. The curriculum is perfectly structured. I’m now a Data Analyst at Google, and I couldn't be happier.",
+    company: "Google",
+    role: "Data Analyst",
+    package: "21 LPA",
+    avatar: "https://picsum.photos/seed/rajesh/100/100",
+  },
+  {
+    name: "Sunita Williams",
+    quote: "The Cloud Computing course helped me master AWS and Azure. Landed a Cloud Architect role at Amazon Web Services.",
+    company: "Amazon",
+    role: "Cloud Architect",
+    package: "23 LPA",
+    avatar: "https://picsum.photos/seed/sunita/100/100",
+  },
+  {
+    name: "Amitabh Singh",
+    quote: "The AI/ML program is incredibly detailed. The mentors guided me through complex projects, which was key to getting hired by Meta.",
+    company: "Meta",
+    role: "Research Scientist",
+    package: "27.5 LPA",
+    avatar: "https://picsum.photos/seed/amitabh/100/100",
+  },
+  {
+    name: "Deepika Patel",
+    quote: "I was new to coding, but the Full Stack course was so well-taught that I landed an SDE role at Microsoft. Highly recommended!",
+    company: "Microsoft",
+    role: "SDE-1",
+    package: "24.5 LPA",
+    avatar: "https://picsum.photos/seed/deepika/100/100",
+  },
+  {
+    name: "Ranveer Chopra",
+    quote: "The Cyber Security specialization is a must for anyone passionate about this field. I'm now a Security Consultant at Accenture, thanks to DigiTantra.",
+    company: "Accenture",
+    role: "Security Consultant",
+    package: "20 LPA",
+    avatar: "https://picsum.photos/seed/ranveer/100/100",
+  },
+  {
+    name: "Katrina Menon",
+    quote: "The Gen AI course content is cutting-edge. It helped me secure a coveted role as a Prompt Engineer at Google.",
+    company: "Google",
+    role: "Prompt Engineer",
+    package: "26.5 LPA",
+    avatar: "https://picsum.photos/seed/katrina/100/100",
+  },
+  {
+    name: "Salman Biswas",
+    quote: "The placement support for the Data Science course is phenomenal. I got placed at TCS as a Data Scientist right after completing the program.",
+    company: "TCS",
+    role: "Data Scientist",
+    package: "17 LPA",
+    avatar: "https://picsum.photos/seed/salman/100/100",
+  },
 ];
 
 
@@ -160,7 +240,7 @@ export default function FeaturesPage() {
         >
           <CarouselContent>
             {testimonials.map((testimonial, index) => (
-              <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+              <CarouselItem key={index} className="md:basis-1/2">
                 <div className="p-4">
                   <Card className="glassmorphic flex flex-col h-full">
                     <CardContent className="pt-6 flex-grow">
