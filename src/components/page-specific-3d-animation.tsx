@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRef, useMemo } from 'react';
@@ -34,6 +35,62 @@ const FallingStars = () => {
                        {material}
                     </Sphere>
                 </FallingObject>
+            ))}
+        </group>
+    );
+};
+
+const FloatingTextObject = ({ children, position, rotationSpeed }: { children: React.ReactNode; position: [number, number, number]; rotationSpeed: number }) => {
+    const ref = useRef<any>(null!);
+
+    useFrame((state, delta) => {
+        if (ref.current) {
+            ref.current.position.y += delta * 0.1; // Slowly drift upwards
+            ref.current.rotation.x += delta * rotationSpeed * 0.2;
+            ref.current.rotation.y += delta * rotationSpeed * 0.3;
+            if (ref.current.position.y > 15) {
+                ref.current.position.y = -15; // Reset to the bottom
+            }
+        }
+    });
+
+    return <group ref={ref} position={position}>{children}</group>
+};
+
+
+const FloatingText = () => {
+    const texts = useMemo(() => {
+        const items = [];
+        for (let i = 0; i < 15; i++) {
+            items.push({
+                position: [
+                    (Math.random() - 0.5) * 25,
+                    (Math.random() - 0.5) * 30,
+                    (Math.random() - 0.5) * 10 - 5,
+                ] as [number, number, number],
+                rotationSpeed: Math.random() * 0.2 + 0.1,
+            });
+        }
+        return items;
+    }, []);
+
+    return (
+        <group>
+            {texts.map((data, i) => (
+                <FloatingTextObject key={i} position={data.position} rotationSpeed={data.rotationSpeed}>
+                    <Text
+                        fontSize={1.5}
+                        color="hsl(var(--primary))"
+                        anchorX="center"
+                        anchorY="middle"
+                        font="/fonts/SpaceGrotesk-Bold.ttf"
+                        material-toneMapped={false}
+                        material-emissive="hsl(var(--primary))"
+                        material-emissiveIntensity={0.4}
+                    >
+                        DigiTantra
+                    </Text>
+                </FloatingTextObject>
             ))}
         </group>
     );
@@ -210,11 +267,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'about':
         return <AcademicFallingObjects />;
     case 'features':
-       return (
-        <Dodecahedron ref={meshRef} args={[1.5, 0]}>
-            {sharedMaterial}
-        </Dodecahedron>
-       )
+       return <FloatingText />;
     case 'analytics':
         return <DataFallingObjects />;
     case 'contact':
@@ -316,7 +369,7 @@ export function PageSpecific3DAnimation({ type: propType }: { type?: AnimationTy
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
         <AnimatedShape type={animationType} />
-        {animationType !== 'about' && animationType !== 'analytics' && animationType !== 'contact' && <Particles />}
+        {animationType !== 'about' && animationType !== 'analytics' && animationType !== 'contact' && animationType !== 'features' && <Particles />}
       </Canvas>
   )
 
