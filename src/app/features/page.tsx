@@ -1,12 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUpRight, BarChart, Bot, Code, Cpu, Database, Feather, Lock, Rocket, Server, Gem, CheckCircle, Clock, Users, ChevronDown, Linkedin } from "lucide-react";
+import { ArrowUpRight, BarChart, Bot, Code, Cpu, Database, Feather, Lock, Rocket, Server, Gem, CheckCircle, Clock, Users, ChevronDown, Linkedin, Star, Quote } from "lucide-react";
 import type { Metadata } from 'next';
 import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 export const metadata: Metadata = {
   title: 'Courses & Pricing | DigiTantra',
@@ -23,6 +24,58 @@ const courses = [
   { name: 'Web 3.0 & Blockchain', icon: <Gem />, description: 'Explore the future of the decentralized internet.', price: '₹54,999', timeline: '20 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'dApp Development'], url: 'https://www.coursera.org/learn/web3-blockchain-fundamentals' },
   { name: 'DevOps Engineering', icon: <Rocket />, description: 'Automate and streamline your development pipelines.', price: '₹47,999', timeline: '15 Weeks', features: ['24/7 Mentor Support', 'AI Chatbot Access', 'CI/CD Pipelines'], url: 'https://www.lpu.in/b-tech-cse-cloud-computing-and-devOps-automation/' },
 ];
+
+const testimonials = [
+  {
+    name: "Priya Sharma",
+    quote: "The Gen AI course was a game-changer! The hands-on projects gave me the confidence to crack interviews at top companies.",
+    company: "Google",
+    role: "AI Engineer",
+    package: "28 LPA",
+    avatar: "https://picsum.photos/seed/priya/100/100",
+  },
+  {
+    name: "Rohan Verma",
+    quote: "DigiTantra's Full Stack course is incredibly comprehensive. I went from knowing basic HTML to building complex applications and landed my dream job at Microsoft.",
+    company: "Microsoft",
+    role: "Software Engineer",
+    package: "25 LPA",
+    avatar: "https://picsum.photos/seed/rohan/100/100",
+  },
+  {
+    name: "Aisha Khan",
+    quote: "The Data Science program is top-notch. The mentors are industry experts who provide invaluable guidance. I'm now working at Amazon, and it's all thanks to DigiTantra.",
+    company: "Amazon",
+    role: "Data Scientist",
+    package: "22 LPA",
+    avatar: "https://picsum.photos/seed/aisha/100/100",
+  },
+  {
+    name: "Vikram Singh",
+    quote: "I highly recommend the Cyber Security course. The ethical hacking labs were the best part, and they prepared me for my role at Cisco.",
+    company: "Cisco",
+    role: "Security Analyst",
+    package: "18 LPA",
+    avatar: "https://picsum.photos/seed/vikram/100/100",
+  },
+   {
+    name: "Sneha Reddy",
+    quote: "The blend of theory and practical projects in the AI/ML course is perfect. I felt fully prepared for my technical interviews and secured a position at Meta.",
+    company: "Meta",
+    role: "Machine Learning Engineer",
+    package: "26 LPA",
+    avatar: "https://picsum.photos/seed/sneha/100/100",
+  },
+  {
+    name: "Arjun Mehta",
+    quote: "The consulting case studies in the curriculum were amazing. They helped me land a Tech Consultant role at McKinsey right after the course.",
+    company: "McKinsey",
+    role: "Tech Consultant",
+    package: "27 LPA",
+    avatar: "https://picsum.photos/seed/arjun/100/100",
+  },
+];
+
 
 export default function FeaturesPage() {
   return (
@@ -89,6 +142,56 @@ export default function FeaturesPage() {
             </AccordionItem>
           ))}
         </Accordion>
+      </div>
+
+       <div className="main-container relative z-10">
+        <div className="text-center">
+          <h2 className="font-headline text-4xl md:text-5xl font-bold tracking-tighter">
+            Success <span className="text-glow-primary text-primary">Stories</span>
+          </h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
+            Hear from our alumni who have landed their dream jobs in top tech companies.
+          </p>
+        </div>
+
+        <Carousel
+          opts={{ align: "start", loop: true }}
+          className="w-full max-w-6xl mx-auto mt-16"
+        >
+          <CarouselContent>
+            {testimonials.map((testimonial, index) => (
+              <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-4">
+                  <Card className="glassmorphic flex flex-col h-full">
+                    <CardContent className="pt-6 flex-grow">
+                      <Quote className="h-8 w-8 text-primary/50 mb-4" />
+                      <p className="text-muted-foreground italic">"{testimonial.quote}"</p>
+                    </CardContent>
+                    <CardFooter className="flex flex-col items-start p-6 bg-muted/30">
+                        <div className="flex items-center w-full">
+                             <Avatar className="h-12 w-12 mr-4 border-2 border-primary">
+                                <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                                <AvatarFallback>{testimonial.name.substring(0,2)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="font-bold text-lg">{testimonial.name}</p>
+                                <p className="text-sm text-muted-foreground">{testimonial.role} at <span className="font-semibold text-primary">{testimonial.company}</span></p>
+                            </div>
+                        </div>
+                        <div className="w-full text-right mt-4">
+                            <Badge variant="secondary" className="text-lg">
+                                {testimonial.package}
+                            </Badge>
+                        </div>
+                    </CardFooter>
+                  </Card>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="-left-4 md:-left-12" />
+          <CarouselNext className="-right-4 md:-right-12" />
+        </Carousel>
       </div>
     </div>
   );
