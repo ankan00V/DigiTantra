@@ -120,7 +120,7 @@ const AcademicFallingObjects = () => {
         const motivationalWords = ['Learn', 'Grow', 'Imagine', 'Create', 'Innovate', 'Succeed', 'Inspire', 'Dream'];
         const objectTypes = ['word', 'book', 'pen'];
         
-        for (let i = 0; i < 40; i++) { // Reduced object count for cleaner look
+        for (let i = 0; i < 30; i++) {
             const type = objectTypes[Math.floor(Math.random() * objectTypes.length)];
             items.push({
                 type: type,
@@ -145,7 +145,7 @@ const AcademicFallingObjects = () => {
                 <FallingObject key={i} position={data.position}>
                     {data.type === 'word' && (
                         <Text
-                            fontSize={0.8 + Math.random() * 0.5} // Made words smaller
+                            fontSize={0.6 + Math.random() * 0.3}
                             color="hsl(var(--primary))"
                             anchorX="center"
                             anchorY="middle"
@@ -156,12 +156,12 @@ const AcademicFallingObjects = () => {
                         </Text>
                     )}
                     {data.type === 'book' && (
-                        <Box args={[1.2, 1.6, 0.2]}>
+                         <Box args={[0.8, 1.1, 0.15]}>
                            {bookMaterial}
                         </Box>
                     )}
                     {data.type === 'pen' && (
-                        <Cylinder args={[0.05, 0.05, 1.5, 8]}>
+                        <Cylinder args={[0.04, 0.04, 1.2, 8]}>
                            {penMaterial}
                         </Cylinder>
                     )}
@@ -236,7 +236,12 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'features':
         return <FloatingText />;
     case 'analytics':
-        return <FallingStars />;
+        return (
+            <>
+                <FallingStars />
+                <FloatingText />
+            </>
+        )
     case 'contact':
         return <FallingStars />;
     case 'social':
