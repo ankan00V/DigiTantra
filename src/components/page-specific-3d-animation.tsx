@@ -118,9 +118,9 @@ const AcademicFallingObjects = () => {
     const objects = useMemo(() => {
         const items = [];
         const motivationalWords = ['Learn', 'Grow', 'Imagine', 'Create', 'Innovate', 'Succeed', 'Inspire', 'Dream'];
-        const objectTypes = ['word', 'book', 'pen'];
+        const objectTypes = ['word']; // Only generate words
         
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 70; i++) { // Increased number of objects
             const type = objectTypes[Math.floor(Math.random() * objectTypes.length)];
             items.push({
                 type: type,
@@ -145,7 +145,7 @@ const AcademicFallingObjects = () => {
                 <FallingObject key={i} position={data.position}>
                     {data.type === 'word' && (
                         <Text
-                            fontSize={0.25 + Math.random() * 0.15}
+                            fontSize={0.2 + Math.random() * 0.1}
                             color="hsl(var(--primary))"
                             anchorX="center"
                             anchorY="middle"
@@ -156,12 +156,12 @@ const AcademicFallingObjects = () => {
                         </Text>
                     )}
                     {data.type === 'book' && (
-                         <Box args={[0.4, 0.55, 0.07]}>
+                         <Box args={[0.3, 0.45, 0.05]}>
                            {bookMaterial}
                         </Box>
                     )}
                     {data.type === 'pen' && (
-                        <Cylinder args={[0.02, 0.02, 0.7, 8]}>
+                        <Cylinder args={[0.015, 0.015, 0.6, 8]}>
                            {penMaterial}
                         </Cylinder>
                     )}
