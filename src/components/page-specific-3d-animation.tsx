@@ -117,7 +117,7 @@ const DataFallingObjects = () => {
     const objects = useMemo(() => {
         const items = [];
         const objectTypes = [Icosahedron, Sphere, Box, Octahedron, TorusKnot];
-        for (let i = 0; i < 70; i++) {
+        for (let i = 0; i < 30; i++) {
             items.push({
                 type: objectTypes[Math.floor(Math.random() * objectTypes.length)],
                 position: [
@@ -273,11 +273,7 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
             </Dodecahedron>
         )
     case 'analytics':
-        return (
-            <TorusKnot ref={meshRef} args={[5, 0.3, 300, 20]} scale={0.5}>
-                <meshStandardMaterial color="hsl(var(--chart-2))" wireframe emissive="hsl(var(--chart-2))" emissiveIntensity={0.4} />
-            </TorusKnot>
-        );
+        return <DataFallingObjects />;
     case 'contact':
         return <FallingStars />;
     case 'social':
