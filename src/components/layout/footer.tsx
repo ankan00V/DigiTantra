@@ -1,10 +1,35 @@
+'use client';
+
 import Link from 'next/link';
 import { Facebook, Instagram, Twitter, Send, Linkedin } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
 
 export function Footer() {
+  const { toast } = useToast();
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim() === '' || !/^\S+@\S+\.\S+$/.test(email)) {
+        toast({
+            variant: 'destructive',
+            title: 'Invalid Email',
+            description: 'Please enter a valid email address.',
+        });
+        return;
+    }
+
+    toast({
+        title: 'Subscription Successful!',
+        description: 'Our team will connect with you soon.',
+    });
+    setEmail('');
+  };
+
   return (
     <footer className="border-t border-white/5 bg-background relative z-10">
       <div className="container mx-auto px-4 py-16">
@@ -46,12 +71,18 @@ export function Footer() {
             <p className="mt-4 text-sm text-muted-foreground">
               Subscribe to our newsletter for the latest updates on courses and tech insights.
             </p>
-            <div className="mt-4 flex w-full max-w-sm">
-              <Input type="email" placeholder="Your email address" className="rounded-r-none" />
+            <form onSubmit={handleSubmit} className="mt-4 flex w-full max-w-sm">
+              <Input 
+                type="email" 
+                placeholder="Your email address" 
+                className="rounded-r-none" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
               <Button type="submit" size="icon" className="rounded-l-none">
                 <Send className="h-4 w-4" />
               </Button>
-            </div>
+            </form>
             <div className="flex space-x-4 mt-6">
                <a href="https://www.facebook.com/LPUUniversity/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Facebook /></a>
                <a href="https://www.instagram.com/ft.ankannnn/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Instagram /></a>
