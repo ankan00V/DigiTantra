@@ -113,39 +113,6 @@ const FallingObject = ({ children, position }: { children: React.ReactNode; posi
     return <group ref={ref} position={position}>{children}</group>
 };
 
-const DataFallingObjects = () => {
-    const objects = useMemo(() => {
-        const items = [];
-        const objectTypes = [Icosahedron, Sphere, Box, Octahedron, TorusKnot];
-        for (let i = 0; i < 30; i++) {
-            items.push({
-                type: objectTypes[Math.floor(Math.random() * objectTypes.length)],
-                position: [
-                    (Math.random() - 0.5) * 50,
-                    (Math.random() - 0.5) * 50,
-                    (Math.random() - 0.5) * 20 - 5,
-                ] as [number, number, number],
-                scale: Math.random() * 0.2 + 0.1,
-            });
-        }
-        return items;
-    }, []);
-
-    const material = <meshStandardMaterial color="hsl(var(--chart-2))" wireframe emissive="hsl(var(--chart-2))" emissiveIntensity={0.4} />;
-
-    return (
-        <group>
-            {objects.map((data, i) => (
-                <FallingObject key={i} position={data.position}>
-                    <data.type args={[data.scale * 4]}>
-                       {material}
-                    </data.type>
-                </FallingObject>
-            ))}
-        </group>
-    );
-};
-
 
 const AcademicFallingObjects = () => {
     const objects = useMemo(() => {
@@ -153,7 +120,7 @@ const AcademicFallingObjects = () => {
         const motivationalWords = ['Learn', 'Grow', 'Imagine', 'Create', 'Innovate', 'Succeed', 'Inspire', 'Dream'];
         const objectTypes = ['word', 'book', 'pen'];
         
-        for (let i = 0; i < 70; i++) { // Increased object count for variety
+        for (let i = 0; i < 40; i++) { // Reduced object count for cleaner look
             const type = objectTypes[Math.floor(Math.random() * objectTypes.length)];
             items.push({
                 type: type,
@@ -267,13 +234,9 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'about':
         return <AcademicFallingObjects />;
     case 'features':
-        return (
-            <Dodecahedron ref={meshRef} args={[1.5, 0]}>
-                {sharedMaterial}
-            </Dodecahedron>
-        )
+        return <FloatingText />;
     case 'analytics':
-        return <DataFallingObjects />;
+        return <FallingStars />;
     case 'contact':
         return <FallingStars />;
     case 'social':
@@ -373,7 +336,7 @@ export function PageSpecific3DAnimation({ type: propType }: { type?: AnimationTy
         <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
         <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
         <AnimatedShape type={animationType} />
-        {animationType !== 'about' && animationType !== 'analytics' && animationType !== 'contact' && <Particles />}
+        <Particles />
       </Canvas>
   )
 
