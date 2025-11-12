@@ -145,7 +145,7 @@ const AcademicFallingObjects = () => {
                 <FallingObject key={i} position={data.position}>
                     {data.type === 'word' && (
                         <Text
-                            fontSize={0.6 + Math.random() * 0.3}
+                            fontSize={0.25 + Math.random() * 0.15}
                             color="hsl(var(--primary))"
                             anchorX="center"
                             anchorY="middle"
@@ -156,12 +156,12 @@ const AcademicFallingObjects = () => {
                         </Text>
                     )}
                     {data.type === 'book' && (
-                         <Box args={[0.8, 1.1, 0.15]}>
+                         <Box args={[0.4, 0.55, 0.07]}>
                            {bookMaterial}
                         </Box>
                     )}
                     {data.type === 'pen' && (
-                        <Cylinder args={[0.04, 0.04, 1.2, 8]}>
+                        <Cylinder args={[0.02, 0.02, 0.7, 8]}>
                            {penMaterial}
                         </Cylinder>
                     )}
