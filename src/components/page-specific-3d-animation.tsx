@@ -273,7 +273,11 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
             </Dodecahedron>
         )
     case 'analytics':
-        return <DataFallingObjects />;
+        return (
+            <TorusKnot ref={meshRef} args={[5, 0.3, 300, 20]} scale={0.5}>
+                <meshStandardMaterial color="hsl(var(--chart-2))" wireframe emissive="hsl(var(--chart-2))" emissiveIntensity={0.4} />
+            </TorusKnot>
+        );
     case 'contact':
         return <FallingStars />;
     case 'social':
