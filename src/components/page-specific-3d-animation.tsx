@@ -234,14 +234,9 @@ const AnimatedShape = ({ type }: { type: AnimationType }) => {
     case 'about':
         return <AcademicFallingObjects />;
     case 'features':
-        return <FloatingText />;
+        return <FallingStars />;
     case 'analytics':
-        return (
-            <>
-                <FallingStars />
-                <FloatingText />
-            </>
-        )
+        return <FallingStars />;
     case 'contact':
         return <FallingStars />;
     case 'social':
