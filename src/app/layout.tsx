@@ -47,6 +47,7 @@ export default function RootLayout({
         <FirebaseClientProvider>
           <LayoutContent>{children}</LayoutContent>
         </FirebaseClientProvider>
+        <script src="//code.tidio.co/wnu0vx9jg4hiyxyqwbzrurd52lv40vqv.js" async></script>
       </body>
     </html>
   );
