@@ -1,7 +1,9 @@
-import { Target, Goal, Brush, Star, Heart, Award } from "lucide-react";
+import { Target, Goal, Brush, Star, Heart, Award, Wand2, ArrowRight } from "lucide-react";
 import type { Metadata } from 'next';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { PageSpecific3DAnimation } from "@/components/page-specific-3d-animation";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: 'About | DigiTantra',
@@ -67,6 +69,29 @@ export default function AboutPage() {
                         </CardContent>
                     </Card>
                 ))}
+            </div>
+
+            <div className="mt-24 text-center">
+                <Card className="glassmorphic inline-block transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/50">
+                    <CardHeader>
+                        <div className="flex justify-center">
+                            <Wand2 className="h-10 w-10 text-primary text-glow-primary" />
+                        </div>
+                        <CardTitle className="font-headline text-3xl mt-4">
+                            Explore our <span className="text-glow-primary text-primary">AI Blog Generator</span>
+                        </CardTitle>
+                        <CardDescription className="max-w-xl mx-auto text-lg text-muted-foreground">
+                            Curious about the power of AI in content creation? Visit our blog and generate your own unique articles in seconds.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardFooter className="flex justify-center">
+                        <Button asChild size="lg" className="font-semibold">
+                            <Link href="/blog">
+                                Try it Now <ArrowRight className="ml-2 h-5 w-5" />
+                            </Link>
+                        </Button>
+                    </CardFooter>
+                </Card>
             </div>
         </div>
     </div>
