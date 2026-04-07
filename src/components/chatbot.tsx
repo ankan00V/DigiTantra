@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, Suspense, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -8,9 +8,6 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Bot, Loader2, Send, User, Sparkles } from 'lucide-react';
 import type { Message } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Icosahedron, TorusKnot } from '@react-three/drei';
-import * as THREE from 'three';
 
 type ChatbotProps = {
   className?: string;
@@ -20,55 +17,6 @@ type ChatbotProps = {
   title?: string;
   welcomeMessage?: string;
 };
-
-const Chatbot3DElement = ({ isLoading }: { isLoading: boolean }) => {
-    const groupRef = useRef<THREE.Group>(null!);
-    const icosahedronRef = useRef<THREE.Mesh>(null!);
-    const torusKnotRef = useRef<THREE.Mesh>(null!);
-    
-    useFrame((state, delta) => {
-        if (groupRef.current) {
-            const time = state.clock.getElapsedTime();
-            groupRef.current.rotation.y += delta * 0.1;
-            
-            if (icosahedronRef.current) {
-                icosahedronRef.current.rotation.x += delta * 0.2;
-                icosahedronRef.current.rotation.z += delta * 0.2;
-                 if (icosahedronRef.current.material instanceof THREE.MeshStandardMaterial) {
-                    const targetIntensity = isLoading ? 1.5 + Math.sin(time * 5) * 0.5 : 0.6;
-                    icosahedronRef.current.material.emissiveIntensity = THREE.MathUtils.lerp(icosahedronRef.current.material.emissiveIntensity, targetIntensity, 0.1);
-                 }
-            }
-
-            if (torusKnotRef.current) {
-                torusKnotRef.current.rotation.y += delta * 0.5;
-            }
-        }
-    });
-
-    return (
-        <group ref={groupRef}>
-             <Icosahedron ref={icosahedronRef} args={[0.8, 1]}>
-                <meshStandardMaterial 
-                    color="purple" 
-                    wireframe 
-                    emissive="purple" 
-                    emissiveIntensity={0.6}
-                    transparent
-                    opacity={0.8}
-                />
-            </Icosahedron>
-            <TorusKnot ref={torusKnotRef} args={[1.2, 0.02, 1000, 16]}>
-                 <meshStandardMaterial 
-                    color="hsl(var(--primary))"
-                    emissive="hsl(var(--primary))"
-                    emissiveIntensity={0.2}
-                 />
-            </TorusKnot>
-        </group>
-    )
-};
-
 
 export function Chatbot({
   className,
@@ -147,13 +95,14 @@ export function Chatbot({
         </div>
         <div className="flex items-center gap-2">
           <div className='h-12 w-16 sm:h-14 sm:w-20'>
-              <Suspense fallback={<Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}>
-                  <Canvas camera={{ position: [0, 0, 4], fov: 50 }}>
-                      <ambientLight intensity={0.5} />
-                      <pointLight position={[5,5,5]} intensity={1} color="hsl(var(--primary))" />
-                      <Chatbot3DElement isLoading={isLoading} />
-                  </Canvas>
-              </Suspense>
+              <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-[radial-gradient(circle_at_center,rgba(126,87,255,0.28),transparent_60%)]">
+                <div className={cn(
+                  'absolute h-8 w-8 rounded-full border border-primary/35 bg-primary/10 blur-[1px]',
+                  isLoading ? 'animate-spin' : 'animate-pulse'
+                )} />
+                <div className="absolute h-11 w-11 rounded-full border border-secondary/25" />
+                <Sparkles className={cn('relative z-10 h-5 w-5 text-primary', isLoading && 'animate-pulse')} />
+              </div>
           </div>
           {onClose ? (
             <Button

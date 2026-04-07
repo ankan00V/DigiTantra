@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle, Code, Cpu, Database, Feather, LineChart, Lock,
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { HomeSplineBackground } from '@/components/home-spline-background';
 
 const courses = [
   { name: 'Gen AI', icon: <Feather /> },
@@ -22,29 +23,40 @@ const kpis = [
 export default function Home() {
   return (
     <div className="relative overflow-hidden">
-      <div className="main-container flex min-h-[72svh] flex-col items-center justify-center pt-24 text-center sm:min-h-[78svh] sm:pt-28">
-        <div className="relative z-10 mx-auto max-w-5xl">
-          <h1 className="font-headline text-4xl font-bold leading-[0.95] tracking-tighter sm:text-6xl lg:text-8xl">
-            <span className="block bg-clip-text text-transparent bg-gradient-to-br from-white to-neutral-400">The Future of</span>
-            <span className="block text-glow-primary text-primary mt-2">Tech Education</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            Master the most in-demand skills with our project-based courses, designed by industry experts for aspiring tech leaders.
-          </p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
-            <Button asChild size="lg" className="h-12 font-semibold text-base sm:text-lg">
-              <Link href="/features">
-                Explore Courses & Pricing <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="h-12 font-semibold text-base sm:text-lg">
-              <Link href="/contact">Get Started</Link>
-            </Button>
+      <section className="relative min-h-[100svh] overflow-hidden">
+        <HomeSplineBackground />
+        <div className="main-container relative z-10 flex min-h-[100svh] flex-col items-center justify-center pt-24 text-center sm:pt-28">
+          <div className="mx-auto max-w-5xl px-6 sm:px-10">
+            <div className="mx-auto mb-5 inline-flex items-center rounded-full border border-white/15 bg-black/20 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.28em] text-white/92 shadow-[0_10px_30px_rgba(0,0,0,0.3)] backdrop-blur-md">
+              AI-first learning platform
+            </div>
+            <h1 className="font-headline text-4xl font-bold leading-[0.95] tracking-tighter sm:text-6xl lg:text-8xl">
+              <span className="block bg-gradient-to-br from-white via-violet-100 to-fuchsia-100 bg-clip-text text-transparent drop-shadow-[0_18px_46px_rgba(0,0,0,0.52)]">
+                The Future of
+              </span>
+              <span className="mt-2 block bg-gradient-to-b from-[#2a1459] via-[#3f1f86] to-[#5b2cc0] bg-clip-text text-transparent [-webkit-text-stroke:1.5px_rgba(232,221,255,0.92)] [text-shadow:0_0_18px_rgba(176,132,255,0.36),0_12px_28px_rgba(0,0,0,0.34)]">
+                Tech Education
+              </span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-base font-medium text-white/95 [text-shadow:0_10px_26px_rgba(0,0,0,0.58)] sm:text-lg">
+              Master the most in-demand skills with our project-based courses, designed by
+              industry experts for aspiring tech leaders.
+            </p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
+              <Button asChild size="lg" className="h-12 border border-[#eadcff]/70 bg-gradient-to-b from-[#3a1d79] via-[#5a2cc0] to-[#7644eb] font-semibold text-base text-white shadow-[0_16px_36px_rgba(120,76,255,0.34),inset_0_0_0_1px_rgba(255,255,255,0.14)] hover:from-[#43218a] hover:via-[#6433d3] hover:to-[#8756f2] sm:text-lg">
+                <Link href="/features">
+                  Explore Courses & Pricing <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="h-12 border-white/20 bg-black/25 font-semibold text-base text-white shadow-[0_16px_36px_rgba(0,0,0,0.24)] backdrop-blur-md hover:bg-black/35 sm:text-lg">
+                <Link href="/contact">Get Started</Link>
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
       
-      <section className="relative z-10 py-16 sm:py-20">
+      <section className="relative z-10 bg-background py-16 sm:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12 text-center sm:mb-16">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Trending Courses</h2>

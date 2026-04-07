@@ -1,16 +1,19 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
   /* config options here */
   experimental: {
     serverActions: {
       allowedOrigins: ['*.slim.show'],
     },
-    serverComponentsExternalPackages: [
-      '@opentelemetry/instrumentation',
-      '@opentelemetry/instrumentation-http',
-      'require-in-the-middle',
-    ],
   },
+  serverExternalPackages: [
+    '@opentelemetry/instrumentation',
+    '@opentelemetry/instrumentation-http',
+    'require-in-the-middle',
+  ],
+  outputFileTracingRoot: path.join(__dirname),
   typescript: {
     ignoreBuildErrors: true,
   },

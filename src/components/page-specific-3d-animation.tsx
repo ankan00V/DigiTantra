@@ -1,404 +1,89 @@
-
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
 import { usePathname } from 'next/navigation';
-import { Icosahedron, Sphere, Torus, TorusKnot, Box, Dodecahedron, Octahedron, Plane, Text, Cylinder } from '@react-three/drei';
-import * as THREE from 'three';
 
 type AnimationType = 'home' | 'about' | 'features' | 'analytics' | 'contact' | 'social' | 'blog' | 'auth';
 
-const FallingStars = () => {
-    const objects = useMemo(() => {
-        const items = [];
-        for (let i = 0; i < 40; i++) {
-            items.push({
-                position: [
-                    (Math.random() - 0.5) * 50,
-                    (Math.random() - 0.5) * 50,
-                    (Math.random() - 0.5) * 20 - 5,
-                ] as [number, number, number],
-                scale: Math.random() * 0.15 + 0.05,
-            });
-        }
-        return items;
-    }, []);
-
-    const material = <meshStandardMaterial color="hsl(var(--primary))" emissive="hsl(var(--primary))" emissiveIntensity={0.8} roughness={0.2} />;
-
-    return (
-        <group>
-            {objects.map((data, i) => (
-                <FallingObject key={i} position={data.position}>
-                    <Sphere args={[data.scale]}>
-                       {material}
-                    </Sphere>
-                </FallingObject>
-            ))}
-        </group>
-    );
-};
-
-const FloatingTextObject = ({ children, position, rotationSpeed }: { children: React.ReactNode; position: [number, number, number]; rotationSpeed: number }) => {
-    const ref = useRef<any>(null!);
-
-    useFrame((state, delta) => {
-        if (ref.current) {
-            ref.current.position.y += delta * 0.1; // Slowly drift upwards
-            ref.current.rotation.x += delta * rotationSpeed * 0.2;
-            ref.current.rotation.y += delta * rotationSpeed * 0.3;
-            if (ref.current.position.y > 15) {
-                ref.current.position.y = -15; // Reset to the bottom
-            }
-        }
-    });
-
-    return <group ref={ref} position={position}>{children}</group>
-};
-
-
-const FloatingText = () => {
-    const texts = useMemo(() => {
-        const items = [];
-        for (let i = 0; i < 8; i++) {
-            items.push({
-                position: [
-                    (Math.random() - 0.5) * 25,
-                    (Math.random() - 0.5) * 30,
-                    (Math.random() - 0.5) * 10 - 5,
-                ] as [number, number, number],
-                rotationSpeed: Math.random() * 0.2 + 0.1,
-            });
-        }
-        return items;
-    }, []);
-
-    return (
-        <group>
-            {texts.map((data, i) => (
-                <FloatingTextObject key={i} position={data.position} rotationSpeed={data.rotationSpeed}>
-                    <Text
-                        fontSize={1.5}
-                        color="hsl(var(--primary))"
-                        anchorX="center"
-                        anchorY="middle"
-                        font="/fonts/SpaceGrotesk-Bold.ttf"
-                        material-toneMapped={false}
-                        material-emissive="hsl(var(--primary))"
-                        material-emissiveIntensity={0.4}
-                    >
-                        DigiTantra
-                    </Text>
-                </FloatingTextObject>
-            ))}
-        </group>
-    );
-};
-
-const FallingObject = ({ children, position }: { children: React.ReactNode; position: [number, number, number] }) => {
-    const ref = useRef<any>(null!);
-
-    useFrame((state, delta) => {
-        if (ref.current) {
-            ref.current.position.y -= delta * (0.5 + Math.random() * 0.5);
-            ref.current.rotation.x += delta * 0.2;
-            ref.current.rotation.y += delta * 0.1;
-            if (ref.current.position.y < -25) {
-                ref.current.position.y = 25;
-            }
-        }
-    });
-
-    return <group ref={ref} position={position}>{children}</group>
-};
-
-
-const AcademicFallingObjects = () => {
-    const objects = useMemo(() => {
-        const items = [];
-        const motivationalWords = ['Learn', 'Grow', 'Imagine', 'Create', 'Innovate', 'Succeed', 'Inspire', 'Dream'];
-        const objectTypes = ['word']; // Only generate words
-        
-        for (let i = 0; i < 28; i++) {
-            const type = objectTypes[Math.floor(Math.random() * objectTypes.length)];
-            items.push({
-                type: type,
-                content: type === 'word' ? motivationalWords[Math.floor(Math.random() * motivationalWords.length)] : '',
-                position: [
-                    (Math.random() - 0.5) * 50,
-                    (Math.random() - 0.5) * 50,
-                    (Math.random() - 0.5) * 20 - 5,
-                ] as [number, number, number],
-            });
-        }
-
-        return items;
-    }, []);
-
-    const bookMaterial = <meshStandardMaterial color="hsl(var(--primary))" roughness={0.6} />;
-    const penMaterial = <meshStandardMaterial color="hsl(var(--secondary))" metalness={0.5} roughness={0.4} />;
-
-    return (
-        <group>
-            {objects.map((data, i) => (
-                <FallingObject key={i} position={data.position}>
-                    {data.type === 'word' && (
-                        <Text
-                            fontSize={0.2 + Math.random() * 0.1}
-                            color="hsl(var(--primary))"
-                            anchorX="center"
-                            anchorY="middle"
-                            font="/fonts/SpaceGrotesk-Bold.ttf"
-                            material-toneMapped={false}
-                        >
-                            {data.content}
-                        </Text>
-                    )}
-                    {data.type === 'book' && (
-                         <Box args={[0.3, 0.45, 0.05]}>
-                           {bookMaterial}
-                        </Box>
-                    )}
-                    {data.type === 'pen' && (
-                        <Cylinder args={[0.015, 0.015, 0.6, 8]}>
-                           {penMaterial}
-                        </Cylinder>
-                    )}
-                </FallingObject>
-            ))}
-        </group>
-    );
-};
-
-const AnimatedShape = ({ type }: { type: AnimationType }) => {
-  const meshRef = useRef<THREE.Mesh>(null!);
-  const groupRef = useRef<THREE.Group>(null!);
-
-  useFrame((state, delta) => {
-    const time = state.clock.getElapsedTime();
-    if (groupRef.current) {
-        groupRef.current.rotation.y += delta * 0.1;
-    }
-    if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.2;
-      meshRef.current.rotation.x += delta * 0.2;
-      if (type === 'home' && meshRef.current.material instanceof THREE.ShaderMaterial) {
-        meshRef.current.material.uniforms.uTime.value = time;
-      }
-    }
-  });
-
-  const sharedMaterial = <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.5} />;
-  
-  const homeVertexShader = `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `;
-
-  const homeFragmentShader = `
-    uniform float uTime;
-    varying vec2 vUv;
-    void main() {
-      vec2 uv = vUv;
-      float cb = floor(uv.x * 20.) + floor(uv.y * 20.);
-      vec3 color = vec3(mod(cb, 2.0));
-      float strength = (sin(uTime * 2.0 + uv.x * 10.0) + cos(uTime * 1.5 + uv.y * 10.0)) * 0.1 + 0.9;
-      color = mix(vec3(0.0), vec3(0.8, 0.3, 1.0) * strength, color.r);
-      gl_FragColor = vec4(color, 1.0);
-    }
-  `;
-
-  const homeMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      uTime: { value: 0 },
-    },
-    vertexShader: homeVertexShader,
-    fragmentShader: homeFragmentShader,
-    side: THREE.DoubleSide
-  });
-
-  switch (type) {
-    case 'home':
-        return (
-            <group ref={groupRef} scale={1.8}>
-                <Plane ref={meshRef} args={[15, 15, 128, 128]} material={homeMaterial} rotation-x={-Math.PI * 0.2} position={[0, -1, 0]}/>
-                 <TorusKnot args={[4, 0.4, 400, 44]} position={[0,0.5,0]}>
-                    <meshStandardMaterial color="hsl(var(--primary))" wireframe emissive="hsl(var(--primary))" emissiveIntensity={0.7} />
-                </TorusKnot>
-            </group>
-        )
-    case 'about':
-        return <AcademicFallingObjects />;
-    case 'features':
-        return <FallingStars />;
-    case 'analytics':
-        return <FallingStars />;
-    case 'contact':
-        return <FallingStars />;
-    case 'social':
-        return (
-            <TorusKnot ref={meshRef} args={[1.2, 0.2, 128, 16]}>
-                {sharedMaterial}
-            </TorusKnot>
-        )
-    case 'blog':
-        return (
-            <Sphere ref={meshRef} args={[1.4, 32, 32]}>
-                {sharedMaterial}
-            </Sphere>
-        )
-    case 'auth':
-        return (
-            <Octahedron ref={meshRef} args={[1.5, 0]}>
-                {sharedMaterial}
-            </Octahedron>
-        )
-    default:
-      return (
-        <Icosahedron ref={meshRef} args={[1.5, 0]}>
-          {sharedMaterial}
-        </Icosahedron>
-      );
-  }
-};
-
-const Particles = () => {
-    const count = 1200;
-    const meshRef = useRef<THREE.Points>(null!);
-    
-    const particles = useMemo(() => {
-        const temp = [];
-        for (let i = 0; i < count; i++) {
-            const x = (Math.random() - 0.5) * 30;
-            const y = (Math.random() - 0.5) * 30;
-            const z = (Math.random() - 0.5) * 30;
-            temp.push({ x, y, z });
-        }
-        return temp;
-    }, [count]);
-    
-    const dummy = useMemo(() => new THREE.Object3D(), []);
-
-    useFrame((state) => {
-        const time = state.clock.getElapsedTime();
-        particles.forEach((particle, i) => {
-            const { x, y, z } = particle;
-            dummy.position.set(
-                x + Math.sin(time * 0.1 + i) * 0.5,
-                y + Math.cos(time * 0.1 + i) * 0.5,
-                z
-            );
-            dummy.updateMatrix();
-            if(meshRef.current) {
-                (meshRef.current as any).setMatrixAt(i, dummy.matrix);
-            }
-        });
-        if(meshRef.current) {
-             (meshRef.current as any).instanceMatrix.needsUpdate = true;
-        }
-    });
-
-    return (
-        <instancedMesh ref={meshRef as any} args={[undefined as any, undefined as any, count]}>
-            <sphereGeometry args={[0.01, 8, 8]} />
-            <meshStandardMaterial color="hsl(var(--foreground))" emissive="hsl(var(--foreground))" emissiveIntensity={0.2} roughness={0.9} />
-        </instancedMesh>
-    );
-}
-
 const animationMap: Record<string, AnimationType> = {
-    '/': 'home',
-    '/about': 'about',
-    '/social': 'social',
-    '/blog': 'blog',
-    '/signup': 'auth',
-    '/login': 'auth',
+  '/': 'home',
+  '/about': 'about',
+  '/social': 'social',
+  '/blog': 'blog',
+  '/signup': 'auth',
+  '/login': 'auth',
 };
 
 const pageSpecificAnimations: Record<string, AnimationType> = {
-    '/contact': 'contact',
-    '/features': 'contact',
-    '/analytics': 'contact',
-    '/ai-enclave': 'contact',
+  '/contact': 'contact',
+  '/features': 'contact',
+  '/analytics': 'contact',
+  '/ai-enclave': 'contact',
+};
+
+const paletteMap: Record<AnimationType, string[]> = {
+  home: ['from-primary/18', 'via-secondary/12', 'to-primary/6'],
+  about: ['from-primary/14', 'via-emerald-400/8', 'to-secondary/10'],
+  features: ['from-primary/18', 'via-cyan-400/10', 'to-secondary/8'],
+  analytics: ['from-secondary/16', 'via-primary/10', 'to-cyan-300/8'],
+  contact: ['from-primary/20', 'via-secondary/12', 'to-primary/8'],
+  social: ['from-fuchsia-400/12', 'via-primary/12', 'to-secondary/8'],
+  blog: ['from-primary/14', 'via-amber-300/8', 'to-secondary/8'],
+  auth: ['from-primary/16', 'via-secondary/14', 'to-primary/10'],
+};
+
+const orbMap: Record<AnimationType, string[]> = {
+  home: ['bg-primary/16', 'bg-secondary/12', 'bg-primary/10'],
+  about: ['bg-primary/12', 'bg-emerald-300/10', 'bg-secondary/10'],
+  features: ['bg-primary/16', 'bg-cyan-300/10', 'bg-secondary/8'],
+  analytics: ['bg-secondary/14', 'bg-primary/10', 'bg-cyan-300/10'],
+  contact: ['bg-primary/18', 'bg-secondary/12', 'bg-primary/10'],
+  social: ['bg-fuchsia-400/12', 'bg-primary/12', 'bg-secondary/8'],
+  blog: ['bg-primary/12', 'bg-amber-300/10', 'bg-secondary/8'],
+  auth: ['bg-primary/14', 'bg-secondary/12', 'bg-primary/10'],
+};
+
+function DecorativeField({ type }: { type: AnimationType }) {
+  const [fromClass, viaClass, toClass] = paletteMap[type];
+  const [orbA, orbB, orbC] = orbMap[type];
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(120,70,255,0.18),transparent_48%),linear-gradient(180deg,rgba(4,7,20,0.18),transparent_30%,rgba(4,7,20,0.32))]" />
+      <div className={`absolute inset-x-[-10%] top-[-18%] h-[40rem] rounded-full bg-gradient-to-b ${fromClass} blur-3xl`} />
+      <div className={`absolute right-[-12%] top-[18%] h-[28rem] w-[28rem] rounded-full bg-gradient-to-b ${viaClass} blur-3xl animate-[pulse_7s_ease-in-out_infinite]`} />
+      <div className={`absolute bottom-[-12%] left-[-6%] h-[24rem] w-[24rem] rounded-full bg-gradient-to-b ${toClass} blur-3xl animate-[pulse_8s_ease-in-out_infinite]`} />
+      <div className="absolute inset-0 opacity-35 [background-image:radial-gradient(circle_at_center,rgba(255,255,255,0.16)_0,transparent_1.4px)] [background-size:32px_32px]" />
+      <div className={`absolute left-[8%] top-[16%] h-28 w-28 rounded-full ${orbA} blur-2xl animate-pulse`} />
+      <div className={`absolute right-[12%] top-[28%] h-40 w-40 rounded-full ${orbB} blur-3xl animate-pulse`} />
+      <div className={`absolute bottom-[12%] left-[18%] h-32 w-32 rounded-full ${orbC} blur-2xl animate-pulse`} />
+      <div className="absolute inset-x-0 top-[12%] h-px bg-gradient-to-r from-transparent via-primary/28 to-transparent" />
+      <div className="absolute inset-x-0 bottom-[18%] h-px bg-gradient-to-r from-transparent via-secondary/18 to-transparent" />
+    </div>
+  );
 }
 
 export function PageSpecific3DAnimation({ type: propType }: { type?: AnimationType }) {
   const pathname = usePathname();
-  const [shouldRender, setShouldRender] = useState(false);
   const pageSpecificType =
     pageSpecificAnimations[pathname] ??
     (pathname.startsWith('/ai-enclave/') ? 'contact' : undefined);
-  // Allow prop to override pathname-based logic
   const type = propType || pageSpecificType || animationMap[pathname];
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-    let idleId: number | null = null;
-
-    const updateRenderState = () => {
-      if (mediaQuery.matches) {
-        setShouldRender(false);
-        return;
-      }
-
-      const enableRender = () => setShouldRender(true);
-
-      setShouldRender(false);
-
-      if (typeof window.requestIdleCallback === 'function') {
-        idleId = window.requestIdleCallback(enableRender, { timeout: 250 });
-        return;
-      }
-
-      timeoutId = globalThis.setTimeout(enableRender, 120);
-    };
-
-    updateRenderState();
-    mediaQuery.addEventListener('change', updateRenderState);
-
-    return () => {
-      mediaQuery.removeEventListener('change', updateRenderState);
-      if (timeoutId !== null) {
-        window.clearTimeout(timeoutId);
-      }
-      if (idleId !== null && typeof window.cancelIdleCallback === 'function') {
-        window.cancelIdleCallback(idleId);
-      }
-    };
-  }, []);
-
-  const renderCanvas = (animationType: AnimationType) => (
-     <Canvas
-        camera={{ position: [0, 0, 15], fov: 75 }}
-        dpr={[1, 1.5]}
-        gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
-      >
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={2} color="hsl(var(--primary))" />
-        <pointLight position={[-10, -10, -10]} intensity={1} color="hsl(var(--foreground))" />
-        <AnimatedShape type={animationType} />
-        <Particles />
-      </Canvas>
-  )
-
   const isPageSpecific = !!pageSpecificType || propType === 'contact';
-  
-  const animationClass = isPageSpecific
-    ? "fixed top-0 left-0 w-full h-full z-0 pointer-events-none"
-    : "fixed top-0 left-0 w-full h-full z-0 pointer-events-none opacity-20";
 
-  if (!type || !shouldRender) {
+  if (!type || type === 'home') {
     return null;
   }
 
   return (
-    <div className={animationClass}>
-      {renderCanvas(type)}
+    <div
+      className={
+        isPageSpecific
+          ? 'fixed inset-0 z-0 pointer-events-none'
+          : 'fixed inset-0 z-0 pointer-events-none opacity-30'
+      }
+      aria-hidden="true"
+    >
+      <DecorativeField type={type} />
     </div>
   );
 }
