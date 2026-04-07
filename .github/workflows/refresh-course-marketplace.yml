@@ -1,0 +1,29 @@
+name: Refresh Course Marketplace
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger marketplace refresh
+        env:
+          MARKETPLACE_REFRESH_URL: ${{ secrets.MARKETPLACE_REFRESH_URL }}
+          MARKETPLACE_REFRESH_TOKEN: ${{ secrets.MARKETPLACE_REFRESH_TOKEN }}
+        run: |
+          test -n "$MARKETPLACE_REFRESH_URL"
+          test -n "$MARKETPLACE_REFRESH_TOKEN"
+
+          response_file="$(mktemp)"
+
+          curl --fail --silent --show-error \
+            -X POST \
+            -H "Authorization: Bearer $MARKETPLACE_REFRESH_TOKEN" \
+            "$MARKETPLACE_REFRESH_URL" \
+            > "$response_file"
+
+          cat "$response_file" | jq '{ok, refreshedAt, nextSuggestedRefreshAt, refreshIntervalMinutes, summary}'

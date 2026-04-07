@@ -1,0 +1,47 @@
+/**
+ * @fileoverview Firestore Security Rules for DigMkt application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for user profiles.
+ * Only the authenticated user can read or write their own profile data.
+ *
+ * Data Structure:
+ * All user data is stored under the `/users/{userId}` collection.
+ * Each document represents a user profile.
+ *
+ * Key Security Decisions:
+ * - Users can only access their own documents.
+ * - User listing is disallowed.
+ *
+ * Denormalization for Authorization:
+ *  - The 'id' field within the User document is used to validate path consistency.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Manages user profile information. Enforces strict ownership: users can only access their own profile.
+     * @path /users/{userId}
+     * @allow (create) - Authenticated user creates their own profile with matching ID: `request.auth.uid == 'user_abc'` and `request.resource.data.id == 'user_abc'`.
+     * @allow (get, update, delete) - Authenticated user accesses their own profile with matching ID: `request.auth.uid == 'user_abc'` and `resource.data.id == 'user_abc'`.
+     * @deny (create) - Authenticated user attempts to create a profile for another user: `request.auth.uid == 'user_abc'` but `request.resource.data.id == 'user_def'`.
+     * @deny (get, update, delete) - Authenticated user attempts to access another user's profile: `request.auth.uid == 'user_abc'` but `/users/{userId}` is `/users/user_def`.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId} {
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == request.auth.uid;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}

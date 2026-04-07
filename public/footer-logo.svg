@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="312" height="72" viewBox="0 0 312 72" role="img" aria-labelledby="title desc">
+  <title id="title">DigiTantra footer logo</title>
+  <desc id="desc">DigiTantra wordmark with a purple to teal gradient on a dark background.</desc>
+  <defs>
+    <linearGradient id="footer-logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A976FF" />
+      <stop offset="38%" stop-color="#8B5CF6" />
+      <stop offset="72%" stop-color="#57D4C6" />
+      <stop offset="100%" stop-color="#1FE29A" />
+    </linearGradient>
+  </defs>
+  <rect width="312" height="72" fill="#050816" />
+  <text
+    x="0"
+    y="54"
+    fill="url(#footer-logo-gradient)"
+    font-family="'Space Grotesk', 'Inter', 'Segoe UI', Arial, sans-serif"
+    font-size="58"
+    font-weight="700"
+    letter-spacing="-2.4"
+  >
+    DigiTantra
+  </text>
+</svg>
