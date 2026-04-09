@@ -3,13 +3,6 @@ const path = require('path');
 
 const nextConfig = {
   /* config options here */
-  env: {
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'http://localhost:9002',
-    NEXTAUTH_URL_INTERNAL:
-      process.env.NEXTAUTH_URL_INTERNAL ||
-      process.env.NEXTAUTH_URL ||
-      'http://localhost:9002',
-  },
   experimental: {
     serverActions: {
       allowedOrigins: ['*.slim.show'],

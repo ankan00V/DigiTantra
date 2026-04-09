@@ -5,6 +5,33 @@ import { getMongoDb } from "@/lib/mongodb";
 
 export const OAUTH_USERS_COLLECTION = "auth_oauth_users";
 
+function parseUrl(value: string) {
+  try {
+    return new URL(value);
+  } catch {
+    return null;
+  }
+}
+
+function normalizeVercelOrigin() {
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+
+  if (!vercelUrl) {
+    return null;
+  }
+
+  const candidate = vercelUrl.startsWith("http://") || vercelUrl.startsWith("https://")
+    ? vercelUrl
+    : `https://${vercelUrl}`;
+  const parsed = parseUrl(candidate);
+
+  if (!parsed) {
+    return null;
+  }
+
+  return `https://${parsed.host}`;
+}
+
 function validateAuthEnvironment() {
   if (process.env.NODE_ENV !== "production") {
     return;
@@ -20,7 +47,7 @@ function validateAuthEnvironment() {
     return;
   }
 
-  const nextAuthUrl = process.env.NEXTAUTH_URL?.trim();
+  let nextAuthUrl = process.env.NEXTAUTH_URL?.trim();
   const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
   const nextAuthSecret = process.env.NEXTAUTH_SECRET?.trim();
@@ -35,15 +62,31 @@ function validateAuthEnvironment() {
     throw new Error("NEXTAUTH_SECRET is required in production.");
   }
 
+  const parsedNextAuthUrl = nextAuthUrl ? parseUrl(nextAuthUrl) : null;
+  const hasUnsafeNextAuthUrl =
+    Boolean(nextAuthUrl) &&
+    (!parsedNextAuthUrl ||
+      parsedNextAuthUrl.protocol !== "https:" ||
+      parsedNextAuthUrl.hostname === "localhost" ||
+      parsedNextAuthUrl.hostname === "127.0.0.1");
+
+  if (hasUnsafeNextAuthUrl) {
+    const vercelOrigin = normalizeVercelOrigin();
+
+    if (vercelOrigin) {
+      nextAuthUrl = vercelOrigin;
+      process.env.NEXTAUTH_URL = vercelOrigin;
+      process.env.NEXTAUTH_URL_INTERNAL = vercelOrigin;
+    }
+  }
+
   if (!nextAuthUrl) {
     return;
   }
 
-  let parsedUrl: URL;
+  const parsedUrl = parseUrl(nextAuthUrl);
 
-  try {
-    parsedUrl = new URL(nextAuthUrl);
-  } catch {
+  if (!parsedUrl) {
     throw new Error(
       `NEXTAUTH_URL is invalid: "${nextAuthUrl}". Set it to your deployed origin, for example https://digitantra.vercel.app.`
     );
