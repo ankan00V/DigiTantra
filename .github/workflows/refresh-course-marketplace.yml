@@ -1,8 +1,6 @@
 name: Refresh Course Marketplace
 
 on:
-  schedule:
-    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 jobs:
