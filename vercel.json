@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/course-marketplace",
+      "schedule": "*/30 * * * *"
+    }
+  ]
+}
