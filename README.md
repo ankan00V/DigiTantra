@@ -1,93 +1,217 @@
-# DigiTantra
+<div align="center">
 
-DigiTantra is a production-style AI-first learning platform that combines full-stack web engineering, applied data workflows, and multiple LLM-powered learning/career assistants in one deployment.
+<h1>
+  <span style="color:#00F7FF;">Digi</span><span style="color:#FF00D4;">Tantra</span>
+</h1>
 
-Live app: [https://digitantra.vercel.app](https://digitantra.vercel.app)  
-Repository: [https://github.com/ankan00V/DigiTantra](https://github.com/ankan00V/DigiTantra)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=17&duration=2600&pause=900&color=00E5FF&center=true&vCenter=true&width=900&lines=AI-first+learning+platform+for+Data+Science+%2B+Full-Stack+Engineering;Production+auth+%7C+MongoDB+backed+sessions+%7C+Vercel+deployment;AI+Saarthi+%2B+AI+Enclave+(20+services)+%2B+course+marketplace+intelligence;Built+and+shipped+by+Ankan+Ghosh.)](https://git.io/typing-svg)
 
-## What This Project Covers
+<br/>
 
-- End-to-end full-stack app with modern Next.js App Router architecture.
-- Data-science-oriented learning experience with category intelligence and external course aggregation.
-- Multi-provider AI product layer including AI Saarthi and AI Enclave service workbenches.
-- Production auth architecture with both Google OAuth and email/password + OTP flows.
-- MongoDB-backed persistence for users, sessions, OTP lifecycle, OAuth profiles, and marketplace catalogs.
-- Vercel production deployment with scheduled cron-based catalog refresh.
+[![Live](https://img.shields.io/badge/Live-digitantra.vercel.app-00E5FF?style=for-the-badge&logo=vercel&logoColor=0a0a0a)](https://digitantra.vercel.app)
+[![Repo](https://img.shields.io/badge/GitHub-DigiTantra-FF00D4?style=for-the-badge&logo=github&logoColor=0a0a0a)](https://github.com/ankan00V/DigiTantra)
+[![Next.js](https://img.shields.io/badge/Next.js_15-App_Router-111111?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Production_DB-13aa52?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-## Core Product Modules
+</div>
 
-### 1) Authentication and Account System
+---
 
+```bash
+┌──[ankan@digitantra]─[~/project]
+└─$ cat project_overview.txt
+```
+
+DigiTantra is a production-style, AI-powered education platform that merges:
+
+- Data-science-focused learning tracks
+- Full-stack product engineering
+- LLM-driven tooling for career, learning, and content workflows
+
+This repo includes complete web app architecture: frontend UX, backend APIs, auth/session security, MongoDB persistence, provider integrations, and Vercel deployment.
+
+---
+
+```bash
+┌──[ankan@digitantra]─[~/project]
+└─$ cat system_design.md
+```
+
+## System Design
+
+### High-Level Design
+
+- Frontend is built on Next.js App Router with server/client components and API routes in the same codebase.
+- Authentication is hybrid:
+  - Google OAuth via NextAuth.
+  - Email/password + OTP with custom secure cookie sessions.
+- AI layer is split by workload:
+  - AI Saarthi for contextual site guidance.
+  - AI Enclave for authenticated career/learning/content/dev tools.
+- Persistence is fully MongoDB-backed for auth users, sessions, OTPs, OAuth user mirrors, course catalog snapshots, and API rate limits.
+- Marketplace ingestion runs as scheduled refresh through Vercel Cron and is exposed through read/refresh APIs.
+
+### Architecture Diagram
+
+```mermaid
+flowchart TD
+    U[User] --> W[Next.js UI]
+    W --> A1[/auth/]
+    W --> A2[/email-auth/]
+    W --> A3[/ai-chatbot/]
+    W --> A4[/ai-enclave/]
+    W --> A5[/course-marketplace/]
+
+    A1 --> G[Google OAuth]
+    A1 --> M[(MongoDB)]
+
+    A2 --> M
+    A2 --> S[SMTP]
+
+    A3 --> AI[LLM Runtime]
+    A4 --> AI
+
+    A5 --> M
+    A5 --> P[Course Providers]
+
+    C[Cron Job] --> A5
+```
+
+### System Design Notes
+
+- Security boundaries:
+  - Protected operations require OAuth session or `digitantra_email_session`.
+  - OTP and session flows are server-side and persisted in Mongo.
+  - API request throttling is persisted in `api_rate_limits`.
+- Reliability:
+  - AI Enclave routes return controlled JSON errors instead of raw server-component failures.
+  - Course catalog reads are decoupled from refresh execution.
+- Deployment:
+  - Vercel hosts web + APIs.
+  - Scheduled marketplace refresh runs once daily on Hobby-compatible cron.
+
+---
+
+```bash
+┌──[ankan@digitantra]─[~/project]
+└─$ cat modules.txt
+```
+
+## Core Modules
+
+### 1) Authentication and Identity
 - Google OAuth via NextAuth.
 - Email signup flow: `email + name + password + OTP`.
 - Email login flow: `email + password`.
-- Forgot password flow with OTP verification and password reset.
-- Password policy enforcement: minimum 8 chars, uppercase, lowercase, number, special character.
-- Profile API and UI with editable name and uploadable profile photo.
-- Server-issued custom session cookie: `digitantra_email_session` for email-auth sessions.
+- Forgot-password OTP reset flow.
+- Password policy enforcement (8+, upper, lower, number, special char).
+- Custom email-auth session cookie: `digitantra_email_session`.
+- Mongo-backed user/session/OTP lifecycle.
 
-### 2) AI Saarthi (Context-Grounded Assistant)
-
-- Route: `POST /api/ai-chatbot`.
-- Context-restricted assistant behavior grounded to DigiTantra product data.
-- Uses NVIDIA-hosted chat model configuration (`NVIDIA_*` env group).
+### 2) AI Saarthi (site assistant)
+- Endpoint: `POST /api/ai-chatbot`
+- Context-constrained assistant for site guidance.
+- NVIDIA-backed model runtime via `NVIDIA_*` env group.
 
 ### 3) AI Enclave
+- 20 authenticated tool workspaces via `POST /api/ai-enclave/run`.
+- Dedicated AI blog generator flow.
+- Runtime split:
+  - `AI_ENCLAVE_COMPLEX_*` for complex generation workloads.
+  - `AI_ENCLAVE_CHAT_*` for lighter conversational tools.
 
-AI Enclave includes 21 tools in total:
+### 4) Course Marketplace Intelligence
+- Public read endpoint: `GET /api/course-marketplace`
+- Protected refresh endpoint: `POST /api/course-marketplace`
+- Token auth: `COURSE_MARKETPLACE_REFRESH_TOKEN` or `CRON_SECRET`
+- Provider catalog ingestion, normalization, categorization, persistence.
+- Daily Vercel cron refresh in [`vercel.json`](/Users/ankanghosh/Desktop/DigiTantra/vercel.json).
 
-- 20 authenticated workbench services powered through `POST /api/ai-enclave/run`.
-- 1 dedicated AI blog generator flow.
+---
 
-Service groups:
+```bash
+┌──[ankan@digitantra]─[~/project]
+└─$ cat ai_enclave_services.txt
+```
 
-- Career AI: Resume Builder, Cover Letter Generator, LinkedIn Optimizer, SOP Generator, Email Writer, Interview Prep Coach, Skill Gap Analyzer.
-- Learning AI: Career Roadmap Generator, Course Recommender, Assignment Helper, Notes Summarizer, Quiz Generator, Study Planner.
-- Content AI: Blog Generator, Social Caption Generator, Ad Copy Generator, Landing Page Copy Generator, SEO Blog Outline Tool.
-- Builder/Dev AI: Project Idea Generator, Code Explainer, Debug Helper.
+## AI Enclave Services
 
-Runtime model strategy:
+Career AI:
+- Resume Builder
+- Cover Letter Generator
+- LinkedIn Optimizer
+- SOP Generator
+- Email Writer
+- Interview Prep Coach
+- Skill Gap Analyzer
 
-- Complex services use `AI_ENCLAVE_COMPLEX_*`.
-- Lighter services use `AI_ENCLAVE_CHAT_*`.
-- Explicit key separation is enforced in production.
+Learning AI:
+- Career Roadmap Generator
+- Course Recommender
+- Assignment Helper
+- Notes Summarizer
+- Quiz Generator
+- Study Planner
 
-### 4) Course Marketplace Intelligence Layer
+Content AI:
+- Blog Generator
+- Social Caption Generator
+- Ad Copy Generator
+- Landing Page Copy Generator
+- SEO Blog Outline Tool
 
-- Public catalog endpoint: `GET /api/course-marketplace`.
-- Protected refresh endpoint: `POST /api/course-marketplace`.
-- Refresh auth via `Authorization: Bearer <token>` using `COURSE_MARKETPLACE_REFRESH_TOKEN` or `CRON_SECRET`.
-- Provider scraping + normalization + category classification logic.
-- Persistent catalog snapshots in MongoDB.
-- Vercel cron configured for daily refresh (`0 0 * * *`) in [`vercel.json`](/Users/ankanghosh/Desktop/DigiTantra/vercel.json).
+Builder/Dev AI:
+- Project Idea Generator
+- Code Explainer
+- Debug Helper
 
-Tracked external providers include IBM SkillsBuild, Forage, Cisco NetAcad, GeeksforGeeks, Codecademy, upGrad, Udacity, Alison, Simplilearn, edX, Coursera, DataCamp, FutureLearn, Udemy, and others.
+---
+
+```bash
+┌──[ankan@digitantra]─[~/project]
+└─$ cat stack.txt
+```
 
 ## Tech Stack
 
-- Framework: Next.js 15 (App Router), React 18, TypeScript.
-- UI: Tailwind CSS, shadcn/ui, Radix UI primitives, Recharts.
-- Auth: NextAuth (Google OAuth) + custom MongoDB email auth.
-- Database: MongoDB.
-- AI runtime: OpenAI SDK against NVIDIA endpoint, plus Genkit/Gemini integration paths.
-- Email delivery: Nodemailer (SMTP).
-- Deployment: Vercel.
-- Local HTTPS/tunneling workflow: Slim (`slim start`, `slim share`).
+- Framework: Next.js 15 (App Router), React 18, TypeScript
+- UI: Tailwind CSS, shadcn/ui, Radix UI, Recharts
+- Auth: NextAuth + custom Mongo email auth
+- Database: MongoDB
+- AI: OpenAI SDK against NVIDIA endpoints, Genkit paths included
+- Mail: Nodemailer SMTP
+- Deploy: Vercel
+- Local HTTPS/dev tunnel: Slim
 
-## Key API Endpoints
+---
 
-- `POST /api/auth/[...nextauth]` for OAuth auth handling.
-- `POST /api/email-auth/request-otp` for signup OTP issuance.
-- `POST /api/email-auth/verify-otp` for signup OTP verification.
-- `POST /api/email-auth/login` for email/password login.
-- `POST /api/email-auth/logout` for session revoke.
-- `GET /api/email-auth/session` for session resolution.
-- `GET/PATCH /api/email-auth/profile` for profile read/update.
-- `POST /api/email-auth/password-reset/request-otp` for reset OTP.
-- `POST /api/email-auth/password-reset/verify-otp` for password reset completion.
-- `POST /api/ai-chatbot` for AI Saarthi.
-- `POST /api/ai-enclave/run` for AI Enclave tool execution (authenticated).
-- `GET/POST /api/course-marketplace` for catalog read/refresh.
+```bash
+┌──[ankan@digitantra]─[~/project]
+└─$ cat api_surface.txt
+```
+
+## Major API Routes
+
+- `/api/auth/[...nextauth]`
+- `/api/email-auth/request-otp`
+- `/api/email-auth/verify-otp`
+- `/api/email-auth/login`
+- `/api/email-auth/logout`
+- `/api/email-auth/session`
+- `/api/email-auth/profile`
+- `/api/email-auth/password-reset/request-otp`
+- `/api/email-auth/password-reset/verify-otp`
+- `/api/ai-chatbot`
+- `/api/ai-enclave/run`
+- `/api/course-marketplace`
+
+---
+
+```bash
+┌──[ankan@digitantra]─[~/project]
+└─$ cat mongo_collections.txt
+```
 
 ## MongoDB Collections
 
@@ -96,64 +220,16 @@ Tracked external providers include IBM SkillsBuild, Forage, Cisco NetAcad, Geeks
 - `auth_email_sessions`
 - `auth_oauth_users`
 - `courseMarketplace`
+- `api_rate_limits`
 
-## Environment Variables
+---
 
-Set these in local `.env.local` and in Vercel project environments.
+```bash
+┌──[ankan@digitantra]─[~/project]
+└─$ cat quickstart.sh
+```
 
-AI runtime:
-
-- `NVIDIA_API_KEY`
-- `NVIDIA_BASE_URL`
-- `NVIDIA_CHAT_MODEL`
-- `AI_ENCLAVE_COMPLEX_API_KEY`
-- `AI_ENCLAVE_COMPLEX_BASE_URL`
-- `AI_ENCLAVE_COMPLEX_MODEL`
-- `AI_ENCLAVE_CHAT_API_KEY`
-- `AI_ENCLAVE_CHAT_BASE_URL`
-- `AI_ENCLAVE_CHAT_MODEL`
-
-Database:
-
-- `MONGODB_URI`
-- `MONGODB_DB_NAME`
-
-Auth:
-
-- `NEXTAUTH_SECRET`
-- `NEXTAUTH_URL`
-- `NEXTAUTH_URL_INTERNAL`
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`
-- `EMAIL_AUTH_SECRET`
-
-SMTP:
-
-- `SMTP_HOST`
-- `SMTP_PORT`
-- `SMTP_USER`
-- `SMTP_PASSWORD`
-- `AUTH_OTP_FROM_EMAIL`
-- `AUTH_OTP_FROM_NAME`
-- `AUTH_COMPANY_NAME`
-- `AUTH_COMPANY_ADDRESS`
-- `AUTH_SUPPORT_EMAIL`
-- `AUTH_SUPPORT_URL`
-
-Cron/refresh:
-
-- `COURSE_MARKETPLACE_REFRESH_TOKEN`
-- `CRON_SECRET`
-
-## Local Development
-
-### Prerequisites
-
-- Node.js 20.x or 22.x
-- npm
-- Slim installed ([https://slim.sh](https://slim.sh))
-
-### Install and Run
+## Local Setup
 
 ```bash
 git clone https://github.com/ankan00V/DigiTantra.git
@@ -162,9 +238,13 @@ npm install
 npm run dev
 ```
 
-Default local app runs on `http://localhost:9002`.
+App runs on:
 
-### Local HTTPS with Slim (recommended)
+```text
+http://localhost:9002
+```
+
+Recommended local HTTPS:
 
 ```bash
 slim start digitantra --port 9002
@@ -176,55 +256,33 @@ Then open:
 https://digitantra.test
 ```
 
-Optional public tunnel for remote testing:
+---
 
-```bash
-slim share --port 9002
-```
+## Production Notes (Vercel)
 
-## Production Deployment (Vercel)
+1. Configure all required env vars.
+2. Use `NEXTAUTH_URL=https://digitantra.vercel.app`.
+3. Google OAuth must include:
+   - Authorized origin: `https://digitantra.vercel.app`
+   - Redirect URI: `https://digitantra.vercel.app/api/auth/callback/google`
+4. Redeploy after env updates.
+5. Keep daily cron enabled for `/api/course-marketplace`.
 
-1. Add all required env vars in Vercel.
-2. Keep `NEXTAUTH_URL` and `NEXTAUTH_URL_INTERNAL` as `https://digitantra.vercel.app` in production.
-3. Add authorized origin: `https://digitantra.vercel.app` in Google Cloud OAuth client.
-4. Add redirect URI: `https://digitantra.vercel.app/api/auth/callback/google` in Google Cloud OAuth client.
-5. Redeploy after env updates.
-6. Ensure cron route `/api/course-marketplace` stays configured with daily schedule.
+---
 
 ## Verification Scripts
 
-Local AI Enclave sweep:
-
 ```bash
 npx tsx scripts/verify-ai-enclave-services.ts
-```
-
-Production AI Enclave sweep (authenticated):
-
-```bash
 npx tsx scripts/verify-ai-enclave-production.ts https://digitantra.vercel.app <email> <password>
-```
-
-Email OTP/session E2E validation:
-
-```bash
 npx tsx scripts/verify-email-otp-e2e.ts
 ```
 
-## Common Production Pitfalls
+---
 
-- `redirect_uri_mismatch`: Google OAuth client is missing the exact production callback URL.
-- `NEXTAUTH_URL must use https`: production env still points to localhost/http.
-- AI Enclave “configuration missing”: missing `AI_ENCLAVE_CHAT_API_KEY` or `AI_ENCLAVE_COMPLEX_API_KEY`.
-- Cookie/session issues: stale deployment without updated auth env values.
+<div align="center">
 
-## Security Notes
+Built by **Ankan Ghosh**  
+[LinkedIn](https://www.linkedin.com/in/ankan-ghosh/) • [GitHub](https://github.com/ankan00V)
 
-- Never commit real secrets.
-- If credentials are exposed, rotate all affected keys immediately.
-- Keep sensitive envs marked as sensitive in Vercel.
-
-## Author
-
-Ankan Ghosh  
-LinkedIn: [https://www.linkedin.com/in/ankan-ghosh/](https://www.linkedin.com/in/ankan-ghosh/)
+</div>
