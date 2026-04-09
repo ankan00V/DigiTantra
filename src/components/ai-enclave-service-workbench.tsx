@@ -5,10 +5,6 @@ import {usePathname, useRouter} from 'next/navigation';
 import {startTransition, useState} from 'react';
 import {Check, Copy, Loader2, Sparkles} from 'lucide-react';
 
-import {
-  runAiEnclaveService,
-  type RunAiEnclaveServiceOutput,
-} from '@/ai/flows/run-ai-enclave-service';
 import {useAuthSession} from '@/components/auth-session-provider';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
@@ -16,6 +12,11 @@ import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
 import type {AiEnclaveService} from '@/lib/ai-enclave/services';
 import type {AiEnclaveFieldConfig} from '@/lib/ai-enclave/workbench';
+
+type RunAiEnclaveServiceOutput = {
+  title: string;
+  content: string;
+};
 
 type AiEnclaveServiceWorkbenchProps = {
   fields: AiEnclaveFieldConfig[];
@@ -94,11 +95,32 @@ export function AiEnclaveServiceWorkbench({
 
     startTransition(async () => {
       try {
-        const response = await runAiEnclaveService({
-          serviceId: service.id,
-          values,
+        const response = await fetch('/api/ai-enclave/run', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            serviceId: service.id,
+            values,
+          }),
         });
-        setResult(response);
+
+        const payload = (await response.json()) as
+          | RunAiEnclaveServiceOutput
+          | {error?: string; message?: string};
+
+        if (!response.ok) {
+          const apiMessage =
+            typeof (payload as {message?: string}).message === 'string'
+              ? (payload as {message: string}).message
+              : typeof (payload as {error?: string}).error === 'string'
+              ? (payload as {error: string}).error
+              : 'This AI service could not generate a result right now. Please try again in a moment.';
+          throw new Error(apiMessage);
+        }
+
+        setResult(payload as RunAiEnclaveServiceOutput);
       } catch (submitError) {
         const rawMessage =
           submitError instanceof Error
