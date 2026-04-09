@@ -103,21 +103,19 @@ function getAiEnclaveRuntimeProfile(
   profileId: AiEnclaveRuntimeProfileId
 ): AiEnclaveServiceProviderRuntime {
   if (profileId === 'chat') {
-    const apiKey = process.env.AI_ENCLAVE_CHAT_API_KEY?.trim() || process.env.NVIDIA_API_KEY?.trim();
+    const apiKey = process.env.AI_ENCLAVE_CHAT_API_KEY?.trim();
 
     if (!apiKey) {
-      throw new Error('Missing AI_ENCLAVE_CHAT_API_KEY (or fallback NVIDIA_API_KEY)');
+      throw new Error('Missing AI_ENCLAVE_CHAT_API_KEY');
     }
 
     return {
       apiKey,
       baseURL:
         process.env.AI_ENCLAVE_CHAT_BASE_URL?.trim() ||
-        process.env.NVIDIA_BASE_URL?.trim() ||
         'https://integrate.api.nvidia.com/v1',
       model:
         process.env.AI_ENCLAVE_CHAT_MODEL?.trim() ||
-        process.env.NVIDIA_CHAT_MODEL?.trim() ||
         'openai/gpt-oss-120b',
       provider: 'nvidia',
       temperature: 0.35,
@@ -126,21 +124,19 @@ function getAiEnclaveRuntimeProfile(
     };
   }
 
-  const apiKey = process.env.AI_ENCLAVE_COMPLEX_API_KEY?.trim() || process.env.NVIDIA_API_KEY?.trim();
+  const apiKey = process.env.AI_ENCLAVE_COMPLEX_API_KEY?.trim();
 
   if (!apiKey) {
-    throw new Error('Missing AI_ENCLAVE_COMPLEX_API_KEY (or fallback NVIDIA_API_KEY)');
+    throw new Error('Missing AI_ENCLAVE_COMPLEX_API_KEY');
   }
 
   return {
     apiKey,
     baseURL:
       process.env.AI_ENCLAVE_COMPLEX_BASE_URL?.trim() ||
-      process.env.NVIDIA_BASE_URL?.trim() ||
       'https://integrate.api.nvidia.com/v1',
     model:
       process.env.AI_ENCLAVE_COMPLEX_MODEL?.trim() ||
-      process.env.NVIDIA_CHAT_MODEL?.trim() ||
       'openai/gpt-oss-120b',
     provider: 'nvidia',
     temperature: 0.45,
