@@ -15,9 +15,11 @@ const typedAuthHandler = authHandler as unknown as (
 ) => Promise<Response>;
 
 async function runAuthHandler(request: NextRequest, context: RouteContext) {
+  const resolvedParams = await context.params;
+  const nextAuthAction = resolvedParams.nextauth?.[0] ?? "unknown";
   const blockedResponse = await enforceApiRateLimit(request, {
-    scope: "auth",
-    routeId: "auth/nextauth",
+    scope: "default",
+    routeId: `auth/nextauth/${nextAuthAction}`,
   });
 
   if (blockedResponse) {
