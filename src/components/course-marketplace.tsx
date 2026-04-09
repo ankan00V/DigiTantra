@@ -217,7 +217,7 @@ export function CourseMarketplace({ catalog }: { catalog: CourseMarketplaceCatal
           }
         }}
       >
-        <DialogContent className="flex max-h-[92svh] w-[calc(100vw-1rem)] max-w-5xl flex-col overflow-hidden border-white/10 bg-[#090b17] p-0 text-foreground sm:max-h-[85vh] sm:w-full">
+        <DialogContent className="fixed left-0 top-0 flex h-[100dvh] max-h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 flex-col overflow-hidden rounded-none border-white/10 bg-[#090b17] p-0 text-foreground sm:left-[50%] sm:top-[50%] sm:h-auto sm:max-h-[85vh] sm:w-full sm:max-w-5xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl">
           {activeCategory && (
             <div className="flex min-h-0 flex-1 flex-col">
               <DialogHeader className="shrink-0 border-b border-white/10 px-4 py-5 sm:px-6 sm:py-6">
@@ -277,7 +277,7 @@ export function CourseMarketplace({ catalog }: { catalog: CourseMarketplaceCatal
                 ) : null}
               </DialogHeader>
 
-              <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] [-webkit-overflow-scrolling:touch] sm:px-6 sm:py-6 sm:pb-6">
                 {filteredListings.length > 0 ? (
                   <div className="space-y-4">
                     {filteredListings.map((listing) => (

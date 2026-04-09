@@ -6,21 +6,42 @@ import {
   getCourseMarketplaceCatalog,
   refreshCourseMarketplaceCatalog,
 } from "@/lib/course-marketplace/server";
+import { enforceApiRateLimit } from "@/lib/security/api";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const CRON_TOKEN_ENV_KEY = "COURSE_MARKETPLACE_REFRESH_TOKEN";
 const VERCEL_CRON_SECRET_ENV_KEY = "CRON_SECRET";
+const MAX_TOKEN_LENGTH = 512;
+
+function sanitizeTokenCandidate(value: string | null | undefined) {
+  const trimmed = value?.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  if (trimmed.length > MAX_TOKEN_LENGTH) {
+    return null;
+  }
+
+  // Reject non-printable characters in auth tokens.
+  if (/[^\x21-\x7e]/.test(trimmed)) {
+    return null;
+  }
+
+  return trimmed;
+}
 
 function getRefreshTokenCandidate(request: NextRequest) {
   const authorizationHeader = request.headers.get("authorization");
 
   if (authorizationHeader?.startsWith("Bearer ")) {
-    return authorizationHeader.slice("Bearer ".length).trim();
+    return sanitizeTokenCandidate(authorizationHeader.slice("Bearer ".length));
   }
 
-  return request.headers.get("x-refresh-token")?.trim() ?? null;
+  return sanitizeTokenCandidate(request.headers.get("x-refresh-token"));
 }
 
 function tokensMatch(expectedToken: string, providedToken: string) {
@@ -55,6 +76,14 @@ function buildRefreshPayload(catalog: Awaited<ReturnType<typeof refreshCourseMar
 }
 
 export async function GET(request: NextRequest) {
+  const blockedResponse = await enforceApiRateLimit(request, {
+    routeId: "course-marketplace:get",
+  });
+
+  if (blockedResponse) {
+    return blockedResponse;
+  }
+
   const providedToken = getRefreshTokenCandidate(request);
   const expectedTokens = getConfiguredRefreshTokens();
 
@@ -86,6 +115,14 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const blockedResponse = await enforceApiRateLimit(request, {
+    routeId: "course-marketplace:post",
+  });
+
+  if (blockedResponse) {
+    return blockedResponse;
+  }
+
   const expectedTokens = getConfiguredRefreshTokens();
 
   if (!expectedTokens.length) {

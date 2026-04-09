@@ -11,6 +11,12 @@ import {
 } from "@/lib/email-auth/server";
 import { EMAIL_AUTH_SESSION_COOKIE_NAME } from "@/lib/email-auth/shared";
 import { getMongoDb } from "@/lib/mongodb";
+import {
+  enforceApiRateLimit,
+  getJsonMaxBytes,
+  isApiPayloadError,
+  parseJsonBody,
+} from "@/lib/security/api";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -18,9 +24,22 @@ export const runtime = "nodejs";
 const MAX_PROFILE_IMAGE_BYTES = 1_500_000;
 
 const updateProfileSchema = z.object({
-  name: z.string().trim().min(2, "Name must be at least 2 characters long.").optional(),
-  image: z.string().nullable().optional(),
-});
+  name: z
+    .string()
+    .trim()
+    .min(2, "Name must be at least 2 characters long.")
+    .max(80, "Name must be 80 characters or fewer.")
+    .optional(),
+  image: z
+    .string()
+    .max(2_200_000, "Profile photo payload is too large.")
+    .regex(
+      /^data:image\/(?:png|jpeg|jpg|webp|gif);base64,[a-z0-9+/=]+$/i,
+      "Profile photo must be a valid PNG, JPG, WEBP, or GIF image."
+    )
+    .nullable()
+    .optional(),
+}).strict();
 
 type OAuthUserDocument = {
   _id: ObjectId;
@@ -167,6 +186,14 @@ async function updateOAuthProfile({
 }
 
 export async function GET(request: NextRequest) {
+  const blockedResponse = await enforceApiRateLimit(request, {
+    routeId: "email-auth/profile:get",
+  });
+
+  if (blockedResponse) {
+    return blockedResponse;
+  }
+
   try {
     const sessionToken =
       request.cookies.get(EMAIL_AUTH_SESSION_COOKIE_NAME)?.value ?? null;
@@ -225,10 +252,21 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const blockedResponse = await enforceApiRateLimit(request, {
+    routeId: "email-auth/profile:patch",
+  });
+
+  if (blockedResponse) {
+    return blockedResponse;
+  }
+
   try {
     const sessionToken =
       request.cookies.get(EMAIL_AUTH_SESSION_COOKIE_NAME)?.value ?? null;
-    const body = updateProfileSchema.parse(await request.json());
+    const body = await parseJsonBody(request, updateProfileSchema, {
+      maxBytes: getJsonMaxBytes("auth"),
+      oversizeMessage: "Profile update payload is too large.",
+    });
 
     const emailSessionUser = await getEmailAuthUserFromToken(sessionToken);
     if (emailSessionUser) {
@@ -265,6 +303,10 @@ export async function PATCH(request: NextRequest) {
       user: toOAuthApiUser(updatedOAuthUser),
     });
   } catch (error) {
+    if (isApiPayloadError(error)) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: error.issues[0]?.message ?? "Invalid profile update request." },

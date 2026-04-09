@@ -6,11 +6,20 @@ import {
   revokeEmailAuthSession,
 } from "@/lib/email-auth/server";
 import { EMAIL_AUTH_SESSION_COOKIE_NAME } from "@/lib/email-auth/shared";
+import { enforceApiRateLimit } from "@/lib/security/api";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
+  const blockedResponse = await enforceApiRateLimit(request, {
+    routeId: "email-auth/logout",
+  });
+
+  if (blockedResponse) {
+    return blockedResponse;
+  }
+
   try {
     const sessionToken =
       request.cookies.get(EMAIL_AUTH_SESSION_COOKIE_NAME)?.value ?? null;

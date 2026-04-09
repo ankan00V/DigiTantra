@@ -5,12 +5,23 @@ import {
   EmailAuthApiError,
   resetPasswordWithOtp,
 } from "@/lib/email-auth/server";
+import {
+  enforceApiRateLimit,
+  getJsonMaxBytes,
+  isApiPayloadError,
+  parseJsonBody,
+} from "@/lib/security/api";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const verifyPasswordResetSchema = z.object({
-  email: z.string().email("Please enter a valid email address."),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email("Please enter a valid email address.")
+    .max(320, "Email is too long."),
   otp: z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit OTP."),
   newPassword: z
     .string()
@@ -20,11 +31,23 @@ const verifyPasswordResetSchema = z.object({
     .regex(/[A-Z]/, "Password must include an uppercase letter.")
     .regex(/\d/, "Password must include a number.")
     .regex(/[^A-Za-z0-9]/, "Password must include a special character."),
-});
+}).strict();
 
 export async function POST(request: NextRequest) {
+  const blockedResponse = await enforceApiRateLimit(request, {
+    scope: "auth",
+    routeId: "email-auth/password-reset/verify-otp",
+  });
+
+  if (blockedResponse) {
+    return blockedResponse;
+  }
+
   try {
-    const body = verifyPasswordResetSchema.parse(await request.json());
+    const body = await parseJsonBody(request, verifyPasswordResetSchema, {
+      maxBytes: getJsonMaxBytes("auth"),
+      oversizeMessage: "Password reset verification payload is too large.",
+    });
     const result = await resetPasswordWithOtp(body);
 
     return NextResponse.json({
@@ -32,6 +55,10 @@ export async function POST(request: NextRequest) {
       email: result.email,
     });
   } catch (error) {
+    if (isApiPayloadError(error)) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: error.issues[0]?.message ?? "Invalid password reset verification." },

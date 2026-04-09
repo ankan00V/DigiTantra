@@ -6,6 +6,7 @@ import { authOptions, OAUTH_USERS_COLLECTION } from "@/lib/auth";
 import { EmailAuthApiError, getEmailAuthUserFromToken } from "@/lib/email-auth/server";
 import { EMAIL_AUTH_SESSION_COOKIE_NAME } from "@/lib/email-auth/shared";
 import { getMongoDb } from "@/lib/mongodb";
+import { enforceApiRateLimit } from "@/lib/security/api";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -65,6 +66,14 @@ function toOAuthApiUser(user: OAuthUserDocument) {
 }
 
 export async function GET(request: NextRequest) {
+  const blockedResponse = await enforceApiRateLimit(request, {
+    routeId: "email-auth/session",
+  });
+
+  if (blockedResponse) {
+    return blockedResponse;
+  }
+
   try {
     const sessionToken =
       request.cookies.get(EMAIL_AUTH_SESSION_COOKIE_NAME)?.value ?? null;
