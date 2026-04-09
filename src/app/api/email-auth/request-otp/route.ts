@@ -11,7 +11,19 @@ export const runtime = "nodejs";
 
 const requestOtpSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
-  mode: z.enum(["login", "signup"]),
+  mode: z.literal("signup"),
+  signup: z.object({
+    name: z.string().trim().min(2, "Name must be at least 2 characters long."),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters long.")
+      .max(128, "Password is too long.")
+      .regex(/[a-z]/, "Password must include a lowercase letter.")
+      .regex(/[A-Z]/, "Password must include an uppercase letter.")
+      .regex(/\d/, "Password must include a number.")
+      .regex(/[^A-Za-z0-9]/, "Password must include a special character."),
+    image: z.string().nullable().optional(),
+  }),
 });
 
 export async function POST(request: NextRequest) {

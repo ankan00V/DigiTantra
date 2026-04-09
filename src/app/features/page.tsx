@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: 'Courses & Pricing | DigiTantra',
   description: 'Explore our comprehensive curriculum of tech courses and their pricing.',
 };
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 const testimonials = [
   {

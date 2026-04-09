@@ -75,7 +75,6 @@ export async function aiChatbotAssistance(
   input: AiChatbotAssistanceInput
 ): Promise<AiChatbotAssistanceOutput> {
   const {query, pageContext} = AiChatbotAssistanceInputSchema.parse(input);
-
   const apiKey = process.env.NVIDIA_API_KEY;
   if (!apiKey) {
     throw new Error('Missing NVIDIA_API_KEY');
@@ -84,6 +83,7 @@ export async function aiChatbotAssistance(
   const openai = new OpenAI({
     apiKey,
     baseURL: process.env.NVIDIA_BASE_URL ?? 'https://integrate.api.nvidia.com/v1',
+    timeout: 15000,
   });
 
   const completion = await openai.chat.completions.create({
@@ -109,7 +109,7 @@ export async function aiChatbotAssistance(
     ],
     temperature: 0.2,
     top_p: 0.7,
-    max_tokens: 800,
+    max_tokens: 500,
   });
 
   const content = completion.choices
@@ -118,6 +118,8 @@ export async function aiChatbotAssistance(
         | string
         | Array<{text?: string}>
         | null;
+      const reasoningContent = (choice.message as {reasoning_content?: string | null})
+        .reasoning_content;
       if (typeof messageContent === 'string') {
         return messageContent;
       }
@@ -126,6 +128,10 @@ export async function aiChatbotAssistance(
         return messageContent
           .map(part => part.text ?? '')
           .join('\n');
+      }
+
+      if (typeof reasoningContent === 'string') {
+        return reasoningContent;
       }
 
       return '';

@@ -15,7 +15,7 @@ export default function LoginPage() {
                         Welcome <span className="text-glow-primary text-primary">Back</span>
                     </h1>
                     <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-                        Continue with Google to access your DigiTantra workspace.
+                        Log in using your email and password, or continue with Google.
                     </p>
                 </div>
                 <div className="w-full max-w-md">

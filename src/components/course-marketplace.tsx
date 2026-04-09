@@ -102,7 +102,7 @@ function ListingRow({
       <div className="mt-4">
         <Button
           size="sm"
-          className="font-semibold"
+          className="w-full font-semibold sm:w-auto"
           onClick={() => {
             if (!user) {
               onRequireAuth();
@@ -217,11 +217,11 @@ export function CourseMarketplace({ catalog }: { catalog: CourseMarketplaceCatal
           }
         }}
       >
-        <DialogContent className="flex max-h-[90svh] w-[calc(100vw-1rem)] max-w-5xl flex-col overflow-hidden border-white/10 bg-[#090b17] p-0 text-foreground sm:max-h-[85vh] sm:w-full">
+        <DialogContent className="flex max-h-[92svh] w-[calc(100vw-1rem)] max-w-5xl flex-col overflow-hidden border-white/10 bg-[#090b17] p-0 text-foreground sm:max-h-[85vh] sm:w-full">
           {activeCategory && (
             <div className="flex min-h-0 flex-1 flex-col">
               <DialogHeader className="shrink-0 border-b border-white/10 px-4 py-5 sm:px-6 sm:py-6">
-                <DialogTitle className="font-headline text-2xl sm:text-3xl">{activeCategory.name}</DialogTitle>
+                <DialogTitle className="font-headline text-xl sm:text-3xl">{activeCategory.name}</DialogTitle>
                 <DialogDescription className="max-w-3xl text-sm leading-6">
                   {activeCategory.description} DigiTantra pricing remains visible here, while the list below
                   focuses on tracked third-party offerings and current provider status.

@@ -10,9 +10,9 @@ import {getAiEnclaveService, type AiEnclaveServiceId} from '@/lib/ai-enclave/ser
 import {getAiEnclaveWorkbenchConfig} from '@/lib/ai-enclave/workbench';
 
 type AiEnclaveServicePageProps = {
-  params: {
+  params: Promise<{
     serviceId: string;
-  };
+  }>;
 };
 
 function getServicePageData(serviceId: string) {
@@ -25,8 +25,9 @@ function getServicePageData(serviceId: string) {
   }
 }
 
-export function generateMetadata({params}: AiEnclaveServicePageProps): Metadata {
-  const pageData = getServicePageData(params.serviceId);
+export async function generateMetadata({params}: AiEnclaveServicePageProps): Promise<Metadata> {
+  const {serviceId} = await params;
+  const pageData = getServicePageData(serviceId);
 
   if (!pageData) {
     return {
@@ -40,8 +41,9 @@ export function generateMetadata({params}: AiEnclaveServicePageProps): Metadata 
   };
 }
 
-export default function AiEnclaveServicePage({params}: AiEnclaveServicePageProps) {
-  const pageData = getServicePageData(params.serviceId);
+export default async function AiEnclaveServicePage({params}: AiEnclaveServicePageProps) {
+  const {serviceId} = await params;
+  const pageData = getServicePageData(serviceId);
 
   if (!pageData) {
     notFound();

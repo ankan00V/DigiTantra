@@ -1789,6 +1789,17 @@ function buildCatalogFromResults(
   };
 }
 
+function isCatalogStale(catalog: CourseMarketplaceCatalog) {
+  const refreshedAtMs = Date.parse(catalog.refreshedAt);
+
+  if (!Number.isFinite(refreshedAtMs)) {
+    return true;
+  }
+
+  const maxAgeMs = COURSE_REFRESH_INTERVAL_MINUTES * 60 * 1000;
+  return Date.now() - refreshedAtMs >= maxAgeMs;
+}
+
 async function persistCatalog(catalog: CourseMarketplaceCatalog) {
   const collection = await getCatalogCollection();
 
@@ -1840,11 +1851,24 @@ async function readLatestCourseMarketplaceCatalog() {
   }
 
   const { _id, updatedAt, ...catalog } = storedCatalog;
-  return catalog;
+
+  if (!isCatalogStale(catalog)) {
+    return catalog;
+  }
+
+  try {
+    return await refreshCourseMarketplaceCatalog();
+  } catch (error) {
+    console.error(
+      "course-marketplace stale refresh failed, serving last known catalog",
+      error
+    );
+    return catalog;
+  }
 }
 
 const getCachedCourseMarketplaceCatalog = unstable_cache(readLatestCourseMarketplaceCatalog, ["latest"], {
-  revalidate: 300,
+  revalidate: 60,
   tags: [COURSE_MARKETPLACE_CATALOG_TAG],
 });
 

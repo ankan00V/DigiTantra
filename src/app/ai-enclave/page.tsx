@@ -19,7 +19,7 @@ export default function AiEnclavePage() {
       <div className="absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_top,hsl(var(--primary)/0.18),transparent_58%)]" />
       <div className="absolute inset-x-0 top-40 -z-10 h-[28rem] bg-[radial-gradient(circle_at_center,hsl(var(--secondary)/0.06),transparent_62%)]" />
 
-      <div className="main-container relative z-10 space-y-16 pt-24 sm:space-y-20 sm:pt-28">
+      <div className="main-container relative z-10 space-y-14 pt-24 sm:space-y-20 sm:pt-28">
         <section className="space-y-8 text-center">
           <div className="mx-auto max-w-4xl">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-primary">AI Enclave</p>
@@ -37,7 +37,7 @@ export default function AiEnclavePage() {
             {AI_ENCLAVE_OVERVIEW_STATS.map((stat) => (
               <div
                 key={stat.label}
-                className="glassmorphic rounded-2xl px-5 py-6 text-left sm:px-6"
+                className="glassmorphic rounded-2xl px-5 py-6 text-center sm:px-6 sm:text-left"
               >
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {stat.label}
@@ -103,7 +103,7 @@ export default function AiEnclavePage() {
                       </CardHeader>
                       {service.href ? (
                         <CardFooter className="pt-0">
-                          <Button asChild variant="secondary" className="font-semibold">
+                          <Button asChild variant="secondary" className="w-full font-semibold sm:w-auto">
                             <Link href={service.href}>
                               Launch Tool <ArrowRight className="ml-2 h-4 w-4" />
                             </Link>

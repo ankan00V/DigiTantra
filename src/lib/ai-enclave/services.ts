@@ -32,7 +32,6 @@ export type AiEnclaveServiceId =
   | 'skill-gap-analyzer';
 
 export type AiEnclaveService = {
-  apiKeyEnv: string;
   description: string;
   href?: string;
   id: AiEnclaveServiceId;
@@ -49,6 +48,95 @@ export type AiEnclaveServiceSection = {
   title: string;
 };
 
+export type AiEnclaveServiceProviderRuntime = {
+  apiKey: string;
+  baseURL: string;
+  extraBody?: Record<string, unknown>;
+  maxTokens?: number;
+  model: string;
+  provider: 'nvidia';
+  temperature?: number;
+  topP?: number;
+};
+
+type AiEnclaveRuntimeProfileId = 'complex' | 'chat';
+
+const COMPLEX_SERVICE_IDS = new Set<AiEnclaveServiceId>([
+  'resume-builder',
+  'cover-letter-generator',
+  'linkedin-optimizer',
+  'sop-generator',
+  'interview-prep-coach',
+  'career-roadmap-generator',
+  'assignment-helper',
+  'code-explainer',
+  'debug-helper',
+  'skill-gap-analyzer',
+]);
+
+const CHAT_SERVICE_IDS = new Set<AiEnclaveServiceId>([
+  'email-writer',
+  'course-recommender',
+  'project-idea-generator',
+  'notes-summarizer',
+  'quiz-generator',
+  'social-caption-generator',
+  'ad-copy-generator',
+  'landing-page-copy-generator',
+  'seo-blog-outline-tool',
+  'study-planner',
+]);
+
+function getAiEnclaveRuntimeProfileId(serviceId: AiEnclaveServiceId): AiEnclaveRuntimeProfileId {
+  if (COMPLEX_SERVICE_IDS.has(serviceId)) {
+    return 'complex';
+  }
+
+  if (CHAT_SERVICE_IDS.has(serviceId)) {
+    return 'chat';
+  }
+
+  return 'complex';
+}
+
+function getAiEnclaveRuntimeProfile(
+  profileId: AiEnclaveRuntimeProfileId
+): AiEnclaveServiceProviderRuntime {
+  if (profileId === 'chat') {
+    const apiKey = process.env.AI_ENCLAVE_CHAT_API_KEY;
+
+    if (!apiKey) {
+      throw new Error('Missing AI_ENCLAVE_CHAT_API_KEY');
+    }
+
+    return {
+      apiKey,
+      baseURL: process.env.AI_ENCLAVE_CHAT_BASE_URL ?? 'https://integrate.api.nvidia.com/v1',
+      model: process.env.AI_ENCLAVE_CHAT_MODEL ?? 'openai/gpt-oss-120b',
+      provider: 'nvidia',
+      temperature: 0.35,
+      topP: 0.85,
+      maxTokens: 1200,
+    };
+  }
+
+  const apiKey = process.env.AI_ENCLAVE_COMPLEX_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('Missing AI_ENCLAVE_COMPLEX_API_KEY');
+  }
+
+  return {
+    apiKey,
+    baseURL: process.env.AI_ENCLAVE_COMPLEX_BASE_URL ?? 'https://integrate.api.nvidia.com/v1',
+    model: process.env.AI_ENCLAVE_COMPLEX_MODEL ?? 'openai/gpt-oss-120b',
+    provider: 'nvidia',
+    temperature: 0.45,
+    topP: 0.85,
+    maxTokens: 4096,
+  };
+}
+
 export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
   {
     eyebrow: 'Career AI',
@@ -64,7 +152,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/resume-builder',
         pageContext: 'AI Resume Builder',
-        apiKeyEnv: 'AI_RESUME_BUILDER_API_KEY',
       },
       {
         id: 'cover-letter-generator',
@@ -73,7 +160,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/cover-letter-generator',
         pageContext: 'AI Cover Letter Generator',
-        apiKeyEnv: 'AI_COVER_LETTER_GENERATOR_API_KEY',
       },
       {
         id: 'linkedin-optimizer',
@@ -82,7 +168,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/linkedin-optimizer',
         pageContext: 'AI LinkedIn Optimizer',
-        apiKeyEnv: 'AI_LINKEDIN_OPTIMIZER_API_KEY',
       },
       {
         id: 'sop-generator',
@@ -91,7 +176,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/sop-generator',
         pageContext: 'AI SOP Generator',
-        apiKeyEnv: 'AI_SOP_GENERATOR_API_KEY',
       },
       {
         id: 'email-writer',
@@ -100,7 +184,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/email-writer',
         pageContext: 'AI Email Writer',
-        apiKeyEnv: 'AI_EMAIL_WRITER_API_KEY',
       },
       {
         id: 'interview-prep-coach',
@@ -109,7 +192,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/interview-prep-coach',
         pageContext: 'AI Interview Prep Coach',
-        apiKeyEnv: 'AI_INTERVIEW_PREP_COACH_API_KEY',
       },
       {
         id: 'skill-gap-analyzer',
@@ -118,7 +200,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/skill-gap-analyzer',
         pageContext: 'AI Skill Gap Analyzer',
-        apiKeyEnv: 'AI_SKILL_GAP_ANALYZER_API_KEY',
       },
     ],
   },
@@ -136,7 +217,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/career-roadmap-generator',
         pageContext: 'AI Career Roadmap Generator',
-        apiKeyEnv: 'AI_CAREER_ROADMAP_GENERATOR_API_KEY',
       },
       {
         id: 'course-recommender',
@@ -145,7 +225,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/course-recommender',
         pageContext: 'AI Course Recommender',
-        apiKeyEnv: 'AI_COURSE_RECOMMENDER_API_KEY',
       },
       {
         id: 'assignment-helper',
@@ -154,7 +233,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/assignment-helper',
         pageContext: 'AI Assignment Helper',
-        apiKeyEnv: 'AI_ASSIGNMENT_HELPER_API_KEY',
       },
       {
         id: 'notes-summarizer',
@@ -163,7 +241,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/notes-summarizer',
         pageContext: 'AI Notes Summarizer',
-        apiKeyEnv: 'AI_NOTES_SUMMARIZER_API_KEY',
       },
       {
         id: 'quiz-generator',
@@ -172,7 +249,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/quiz-generator',
         pageContext: 'AI Quiz Generator',
-        apiKeyEnv: 'AI_QUIZ_GENERATOR_API_KEY',
       },
       {
         id: 'study-planner',
@@ -181,7 +257,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/study-planner',
         pageContext: 'AI Study Planner',
-        apiKeyEnv: 'AI_STUDY_PLANNER_API_KEY',
       },
     ],
   },
@@ -199,7 +274,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/blog',
         pageContext: 'AI Blog Generator',
-        apiKeyEnv: 'AI_BLOG_GENERATOR_API_KEY',
       },
       {
         id: 'social-caption-generator',
@@ -208,7 +282,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/social-caption-generator',
         pageContext: 'AI Social Caption Generator',
-        apiKeyEnv: 'AI_SOCIAL_CAPTION_GENERATOR_API_KEY',
       },
       {
         id: 'ad-copy-generator',
@@ -217,7 +290,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/ad-copy-generator',
         pageContext: 'AI Ad Copy Generator',
-        apiKeyEnv: 'AI_AD_COPY_GENERATOR_API_KEY',
       },
       {
         id: 'landing-page-copy-generator',
@@ -226,7 +298,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/landing-page-copy-generator',
         pageContext: 'AI Landing Page Copy Generator',
-        apiKeyEnv: 'AI_LANDING_PAGE_COPY_GENERATOR_API_KEY',
       },
       {
         id: 'seo-blog-outline-tool',
@@ -235,7 +306,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/seo-blog-outline-tool',
         pageContext: 'AI SEO Keyword + Blog Outline Tool',
-        apiKeyEnv: 'AI_SEO_BLOG_OUTLINE_TOOL_API_KEY',
       },
     ],
   },
@@ -253,7 +323,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/project-idea-generator',
         pageContext: 'AI Project Idea Generator',
-        apiKeyEnv: 'AI_PROJECT_IDEA_GENERATOR_API_KEY',
       },
       {
         id: 'code-explainer',
@@ -262,7 +331,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/code-explainer',
         pageContext: 'AI Code Explainer',
-        apiKeyEnv: 'AI_CODE_EXPLAINER_API_KEY',
       },
       {
         id: 'debug-helper',
@@ -271,7 +339,6 @@ export const AI_ENCLAVE_SERVICE_SECTIONS: AiEnclaveServiceSection[] = [
         status: 'Live now',
         href: '/ai-enclave/debug-helper',
         pageContext: 'AI Debug Helper',
-        apiKeyEnv: 'AI_DEBUG_HELPER_API_KEY',
       },
     ],
   },
@@ -299,18 +366,13 @@ export function getAiEnclaveService(serviceId: AiEnclaveServiceId) {
 
 export function getAiEnclaveServiceRuntime(serviceId: AiEnclaveServiceId) {
   const service = getAiEnclaveService(serviceId);
-  const apiKey = process.env[service.apiKeyEnv];
-
-  if (!apiKey) {
-    throw new Error(`Missing ${service.apiKeyEnv}`);
-  }
+  const runtime =
+    serviceId === 'blog-generator'
+      ? getAiEnclaveRuntimeProfile('complex')
+      : getAiEnclaveRuntimeProfile(getAiEnclaveRuntimeProfileId(serviceId));
 
   return {
-    apiKey,
-    baseURL: process.env.OPENROUTER_BASE_URL ?? 'https://openrouter.ai/api/v1',
-    model:
-      process.env[`${service.apiKeyEnv.replace(/_API_KEY$/, '')}_MODEL`] ??
-      'openai/gpt-oss-120b:free',
+    ...runtime,
     service,
   };
 }

@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { type ChangeEvent, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { ArrowRight, Loader2, MailCheck, RefreshCcw } from 'lucide-react';
+import { ArrowRight, Loader2, MailCheck, RefreshCcw, Upload, XCircle } from 'lucide-react';
 
 import { useAuthSession } from '@/components/auth-session-provider';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,10 @@ interface AuthFormProps {
 }
 
 const formSchema = z.object({
+  name: z.string().optional(),
   email: z.string().email({ message: 'Please enter a valid email.' }),
+  password: z.string().max(128, { message: 'Password is too long.' }),
+  confirmPassword: z.string().optional(),
   otp: z
     .string()
     .trim()
@@ -29,6 +33,7 @@ const formSchema = z.object({
     .refine((value) => !value || /^\d{6}$/.test(value), {
       message: 'Enter the 6-digit OTP.',
     }),
+  profileImage: z.string().nullable().optional(),
 });
 
 type AuthFormValues = z.infer<typeof formSchema>;
@@ -67,12 +72,58 @@ function getErrorMessage(errorCode: string | null) {
   }
 }
 
+async function readImageAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+        return;
+      }
+
+      reject(new Error('Unable to read image.'));
+    };
+    reader.onerror = () => reject(new Error('Unable to read image.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function getPasswordChecks(password: string) {
+  return {
+    minLength: password.length >= 8,
+    lowercase: /[a-z]/.test(password),
+    uppercase: /[A-Z]/.test(password),
+    number: /\d/.test(password),
+    special: /[^A-Za-z0-9]/.test(password),
+  };
+}
+
+function getPasswordStrengthLabel(score: number) {
+  if (score <= 1) {
+    return 'Weak';
+  }
+
+  if (score <= 3) {
+    return 'Fair';
+  }
+
+  if (score === 4) {
+    return 'Good';
+  }
+
+  return 'Strong';
+}
+
 export function AuthForm({ mode }: AuthFormProps) {
   const [isRequestingOtp, setIsRequestingOtp] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isReadingPhoto, setIsReadingPhoto] = useState(false);
   const [hasSentOtp, setHasSentOtp] = useState(false);
   const [pendingProvider, setPendingProvider] = useState<'google' | null>(null);
   const [resendCooldownRemaining, setResendCooldownRemaining] = useState(0);
+  const [selectedPhotoName, setSelectedPhotoName] = useState<string | null>(null);
+  const hasPrefilledEmail = useRef(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
@@ -81,6 +132,8 @@ export function AuthForm({ mode }: AuthFormProps) {
   const callbackUrlParam = searchParams.get('callbackUrl');
   const callbackUrl =
     callbackUrlParam && callbackUrlParam.startsWith('/') ? callbackUrlParam : '/';
+  const showRegisteredMessage = mode === 'login' && searchParams.get('registered') === '1';
+  const showResetMessage = mode === 'login' && searchParams.get('reset') === '1';
 
   useEffect(() => {
     if (resendCooldownRemaining <= 0) {
@@ -97,10 +150,40 @@ export function AuthForm({ mode }: AuthFormProps) {
   const form = useForm<AuthFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: '',
       email: '',
+      password: '',
+      confirmPassword: '',
       otp: '',
+      profileImage: null,
     },
   });
+
+  useEffect(() => {
+    if (hasPrefilledEmail.current) {
+      return;
+    }
+
+    const emailParam = searchParams.get('email');
+
+    if (!emailParam) {
+      return;
+    }
+
+    const parsed = z.string().email().safeParse(emailParam);
+
+    if (!parsed.success) {
+      return;
+    }
+
+    form.setValue('email', parsed.data, {
+      shouldDirty: false,
+      shouldTouch: false,
+      shouldValidate: true,
+    });
+
+    hasPrefilledEmail.current = true;
+  }, [form, searchParams]);
 
   const parseError = async (response: Response) => {
     try {
@@ -111,16 +194,138 @@ export function AuthForm({ mode }: AuthFormProps) {
     }
   };
 
+  const passwordValue = form.watch('password') ?? '';
+  const passwordChecks = getPasswordChecks(passwordValue);
+  const passwordScore = Object.values(passwordChecks).filter(Boolean).length;
+  const passwordStrengthLabel = getPasswordStrengthLabel(passwordScore);
+
   const handleProviderSignIn = async (provider: 'google') => {
     setPendingProvider(provider);
     await signIn(provider, { callbackUrl });
     setPendingProvider(null);
   };
 
-  const requestOtp = async () => {
+  const validateSignupFields = async () => {
     const emailIsValid = await form.trigger('email');
+    const name = (form.getValues('name') ?? '').trim();
+    const password = form.getValues('password') ?? '';
+    const checks = getPasswordChecks(password);
+    const confirmPassword = form.getValues('confirmPassword') ?? '';
+    let hasError = !emailIsValid;
 
+    if (name.length < 2) {
+      hasError = true;
+      form.setError('name', {
+        type: 'validate',
+        message: 'Name must be at least 2 characters long.',
+      });
+    } else {
+      form.clearErrors('name');
+    }
+
+    if (!checks.minLength) {
+      hasError = true;
+      form.setError('password', {
+        type: 'validate',
+        message: 'Password must be at least 8 characters long.',
+      });
+    } else if (!checks.lowercase) {
+      hasError = true;
+      form.setError('password', {
+        type: 'validate',
+        message: 'Password must include at least one lowercase letter.',
+      });
+    } else if (!checks.uppercase) {
+      hasError = true;
+      form.setError('password', {
+        type: 'validate',
+        message: 'Password must include at least one uppercase letter.',
+      });
+    } else if (!checks.number) {
+      hasError = true;
+      form.setError('password', {
+        type: 'validate',
+        message: 'Password must include at least one number.',
+      });
+    } else if (!checks.special) {
+      hasError = true;
+      form.setError('password', {
+        type: 'validate',
+        message: 'Password must include at least one special character.',
+      });
+    } else {
+      form.clearErrors('password');
+    }
+
+    if (confirmPassword !== password) {
+      hasError = true;
+      form.setError('confirmPassword', {
+        type: 'validate',
+        message: 'Confirm password must match password.',
+      });
+    } else {
+      form.clearErrors('confirmPassword');
+    }
+
+    return !hasError;
+  };
+
+  const loginWithPassword = async (values: AuthFormValues) => {
+    const emailIsValid = await form.trigger('email');
     if (!emailIsValid) {
+      return;
+    }
+
+    if (!values.password) {
+      form.setError('password', {
+        type: 'validate',
+        message: 'Password is required.',
+      });
+      return;
+    }
+
+    setIsLoggingIn(true);
+
+    try {
+      const response = await fetch('/api/email-auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(await parseError(response));
+      }
+
+      await refreshSession();
+      toast({
+        title: 'Welcome Back',
+        description: 'You have been logged in successfully.',
+      });
+      router.push(callbackUrl);
+      router.refresh();
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description:
+          error instanceof Error ? error.message : 'Please check your credentials and try again.',
+      });
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const requestSignupOtp = async () => {
+    const fieldsAreValid = await validateSignupFields();
+
+    if (!fieldsAreValid) {
       return;
     }
 
@@ -135,7 +340,12 @@ export function AuthForm({ mode }: AuthFormProps) {
         credentials: 'same-origin',
         body: JSON.stringify({
           email: form.getValues('email'),
-          mode,
+          mode: 'signup',
+          signup: {
+            name: form.getValues('name'),
+            password: form.getValues('password'),
+            image: form.getValues('profileImage'),
+          },
         }),
       });
 
@@ -148,7 +358,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       toast({
         title: 'Verification Code Sent',
         description:
-          'A 6-digit OTP has been sent to your email. Enter it below to continue.',
+          'A 6-digit OTP has been sent to your email. Enter it below to finish sign up.',
       });
       form.setFocus('otp');
     } catch (error) {
@@ -163,19 +373,8 @@ export function AuthForm({ mode }: AuthFormProps) {
     }
   };
 
-  const resetOtpState = () => {
-    setHasSentOtp(false);
-    setResendCooldownRemaining(0);
-    form.setValue('otp', '');
-  };
-
-  const onSubmit = async (data: AuthFormValues) => {
-    if (!hasSentOtp) {
-      await requestOtp();
-      return;
-    }
-
-    if (!data.otp) {
+  const verifySignupOtp = async (values: AuthFormValues) => {
+    if (!values.otp) {
       form.setError('otp', { message: 'Enter the 6-digit OTP.' });
       return;
     }
@@ -190,9 +389,9 @@ export function AuthForm({ mode }: AuthFormProps) {
         },
         credentials: 'same-origin',
         body: JSON.stringify({
-          email: data.email,
-          otp: data.otp,
-          mode,
+          email: values.email,
+          otp: values.otp,
+          mode: 'signup',
         }),
       });
 
@@ -200,15 +399,21 @@ export function AuthForm({ mode }: AuthFormProps) {
         throw new Error(await parseError(response));
       }
 
-      await refreshSession();
-      toast({
-        title: mode === 'signup' ? 'Account Created' : 'Welcome Back',
-        description:
-          mode === 'signup'
-            ? 'Your DigiTantra account is now active.'
-            : 'You have been logged in successfully.',
+      const params = new URLSearchParams({
+        email: values.email,
+        registered: '1',
       });
-      router.push(callbackUrl);
+
+      if (callbackUrl !== '/') {
+        params.set('callbackUrl', callbackUrl);
+      }
+
+      toast({
+        title: 'Account Created',
+        description: 'Sign up complete. Log in with your email and password.',
+      });
+
+      router.push(`/login?${params.toString()}`);
       router.refresh();
     } catch (error) {
       toast({
@@ -222,7 +427,98 @@ export function AuthForm({ mode }: AuthFormProps) {
     }
   };
 
-  const isBusy = pendingProvider !== null || isRequestingOtp || isVerifyingOtp;
+  const resetSignupOtpState = () => {
+    setHasSentOtp(false);
+    setResendCooldownRemaining(0);
+    form.setValue('otp', '');
+  };
+
+  const handleProfilePhotoSelection = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      form.setError('profileImage', {
+        type: 'validate',
+        message: 'Please select an image file.',
+      });
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > 1_500_000) {
+      form.setError('profileImage', {
+        type: 'validate',
+        message: 'Profile photo must be 1.5 MB or smaller.',
+      });
+      event.target.value = '';
+      return;
+    }
+
+    setIsReadingPhoto(true);
+
+    try {
+      const dataUrl = await readImageAsDataUrl(file);
+      form.setValue('profileImage', dataUrl, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+      form.clearErrors('profileImage');
+      setSelectedPhotoName(file.name);
+    } catch {
+      form.setError('profileImage', {
+        type: 'validate',
+        message: 'Unable to read selected image.',
+      });
+      event.target.value = '';
+    } finally {
+      setIsReadingPhoto(false);
+    }
+  };
+
+  const clearSelectedProfilePhoto = () => {
+    setSelectedPhotoName(null);
+    form.setValue('profileImage', null, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    form.clearErrors('profileImage');
+  };
+
+  const onSubmit = async (data: AuthFormValues) => {
+    if (mode === 'login') {
+      await loginWithPassword(data);
+      return;
+    }
+
+    if (!hasSentOtp) {
+      await requestSignupOtp();
+      return;
+    }
+
+    await verifySignupOtp(data);
+  };
+
+  const isBusy =
+    pendingProvider !== null ||
+    isRequestingOtp ||
+    isVerifyingOtp ||
+    isLoggingIn ||
+    isReadingPhoto;
+  const passwordStrengthTone =
+    passwordScore <= 1
+      ? 'text-destructive'
+      : passwordScore <= 3
+        ? 'text-amber-400'
+        : passwordScore === 4
+          ? 'text-yellow-300'
+          : 'text-emerald-400';
+  const passwordStrengthWidth = `${(passwordScore / 5) * 100}%`;
+
+  const profileImage = form.watch('profileImage');
 
   return (
     <Card className="glassmorphic">
@@ -232,8 +528,8 @@ export function AuthForm({ mode }: AuthFormProps) {
         </CardTitle>
         <CardDescription>
           {mode === 'login'
-            ? 'Use email OTP or continue with Google to access DigiTantra.'
-            : 'Create your DigiTantra account with email OTP or Google.'}
+            ? 'Log in with your email and password, or continue with Google.'
+            : 'Sign up with name, email, password, and OTP verification.'}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 p-5 pt-0 sm:p-6 sm:pt-0">
@@ -243,8 +539,41 @@ export function AuthForm({ mode }: AuthFormProps) {
           </div>
         ) : null}
 
+        {showRegisteredMessage ? (
+          <div className="rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-primary">
+            Sign up completed. Enter your email and password to log in.
+          </div>
+        ) : null}
+
+        {showResetMessage ? (
+          <div className="rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-primary">
+            Password reset completed. Log in with your new password.
+          </div>
+        ) : null}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {mode === 'signup' ? (
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Your full name"
+                        {...field}
+                        value={field.value ?? ''}
+                        disabled={isBusy || hasSentOtp}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
+
             <FormField
               control={form.control}
               name="email"
@@ -255,7 +584,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                     <Input
                       placeholder="name@example.com"
                       {...field}
-                      disabled={isBusy || hasSentOtp}
+                      disabled={isBusy || (mode === 'signup' && hasSentOtp)}
                     />
                   </FormControl>
                   <FormMessage />
@@ -263,7 +592,144 @@ export function AuthForm({ mode }: AuthFormProps) {
               )}
             />
 
-            {hasSentOtp ? (
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                      placeholder={mode === 'login' ? 'Enter password' : 'Create a password'}
+                      {...field}
+                      value={field.value ?? ''}
+                      disabled={isBusy || (mode === 'signup' && hasSentOtp)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {mode === 'signup' ? (
+              <div className="space-y-2 rounded-2xl border border-border/70 bg-background/40 px-4 py-3">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Password Strength</span>
+                  <span className={cn('font-semibold', passwordStrengthTone)}>
+                    {passwordStrengthLabel}
+                  </span>
+                </div>
+                <div className="h-2 rounded-full bg-white/10">
+                  <div
+                    className={cn(
+                      'h-2 rounded-full transition-all duration-300',
+                      passwordScore <= 1
+                        ? 'bg-destructive'
+                        : passwordScore <= 3
+                          ? 'bg-amber-400'
+                          : passwordScore === 4
+                            ? 'bg-yellow-300'
+                            : 'bg-emerald-400'
+                    )}
+                    style={{ width: passwordStrengthWidth }}
+                  />
+                </div>
+                <ul className="grid grid-cols-1 gap-1 text-xs text-muted-foreground sm:grid-cols-2">
+                  <li className={passwordChecks.minLength ? 'text-emerald-400' : undefined}>
+                    8+ characters
+                  </li>
+                  <li className={passwordChecks.uppercase ? 'text-emerald-400' : undefined}>
+                    1 uppercase letter
+                  </li>
+                  <li className={passwordChecks.lowercase ? 'text-emerald-400' : undefined}>
+                    1 lowercase letter
+                  </li>
+                  <li className={passwordChecks.number ? 'text-emerald-400' : undefined}>
+                    1 number
+                  </li>
+                  <li className={passwordChecks.special ? 'text-emerald-400' : undefined}>
+                    1 special character
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+
+            {mode === 'signup' ? (
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        autoComplete="new-password"
+                        placeholder="Confirm your password"
+                        {...field}
+                        value={field.value ?? ''}
+                        disabled={isBusy || hasSentOtp}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
+
+            {mode === 'signup' ? (
+              <div className="space-y-2">
+                <FormLabel className="block">Profile Photo (Optional)</FormLabel>
+                <div className="rounded-2xl border border-border/70 bg-background/40 p-3">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm font-medium text-foreground hover:bg-white/10">
+                      <Upload className="h-4 w-4" />
+                      Upload Photo
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/jpg,image/webp,image/gif"
+                        className="hidden"
+                        onChange={handleProfilePhotoSelection}
+                        disabled={isBusy || hasSentOtp}
+                      />
+                    </label>
+                    {profileImage ? (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearSelectedProfilePhoto}
+                        disabled={isBusy || hasSentOtp}
+                      >
+                        <XCircle className="mr-2 h-4 w-4" />
+                        Remove
+                      </Button>
+                    ) : null}
+                    {selectedPhotoName ? (
+                      <span className="max-w-[14rem] truncate text-xs text-muted-foreground">
+                        {selectedPhotoName}
+                      </span>
+                    ) : null}
+                  </div>
+                  {profileImage ? (
+                    <img
+                      src={profileImage}
+                      alt="Selected profile preview"
+                      className="mt-3 h-20 w-20 rounded-full border border-border/80 object-cover"
+                    />
+                  ) : null}
+                </div>
+                {form.formState.errors.profileImage ? (
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.profileImage.message}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+
+            {mode === 'signup' && hasSentOtp ? (
               <div className="rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2 font-semibold text-foreground">
                   <MailCheck className="h-4 w-4 text-primary" />
@@ -279,7 +745,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               </div>
             ) : null}
 
-            {hasSentOtp ? (
+            {mode === 'signup' && hasSentOtp ? (
               <FormField
                 control={form.control}
                 name="otp"
@@ -306,26 +772,24 @@ export function AuthForm({ mode }: AuthFormProps) {
 
             <div className="space-y-3">
               <Button type="submit" className="w-full font-semibold" disabled={isBusy}>
-                {isRequestingOtp || isVerifyingOtp ? (
+                {isRequestingOtp || isVerifyingOtp || isLoggingIn || isReadingPhoto ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : null}
-                {hasSentOtp
-                  ? mode === 'login'
-                    ? 'Verify OTP and Log In'
-                    : 'Verify OTP and Create Account'
-                  : mode === 'login'
-                    ? 'Send Login OTP'
+                {mode === 'login'
+                  ? 'Log In with Email'
+                  : hasSentOtp
+                    ? 'Verify OTP and Create Account'
                     : 'Send Sign-up OTP'}
               </Button>
 
-              {hasSentOtp ? (
+              {mode === 'signup' && hasSentOtp ? (
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <Button
                     type="button"
                     variant="outline"
                     className="w-full"
                     disabled={isBusy || resendCooldownRemaining > 0}
-                    onClick={requestOtp}
+                    onClick={requestSignupOtp}
                   >
                     <RefreshCcw className="mr-2 h-4 w-4" />
                     {resendCooldownRemaining > 0
@@ -337,10 +801,21 @@ export function AuthForm({ mode }: AuthFormProps) {
                     variant="ghost"
                     className="w-full"
                     disabled={isBusy}
-                    onClick={resetOtpState}
+                    onClick={resetSignupOtpState}
                   >
-                    Use another email
+                    Edit signup details
                   </Button>
+                </div>
+              ) : null}
+
+              {mode === 'login' ? (
+                <div className="text-right text-sm">
+                  <Link
+                    href={`/forgot-password?email=${encodeURIComponent(form.getValues('email') ?? '')}`}
+                    className="text-primary hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
                 </div>
               ) : null}
             </div>
@@ -384,7 +859,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         </Button>
 
         <p className="px-1 text-xs leading-6 text-muted-foreground">
-          Email OTP works with any valid inbox once SMTP is configured, and Google remains available as the direct social sign-in option.
+          Signup now uses secure password + OTP verification, while login uses email and password.
         </p>
       </CardContent>
     </Card>

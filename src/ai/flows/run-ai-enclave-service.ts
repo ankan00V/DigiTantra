@@ -465,42 +465,36 @@ function isLowQualityResponse(
 }
 
 async function requestServiceCompletion({
-  apiKey,
-  baseURL,
   config,
-  model,
+  runtime,
   serviceId,
-  serviceName,
+  service,
   values,
-  retry,
 }: {
-  apiKey: string;
-  baseURL: string;
   config: NonNullable<ReturnType<typeof getAiEnclaveWorkbenchConfig>>;
-  model: string;
+  runtime: ReturnType<typeof getAiEnclaveServiceRuntime>;
   serviceId: AiEnclaveServiceId;
-  retry?: boolean;
-  serviceName: string;
+  service: ReturnType<typeof getAiEnclaveServiceRuntime>['service'];
   values: Record<string, string>;
 }) {
   const contract = SERVICE_RESPONSE_CONTRACTS[serviceId];
   const openai = new OpenAI({
-    apiKey,
-    baseURL,
-    timeout: 25000,
+    apiKey: runtime.apiKey,
+    baseURL: runtime.baseURL,
+    timeout: 15000,
   });
 
   return openai.chat.completions.create({
-    model,
-    temperature: retry ? 0.25 : 0.4,
-    top_p: 0.8,
-    max_tokens: 1800,
+    model: runtime.model,
+    temperature: runtime.temperature ?? 0.35,
+    top_p: runtime.topP ?? 0.8,
+    max_tokens: runtime.maxTokens ?? 1200,
     messages: [
       {
         role: 'system',
         content:
           `${config.systemPrompt}\n\n` +
-          `Tool context: ${serviceName} from DigiTantra AI Enclave.\n` +
+          `Tool context: ${service.name} from DigiTantra AI Enclave.\n` +
           `Output requirement: ${config.outputGuide}\n\n` +
           (contract
             ? `Response contract:\n` +
@@ -524,19 +518,10 @@ async function requestServiceCompletion({
       {
         role: 'user',
         content:
-          `Generate output for ${serviceName} using the following user inputs:\n\n` +
+          `Generate output for ${service.name} using the following user inputs:\n\n` +
       `${formatSubmittedValues(values, config.fields)}\n\n` +
           'Make the response directly usable without extra cleanup by the user. Every factual statement must be grounded in the submitted inputs only.',
       },
-      ...(retry
-        ? [
-            {
-              role: 'user' as const,
-              content:
-                'The previous response was invalid or too weak. Regenerate it with tighter structure, more relevance to the service, and strictly valid JSON only.',
-            },
-          ]
-        : []),
     ],
   });
 }
@@ -564,23 +549,23 @@ export async function runAiEnclaveService(
     throw new Error('This service is handled through its dedicated workspace.');
   }
 
-  const {apiKey, baseURL, model, service} = getAiEnclaveServiceRuntime(serviceId as AiEnclaveServiceId);
-
-  for (const retry of [false, true]) {
+  try {
+    const runtime = getAiEnclaveServiceRuntime(
+      serviceId as AiEnclaveServiceId
+    );
     const completion = await requestServiceCompletion({
-      apiKey,
-      baseURL,
       config,
-      model,
+      runtime,
       serviceId: serviceId as AiEnclaveServiceId,
-      retry,
-      serviceName: service.name,
+      service: runtime.service,
       values,
     });
 
     const content = completion.choices
       .map((choice) => {
         const messageContent = choice.message.content as string | Array<{text?: string}> | null;
+        const reasoningContent = (choice.message as {reasoning_content?: string | null})
+          .reasoning_content;
 
         if (typeof messageContent === 'string') {
           return messageContent;
@@ -590,21 +575,37 @@ export async function runAiEnclaveService(
           return messageContent.map((part) => part.text ?? '').join('\n');
         }
 
+        if (typeof reasoningContent === 'string') {
+          return reasoningContent;
+        }
+
         return '';
       })
       .join('\n')
       .trim();
 
     try {
-        const parsed = RunAiEnclaveServiceOutputSchema.parse(JSON.parse(extractFirstJsonObject(content)));
+      const parsed = RunAiEnclaveServiceOutputSchema.parse(
+        JSON.parse(extractFirstJsonObject(content))
+      );
 
       if (!isLowQualityResponse(parsed, serviceId as AiEnclaveServiceId, values)) {
         return normalizeResult(parsed);
       }
-    } catch {
-      // Retry once with stronger constraints.
-    }
-  }
 
-  throw new Error(`Failed to generate a valid ${service.name} response.`);
+      return normalizeResult(parsed);
+    } catch {
+      const fallback: RunAiEnclaveServiceOutput = {
+        title: runtime.service.name,
+        content:
+          normalizeDisplayText(content) ||
+          'The AI provider returned an empty response. Please try again.',
+      };
+      return normalizeResult(fallback);
+    }
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Failed to generate a valid AI service response.';
+    throw new Error(`AI provider request failed: ${message}`);
+  }
 }

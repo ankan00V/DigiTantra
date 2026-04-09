@@ -15,7 +15,7 @@ export default function SignupPage() {
                         Start with a <span className="text-glow-primary text-primary">trusted account</span>
                     </h1>
                     <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-                        Create your DigiTantra profile instantly using Google.
+                        Sign up with name, email, password, OTP verification, and optional profile photo.
                     </p>
                 </div>
                 <div className="w-full max-w-md">

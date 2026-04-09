@@ -101,6 +101,8 @@ export async function generateBlogPost(input: GenerateBlogPostInput): Promise<Ge
         | string
         | Array<{text?: string}>
         | null;
+      const reasoningContent = (choice.message as {reasoning_content?: string | null})
+        .reasoning_content;
 
       if (typeof messageContent === 'string') {
         return messageContent;
@@ -110,6 +112,10 @@ export async function generateBlogPost(input: GenerateBlogPostInput): Promise<Ge
         return messageContent
           .map(part => part.text ?? '')
           .join('\n');
+      }
+
+      if (typeof reasoningContent === 'string') {
+        return reasoningContent;
       }
 
       return '';

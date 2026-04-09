@@ -3,30 +3,39 @@ import { z } from "zod";
 
 import {
   EmailAuthApiError,
-  verifyEmailOtp,
+  getEmailAuthCookieOptions,
+  loginWithEmailPassword,
 } from "@/lib/email-auth/server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const verifyOtpSchema = z.object({
+const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
-  otp: z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit OTP."),
-  mode: z.literal("signup"),
+  password: z.string().min(1, "Password is required."),
 });
 
 export async function POST(request: NextRequest) {
   try {
-    const body = verifyOtpSchema.parse(await request.json());
-    const result = await verifyEmailOtp(body);
-    return NextResponse.json({
+    const body = loginSchema.parse(await request.json());
+    const result = await loginWithEmailPassword(body);
+    const response = NextResponse.json({
       ok: true,
       user: result.user,
     });
+
+    const cookie = getEmailAuthCookieOptions(result.sessionExpiresAt);
+    response.cookies.set({
+      ...cookie.options,
+      name: cookie.name,
+      value: result.sessionToken,
+    });
+
+    return response;
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: error.issues[0]?.message ?? "Invalid OTP verification request." },
+        { error: error.issues[0]?.message ?? "Invalid login request." },
         { status: 400 }
       );
     }
@@ -35,9 +44,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
 
-    console.error("email-auth verify-otp error", error);
+    console.error("email-auth login error", error);
     return NextResponse.json(
-      { error: "Unable to verify that OTP right now. Please try again." },
+      { error: "Unable to log in right now. Please try again." },
       { status: 500 }
     );
   }

@@ -5,7 +5,7 @@ const SCENE_URL = 'https://prod.spline.design/7kdIygTmCYJQiKpC/scene.splinecode'
 export function HomeSplineBackground() {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-      <div className="absolute inset-[-8%] scale-[1.08]">
+      <div className="absolute inset-[-14%] scale-[1.16] sm:inset-[-10%] sm:scale-[1.12] lg:inset-[-8%] lg:scale-[1.08]">
         <Spline scene={SCENE_URL} className="h-full w-full" />
       </div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_16%,rgba(4,7,20,0.08)_56%,rgba(4,7,20,0.24)_100%)]" />

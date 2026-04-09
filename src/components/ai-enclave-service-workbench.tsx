@@ -100,7 +100,17 @@ export function AiEnclaveServiceWorkbench({
         });
         setResult(response);
       } catch (submitError) {
-        setError('This AI service could not generate a result right now. Please try again in a moment.');
+        const message =
+          submitError instanceof Error
+            ? submitError.message
+            : 'This AI service could not generate a result right now. Please try again in a moment.';
+
+        if (/Missing AI_ENCLAVE_(CHAT|COMPLEX)_API_KEY/i.test(message)) {
+          setError('AI service configuration is missing on the server. Please update environment variables.');
+          return;
+        }
+
+        setError(message);
       } finally {
         setIsLoading(false);
       }
@@ -108,7 +118,7 @@ export function AiEnclaveServiceWorkbench({
   };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+    <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
       <Card className="glassmorphic rounded-[1.75rem] border-primary/10">
         <CardHeader className="space-y-4">
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
@@ -155,6 +165,7 @@ export function AiEnclaveServiceWorkbench({
                   size="sm"
                   onClick={() => applySeedValues(getDemoValues(fields))}
                   disabled={isLoading || !user}
+                  className="flex-1 sm:flex-none"
                 >
                   Use Demo Input
                 </Button>
@@ -164,6 +175,7 @@ export function AiEnclaveServiceWorkbench({
                   size="sm"
                   onClick={() => applySeedValues(getEmptyValues(fields))}
                   disabled={isLoading || !user}
+                  className="flex-1 sm:flex-none"
                 >
                   Clear
                 </Button>
@@ -196,7 +208,7 @@ export function AiEnclaveServiceWorkbench({
             ))}
           </CardContent>
           <CardFooter className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <Button type="submit" disabled={isLoading || !user} size="lg" className="font-semibold">
+            <Button type="submit" disabled={isLoading || !user} size="lg" className="w-full font-semibold sm:w-auto">
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -247,7 +259,7 @@ export function AiEnclaveServiceWorkbench({
                     variant="secondary"
                     size="sm"
                     onClick={handleCopyResult}
-                    className="gap-2"
+                    className="w-full gap-2 sm:w-auto"
                   >
                     {copyState === 'success' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                     {copyState === 'success' ? 'Copied' : 'Copy Output'}

@@ -15,11 +15,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AI_ENCLAVE_SERVICE_SECTIONS } from "@/lib/ai-enclave/services";
 import { getCourseMarketplaceCatalog } from "@/lib/course-marketplace/server";
+import type { CourseCategory, ProviderStatus } from "@/lib/course-marketplace/types";
 
 export const metadata: Metadata = {
   title: 'Dashboard | DigiTantra',
   description: 'View a real snapshot of DigiTantra site structure, AI Enclave inventory, and course marketplace coverage.',
 };
+
+export const dynamic = "force-dynamic";
 
 const PRIMARY_SECTIONS = [
   'Home',
@@ -30,44 +33,54 @@ const PRIMARY_SECTIONS = [
   'Contact',
 ];
 
-function formatTimestamp(value: string) {
-  return new Intl.DateTimeFormat('en-IN', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(value));
-}
-
 export default async function AnalyticsPage() {
   const courseMarketplaceCatalog = await getCourseMarketplaceCatalog();
+  const refreshedAtMs = Date.parse(courseMarketplaceCatalog.refreshedAt);
+  const minutesSinceRefresh = Number.isFinite(refreshedAtMs)
+    ? Math.max(0, Math.round((Date.now() - refreshedAtMs) / (60 * 1000)))
+    : null;
+  const freshnessValue =
+    minutesSinceRefresh === null
+      ? "Unknown"
+      : minutesSinceRefresh < 1
+        ? "Just now"
+        : `${minutesSinceRefresh}m ago`;
 
   const totalAiServices = AI_ENCLAVE_SERVICE_SECTIONS.reduce(
     (count, section) => count + section.services.length,
     0
   );
   const totalTrackedListings = courseMarketplaceCatalog.categories.reduce(
-    (count, category) => count + category.listings.length,
+    (count: number, category: CourseCategory) => count + category.listings.length,
     0
   );
   const freeTrackedListings = courseMarketplaceCatalog.categories.reduce(
-    (count, category) =>
+    (count: number, category: CourseCategory) =>
       count +
       category.listings.filter((listing) => listing.priceLabel?.toLowerCase().includes('free')).length,
     0
   );
   const paidTrackedListings = totalTrackedListings - freeTrackedListings;
   const liveProviderCount = courseMarketplaceCatalog.providers.filter(
-    (provider) => provider.mode === 'live' || provider.mode === 'partial'
+    (provider: ProviderStatus) => provider.mode === 'live' || provider.mode === 'partial'
   ).length;
   const blockedProviderCount = courseMarketplaceCatalog.providers.filter(
-    (provider) => provider.mode === 'blocked'
+    (provider: ProviderStatus) => provider.mode === 'blocked'
   ).length;
+  const providersWithListingsCount = courseMarketplaceCatalog.providers.filter(
+    (provider: ProviderStatus) => provider.listingCount > 0
+  ).length;
+  const averageListingsPerTrack =
+    courseMarketplaceCatalog.categories.length > 0
+      ? (totalTrackedListings / courseMarketplaceCatalog.categories.length).toFixed(1)
+      : "0.0";
 
   const overviewStats = [
     {
       icon: <LayoutDashboard className="h-7 w-7 text-primary" />,
-      label: 'Primary Sections',
-      value: `${PRIMARY_SECTIONS.length}`,
-      description: 'Core navigation surfaces currently live in the product.',
+      label: 'Catalog Freshness',
+      value: freshnessValue,
+      description: 'Time since last successful marketplace scrape snapshot.',
     },
     {
       icon: <Database className="h-7 w-7 text-primary" />,
@@ -91,9 +104,9 @@ export default async function AnalyticsPage() {
 
   const quickStats = [
     {
-      label: 'Course Tracks',
-      value: `${courseMarketplaceCatalog.categories.length}`,
-      description: 'DigiTantra track cards on Courses & Pricing.',
+      label: 'Providers With Listings',
+      value: `${providersWithListingsCount}`,
+      description: 'Sources currently contributing at least one tracked listing.',
     },
     {
       label: 'Free Listings',
@@ -110,9 +123,14 @@ export default async function AnalyticsPage() {
       value: `${blockedProviderCount}`,
       description: 'Sources currently facing anti-bot or extraction limits.',
     },
+    {
+      label: 'Avg Listings / Track',
+      value: averageListingsPerTrack,
+      description: 'Mean listing volume per DigiTantra course category.',
+    },
   ];
 
-  const categoryDistribution = courseMarketplaceCatalog.categories.map((category) => ({
+  const categoryDistribution = courseMarketplaceCatalog.categories.map((category: CourseCategory) => ({
     category: category.name,
     totalListings: category.listings.length,
     freeListings: category.listings.filter((listing) =>
@@ -132,7 +150,9 @@ export default async function AnalyticsPage() {
     ['live', 'partial', 'blocked', 'planned'] as const
   ).map((mode) => ({
     mode: mode[0].toUpperCase() + mode.slice(1),
-    providers: courseMarketplaceCatalog.providers.filter((provider) => provider.mode === mode).length,
+    providers: courseMarketplaceCatalog.providers.filter(
+      (provider: ProviderStatus) => provider.mode === mode
+    ).length,
   }));
 
   return (
@@ -191,7 +211,7 @@ export default async function AnalyticsPage() {
           ))}
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-5">
           {quickStats.map((stat) => (
             <Card key={stat.label} className="glassmorphic">
               <CardHeader className="pb-3">
