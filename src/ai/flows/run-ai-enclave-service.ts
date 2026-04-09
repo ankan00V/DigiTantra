@@ -3,7 +3,11 @@
 import OpenAI from 'openai';
 import {z} from 'zod';
 
-import {getAiEnclaveServiceRuntime, type AiEnclaveServiceId} from '@/lib/ai-enclave/services';
+import {
+  getAiEnclaveService,
+  getAiEnclaveServiceRuntime,
+  type AiEnclaveServiceId,
+} from '@/lib/ai-enclave/services';
 import {getAiEnclaveWorkbenchConfig} from '@/lib/ai-enclave/workbench';
 
 const RunAiEnclaveServiceInputSchema = z.object({
@@ -464,6 +468,40 @@ function isLowQualityResponse(
   );
 }
 
+function mapAiProviderFailureMessage(error: unknown) {
+  if (error instanceof OpenAI.APIError) {
+    if (error.status === 401 || error.status === 403) {
+      return 'AI service authentication failed on the server. Please contact support to verify provider credentials.';
+    }
+
+    if (error.status === 404) {
+      return 'AI model configuration is invalid right now. Please try again shortly.';
+    }
+
+    if (error.status === 429) {
+      return 'AI service is currently rate-limited. Please wait a moment and try again.';
+    }
+
+    if (typeof error.status === 'number' && error.status >= 500) {
+      return 'AI provider is temporarily unavailable. Please try again in a few minutes.';
+    }
+
+    return 'AI request could not be completed right now. Please try again in a moment.';
+  }
+
+  if (error instanceof Error) {
+    if (/Missing AI_ENCLAVE_(CHAT|COMPLEX)_API_KEY/i.test(error.message)) {
+      return 'AI service configuration is missing on the server. Please contact support.';
+    }
+
+    if (/timeout|timed out|ECONNRESET|ENOTFOUND|EAI_AGAIN|fetch failed/i.test(error.message)) {
+      return 'AI service connection timed out. Please try again in a moment.';
+    }
+  }
+
+  return 'This AI service is temporarily unavailable. Please try again in a few minutes.';
+}
+
 async function requestServiceCompletion({
   config,
   runtime,
@@ -604,8 +642,17 @@ export async function runAiEnclaveService(
       return normalizeResult(fallback);
     }
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : 'Failed to generate a valid AI service response.';
-    throw new Error(`AI provider request failed: ${message}`);
+    const failureMessage = mapAiProviderFailureMessage(error);
+    const serviceName = getAiEnclaveService(serviceId as AiEnclaveServiceId).name;
+
+    console.error('[ai-enclave] service request failed', {
+      serviceId,
+      message: error instanceof Error ? error.message : 'unknown error',
+    });
+
+    return {
+      title: `${serviceName} is temporarily unavailable`,
+      content: failureMessage,
+    };
   }
 }

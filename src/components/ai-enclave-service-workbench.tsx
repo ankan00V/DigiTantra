@@ -100,17 +100,22 @@ export function AiEnclaveServiceWorkbench({
         });
         setResult(response);
       } catch (submitError) {
-        const message =
+        const rawMessage =
           submitError instanceof Error
             ? submitError.message
             : 'This AI service could not generate a result right now. Please try again in a moment.';
 
-        if (/Missing AI_ENCLAVE_(CHAT|COMPLEX)_API_KEY/i.test(message)) {
+        if (/Missing AI_ENCLAVE_(CHAT|COMPLEX)_API_KEY/i.test(rawMessage)) {
           setError('AI service configuration is missing on the server. Please update environment variables.');
           return;
         }
 
-        setError(message);
+        if (/An error occurred in the Server Components render|digest property is included/i.test(rawMessage)) {
+          setError('This AI service is temporarily unavailable. Please try again in a few minutes.');
+          return;
+        }
+
+        setError(rawMessage);
       } finally {
         setIsLoading(false);
       }
