@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: 'DigiTantra — The Future of Tech Education',
   description: 'A modern, data-driven, and visually stunning website for learning tech skills.',
   keywords: ['digital marketing', 'SEO', 'analytics', 'AI tools', 'modern marketing'],
+  verification: {
+    google: 'ZkGGYJIeoDcie1mBEBJch4ilq7pPtuVBDYa4apwYdRU',
+  },
 };
 
 export default function RootLayout({
