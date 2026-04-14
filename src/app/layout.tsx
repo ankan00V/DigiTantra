@@ -9,6 +9,13 @@ export const metadata: Metadata = {
   title: 'DigiTantra — The Future of Tech Education',
   description: 'A modern, data-driven, and visually stunning website for learning tech skills.',
   keywords: ['digital marketing', 'SEO', 'analytics', 'AI tools', 'modern marketing'],
+  metadataBase: new URL('https://digitantra.vercel.app'),
+  openGraph: {
+    title: 'Digitantra',
+    description: 'Digital solutions for startups',
+    url: 'https://digitantra.vercel.app',
+    type: 'website',
+  },
   verification: {
     google: 'ZkGGYJIeoDcie1mBEBJch4ilq7pPtuVBDYa4apwYdRU',
   },
