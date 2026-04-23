@@ -19,15 +19,15 @@ Website summary:
 - The AI Enclave page is a separate section for AI services across career, learning, content, and developer workflows.
 - AI Enclave currently exposes direct-use workspaces for AI Resume Builder, AI Cover Letter Generator, AI LinkedIn Optimizer, AI SOP Generator, AI Email Writer, AI Interview Prep Coach, AI Career Roadmap Generator, AI Course Recommender, AI Project Idea Generator, AI Assignment Helper, AI Notes Summarizer, AI Quiz Generator, AI Code Explainer, AI Debug Helper, AI Social Caption Generator, AI Ad Copy Generator, AI Landing Page Copy Generator, AI SEO Keyword + Blog Outline Tool, AI Study Planner, AI Skill Gap Analyzer, and the AI Blog Generator.
 
-Courses and pricing shown on the site:
-- Gen AI: ₹49,999, 12 Weeks, Master generative AI and build next-gen applications.
-- AI/ML: ₹44,999, 16 Weeks, Dive deep into machine learning models and algorithms.
-- Data Science: ₹39,999, 14 Weeks, Learn to extract insights from data with Python and SQL.
-- Full Stack Development: ₹59,999, 24 Weeks, Become a complete web developer from frontend to backend.
-- Cloud Computing: ₹34,999, 10 Weeks, Understand cloud infrastructure with AWS, Azure, and GCP.
-- Cyber Security: ₹42,999, 18 Weeks, Protect systems and networks from digital attacks.
-- Web 3.0 & Blockchain: ₹54,999, 20 Weeks, Explore the future of the decentralized internet.
-- DevOps Engineering: ₹47,999, 15 Weeks, Automate and streamline development pipelines.
+Courses shown on the site:
+- Gen AI: 12 Weeks, Master generative AI and build next-gen applications.
+- AI/ML: 16 Weeks, Dive deep into machine learning models and algorithms.
+- Data Science: 14 Weeks, Learn to extract insights from data with Python and SQL.
+- Full Stack Development: 24 Weeks, Become a complete web developer from frontend to backend.
+- Cloud Computing: 10 Weeks, Understand cloud infrastructure with AWS, Azure, and GCP.
+- Cyber Security: 18 Weeks, Protect systems and networks from digital attacks.
+- Web 3.0 & Blockchain: 20 Weeks, Explore the future of the decentralized internet.
+- DevOps Engineering: 15 Weeks, Automate and streamline development pipelines.
 
 Course features shown on the site:
 - Every course lists 24/7 Mentor Support and AI Chatbot Access.

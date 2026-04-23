@@ -223,13 +223,9 @@ export function CourseMarketplace({ catalog }: { catalog: CourseMarketplaceCatal
               <DialogHeader className="shrink-0 border-b border-white/10 px-4 py-5 sm:px-6 sm:py-6">
                 <DialogTitle className="font-headline text-xl sm:text-3xl">{activeCategory.name}</DialogTitle>
                 <DialogDescription className="max-w-3xl text-sm leading-6">
-                  {activeCategory.description} DigiTantra pricing remains visible here, while the list below
-                  focuses on tracked third-party offerings and current provider status.
+                  {activeCategory.description} The list below focuses on tracked third-party offerings and current provider status.
                 </DialogDescription>
                 <div className="flex flex-wrap gap-2 pt-3">
-                  <Badge variant="secondary" className="bg-primary/15 text-primary">
-                    DigiTantra: {activeCategory.ownedPrice}
-                  </Badge>
                   <Badge variant="outline" className="border-white/10 text-muted-foreground">
                     {activeCategory.ownedTimeline}
                   </Badge>
