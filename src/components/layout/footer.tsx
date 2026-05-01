@@ -67,6 +67,7 @@ export function Footer() {
               <li><Link href="/" className="text-muted-foreground hover:text-primary transition-colors">Home</Link></li>
               <li><Link href="/features" className="text-muted-foreground hover:text-primary transition-colors">Courses & Pricing</Link></li>
               <li><Link href="/ai-enclave" className="text-muted-foreground hover:text-primary transition-colors">AI Enclave</Link></li>
+              <li><Link href="/focus" className="text-muted-foreground hover:text-primary transition-colors">Focus Timer</Link></li>
               <li><Link href="/analytics" className="text-muted-foreground hover:text-primary transition-colors">Dashboard</Link></li>
               <li><Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">About</Link></li>
               <li><Link href="/contact" className="text-muted-foreground hover:text-primary transition-colors">Contact</Link></li>

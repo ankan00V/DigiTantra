@@ -16,6 +16,7 @@ const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/features', label: 'Courses & Pricing' },
   { href: '/ai-enclave', label: 'AI Enclave' },
+  { href: '/focus', label: 'Focus Timer' },
   { href: '/analytics', label: 'Dashboard' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
