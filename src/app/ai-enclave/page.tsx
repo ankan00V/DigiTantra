@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
+  Timer,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -116,6 +117,34 @@ export default function AiEnclavePage() {
               </div>
             );
           })}
+
+          <div className="rounded-[2rem] border border-white/5 bg-background/20 p-6 backdrop-blur-sm sm:p-8">
+            <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10">
+                    <Timer className="h-6 w-6 text-primary" />
+                  </div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
+                    Learning Utility
+                  </p>
+                </div>
+                <h2 className="font-headline text-2xl font-semibold tracking-tight sm:text-3xl">
+                  Focus Timer (VibeFocus)
+                </h2>
+                <p className="max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">
+                  Pair your DigiTantra learning track with an aesthetic deep-work timer for focused study blocks.
+                </p>
+              </div>
+              <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
+                <Button asChild variant="secondary" className="font-semibold">
+                  <Link href="/focus">
+                    Open Focus Timer <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
         </section>
       </div>
     </div>
