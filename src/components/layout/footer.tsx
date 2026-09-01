@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Facebook, Instagram, Twitter, Send, Linkedin } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -15,7 +15,7 @@ export function Footer() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim() === '' || !/^\S+@\S+\.\S+$/.test(email)) {
+    if (email.trim() === '' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         toast({
             variant: 'destructive',
             title: 'Invalid Email',
@@ -36,15 +36,8 @@ export function Footer() {
       <div className="container mx-auto px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         <div className="grid grid-cols-1 gap-10 text-center sm:gap-12 md:grid-cols-2 md:text-left xl:grid-cols-5">
           
-          {/* Column 1: Logo & About */}
+          {/* Column 1: About */}
           <div className="flex flex-col items-center md:items-start xl:pr-4">
-            <img
-              src="/footer-logo.png"
-              alt="DigiTantra"
-              className="h-9 w-auto sm:h-10"
-              width="312"
-              height="72"
-            />
             <p className="mt-4 max-w-xs text-base leading-8 text-muted-foreground sm:max-w-sm">
               DigiTantra is a project-based learning platform designed to equip you with the most in-demand tech skills of tomorrow.
             </p>
@@ -103,7 +96,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Column 5: Stay Connected */}
+          {/* Column 5: Stay Connected (newsletter only) */}
           <div className="flex flex-col items-center md:items-start">
             <h3 className="font-headline text-lg font-semibold text-primary">Stay Connected</h3>
             <p className="mt-4 text-sm text-muted-foreground">
@@ -121,12 +114,6 @@ export function Footer() {
                 <Send className="h-4 w-4" />
               </Button>
             </form>
-            <div className="mt-6 flex flex-wrap justify-center gap-4 md:justify-start">
-               <a href="https://www.facebook.com/LPUUniversity/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Facebook /></a>
-               <a href="https://www.instagram.com/ft.ankannnn/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Instagram /></a>
-               <a href="https://twitter.com/Lpu_online" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Twitter /></a>
-               <a href="https://www.linkedin.com/in/ghoshankan/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Linkedin /></a>
-            </div>
           </div>
         </div>
         <div className="mt-12 pt-8 border-t border-white/5 text-center text-sm text-muted-foreground">
