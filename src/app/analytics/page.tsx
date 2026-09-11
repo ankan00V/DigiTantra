@@ -1,10 +1,11 @@
+'use client';
+
 import Link from "next/link";
 import type { Metadata } from 'next';
 import {
   Bot,
   Database,
   LayoutDashboard,
-  Linkedin,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -167,31 +168,6 @@ export default async function AnalyticsPage() {
             A live snapshot of DigiTantra&apos;s actual product surface: navigation structure, AI Enclave
             inventory, course marketplace coverage, and current provider health.
           </p>
-        </div>
-
-        <div className="mt-16">
-          <Card className="glassmorphic overflow-hidden border-primary/35 bg-gradient-to-br from-primary/12 via-background/90 to-secondary/10 shadow-[0_0_30px_hsl(var(--primary)/0.18)] transition-all duration-300 ease-in-out hover:scale-[1.01] hover:border-primary/60 hover:shadow-2xl hover:shadow-primary/25">
-            <CardContent className="flex flex-col gap-8 p-8 md:flex-row md:items-center">
-              <Avatar className="h-24 w-24 border-4 border-primary">
-                <AvatarImage src="https://avatars.githubusercontent.com/u/142795534?v=4" alt="Ankan Ghosh" />
-                <AvatarFallback>AG</AvatarFallback>
-              </Avatar>
-              <div className="text-center md:text-left">
-                <h3 className="font-headline text-3xl text-primary">Founder Desk</h3>
-                <p className="mt-2 max-w-2xl text-muted-foreground">
-                  DigiTantra is being built as a practical learning ecosystem where students do not just browse
-                  courses, but move from discovery to guided execution through structured tracks, AI workspaces,
-                  and real product-led learning experiences.
-                </p>
-              </div>
-              <Button asChild size="lg" className="ml-auto flex-shrink-0 font-semibold">
-                <Link href="https://www.linkedin.com/in/ghoshankan/" target="_blank" rel="noopener noreferrer">
-                  <Linkedin className="mr-2 h-5 w-5" />
-                  Connect on LinkedIn
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
         </div>
 
         <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
