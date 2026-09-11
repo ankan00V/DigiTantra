@@ -34,9 +34,8 @@ export function Footer() {
   return (
     <footer className="border-t border-white/5 bg-background relative z-10">
       <div className="container mx-auto px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 text-center sm:gap-12 md:grid-cols-2 md:text-left xl:grid-cols-5">
+        <div className="grid grid-cols-1 gap-10 text-center sm:gap-12 md:grid-cols-2 md:text-left xl:grid-cols-4">
           
-          {/* Column 1: About */}
           <div className="flex flex-col items-center md:items-start xl:pr-4">
             <p className="mt-4 max-w-xs text-base leading-8 text-muted-foreground sm:max-w-sm">
               DigiTantra is a project-based learning platform designed to equip you with the most in-demand tech skills of tomorrow.
@@ -53,7 +52,6 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Column 2: Navigation */}
           <div>
             <h3 className="font-headline text-lg font-semibold text-primary">Navigate</h3>
             <ul className="mt-4 space-y-3">
@@ -67,7 +65,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Column 3: Top Courses */}
           <div>
             <h3 className="font-headline text-lg font-semibold text-primary">Top Courses</h3>
             <ul className="mt-4 space-y-3">
@@ -78,25 +75,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Column 4: Privacy Policy */}
-          <div>
-            <h3 className="font-headline text-lg font-semibold text-primary">Privacy Policy</h3>
-            <p className="mt-4 text-sm text-muted-foreground">
-              We only use the information you share to run the platform, respond to enquiries, and improve the learning experience.
-            </p>
-            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-              <li>Collected: contact details, account activity, and analytics signals.</li>
-              <li>Used for: support, platform operations, and course improvements.</li>
-              <li>Control: you can request updates or deletion of your data.</li>
-            </ul>
-            <div className="mt-5">
-              <Link href="/privacy-policy" className="font-semibold text-primary transition-colors hover:text-primary/80">
-                View full privacy policy
-              </Link>
-            </div>
-          </div>
-
-          {/* Column 5: Stay Connected (newsletter only) */}
           <div className="flex flex-col items-center md:items-start">
             <h3 className="font-headline text-lg font-semibold text-primary">Stay Connected</h3>
             <p className="mt-4 text-sm text-muted-foreground">
@@ -118,7 +96,7 @@ export function Footer() {
         </div>
         <div className="mt-12 pt-8 border-t border-white/5 text-center text-sm text-muted-foreground">
           <p>
-            &copy; {new Date().getFullYear()} DigiTantra. All Rights Reserved.{" "}
+            &copy; {new Date().getFullYear()} DigiTantra. All Rights Reserved. {" "}
             <Link href="/privacy-policy" className="text-primary transition-colors hover:text-primary/80">
               Privacy Policy
             </Link>
