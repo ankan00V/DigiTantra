@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Use VibeFocus — an aesthetic deep-work timer — to stay in flow while learning on DigiTantra.",
 };
 
-const VIBE_FOCUS_URL = "https://vibe-focus-three.vercel.app";
+const VIBE_FOCUS_URL = "https://vibefocuss.vercel.app";
 
 export default function FocusPage() {
   return (
